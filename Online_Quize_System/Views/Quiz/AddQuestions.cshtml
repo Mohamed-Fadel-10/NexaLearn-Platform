@@ -1,0 +1,226 @@
+﻿@using Infrastructure.ViewModels
+@model List<QuestionViewModel>
+
+@{
+    ViewData["Title"] = "Add Questions";
+    Layout = "_Dashboard";
+}
+
+<h2>Add Questions</h2>
+
+<head>
+    <style>
+        .quiz-settings-container, .sidebar {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .form-control, .form-check-input {
+            margin-bottom: 10px;
+        }
+
+        .question-form {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .question-counter {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 50%;
+        }
+
+        .delete-question {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar h4 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="SaveQuestions" asp-controller="Quiz" id="quizForm" method="post">
+            <input type="hidden" name="QuizId" value="@ViewBag.Id" />
+
+            <div id="questionsContainer">
+                <!-- Question forms will be dynamically added here -->
+            </div>
+            <button type="button" class="btn btn-secondary btn-block" id="addQuestionBtn">Add Question</button>
+            <button type="submit" class="btn btn-primary">Save Quiz</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let questionCounter = 0;
+
+        function updateQuestionCounters() {
+            const counters = document.querySelectorAll('.question-counter');
+            counters.forEach((counter, index) => {
+                counter.textContent = index + 1;
+            });
+        }
+
+        document.getElementById('addQuestionBtn').addEventListener('click', function () {
+            const questionsContainer = document.getElementById('questionsContainer');
+            const questionForm = document.createElement('div');
+            questionForm.className = 'question-form';
+            questionForm.innerHTML = `<div class="question-counter">${questionCounter + 1}</div>`;
+
+            let formContent = '';
+            const index = questionCounter;
+
+            formContent = `
+                        <div class="form-group">
+                            <label>Question Type</label>
+                            <select class="form-control" id="QuestionType_${index}" name="model[${index}].Type" onchange="updateQuestionForm(${index})" required>
+                                <option value="">Select Type</option>
+                                <option value="3">Multiple Choice</option>
+                                <option value="2">True/False</option>
+                                <option value="1">Short Text</option>
+                            </select>
+                        </div>
+                        <div id="QuestionContent_${index}">
+                            <!-- Dynamic question content will be inserted here -->
+                        </div>
+                    `;
+
+            questionForm.innerHTML += formContent;
+            questionForm.innerHTML += `<button type="button" class="delete-question" onclick="removeQuestion(this)">X</button>`;
+            questionsContainer.appendChild(questionForm);
+
+            questionCounter++;
+            updateQuestionCounters();
+        });
+
+        function updateQuestionForm(index) {
+            const selectedType = document.getElementById(`QuestionType_${index}`).value;
+            const questionContent = document.getElementById(`QuestionContent_${index}`);
+
+            let formContent = '';
+
+            if (selectedType === '3') {
+                formContent = `
+                            <div class="form-group">
+                                <label for="QuestionText_${index}">Question Text</label>
+                                <input type="text" class="form-control" id="QuestionText_${index}" name="model[${index}].QuestionText" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="Points_${index}">Points</label>
+                                <input type="number" class="form-control" id="Points_${index}" name="model[${index}].Points" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="Hint_${index}">Hint</label>
+                                <input type="text" class="form-control" id="Hint_${index}" name="model[${index}].Hint">
+                            </div>
+                            <div class="form-group">
+                                <label>Choices</label>
+                                <input type="text" class="form-control" id="Choices_${index}_0" name="model[${index}].Options[0].Text" placeholder="Choice 1" required>
+                                <input type="checkbox" class="form-check-input" id="Correct_${index}_0" name="model[${index}].Options[0].IsCorrect" value="true" onclick="setCorrectAnswer(${index}, 0)"> Correct
+                                <input type="text" class="form-control" id="Choices_${index}_1" name="model[${index}].Options[1].Text" placeholder="Choice 2" required>
+                                <input type="checkbox" class="form-check-input" id="Correct_${index}_1" name="model[${index}].Options[1].IsCorrect" value="true" onclick="setCorrectAnswer(${index}, 1)"> Correct
+                                <input type="text" class="form-control" id="Choices_${index}_2" name="model[${index}].Options[2].Text" placeholder="Choice 3" required>
+                                <input type="checkbox" class="form-check-input" id="Correct_${index}_2" name="model[${index}].Options[2].IsCorrect" value="true" onclick="setCorrectAnswer(${index}, 2)"> Correct
+                                <input type="text" class="form-control" id="Choices_${index}_3" name="model[${index}].Options[3].Text" placeholder="Choice 4" required>
+                                <input type="checkbox" class="form-check-input" id="Correct_${index}_3" name="model[${index}].Options[3].IsCorrect" value="true" onclick="setCorrectAnswer(${index}, 3)"> Correct
+                                <input type="hidden" id="CorrectAnswer_${index}" name="model[${index}].CorrectAnswer">
+                            </div>
+                        `;
+            } else if (selectedType === '2') {
+                formContent = `
+                            <div class="form-group">
+                                <label for="QuestionText_${index}">Question Text</label>
+                                <input type="text" class="form-control" id="QuestionText_${index}" name="model[${index}].QuestionText" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="Points_${index}">Points</label>
+                                <input type="number" class="form-control" id="Points_${index}" name="model[${index}].Points" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="Hint_${index}">Hint</label>
+                                <input type="text" class="form-control" id="Hint_${index}" name="model[${index}].Hint">
+                            </div>
+                            <div class="form-group">
+                                <label>True or False</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="TrueFalse_${index}_true" name="model[${index}].CorrectAnswer" value="true" required>
+                                    <label class="form-check-label" for="TrueFalse_${index}_true">True</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="TrueFalse_${index}_false" name="model[${index}].CorrectAnswer" value="false" required>
+                                    <label class="form-check-label" for="TrueFalse_${index}_false">False</label>
+                                </div>
+                            </div>
+                        `;
+            } else if (selectedType === '1') {
+                formContent = `
+                            <div class="form-group">
+                                <label for="QuestionText_${index}">Question Text</label>
+                                <input type="text" class="form-control" id="QuestionText_${index}" name="model[${index}].QuestionText" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="Points_${index}">Points</label>
+                                <input type="number" class="form-control" id="Points_${index}" name="model[${index}].Points" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="Hint_${index}">Hint</label>
+                                <input type="text" class="form-control" id="Hint_${index}" name="model[${index}].Hint">
+                            </div>
+                            <div class="form-group">
+                                <label for="ShortTextAnswer_${index}">Correct Answer</label>
+                                <input type="text" class="form-control" id="ShortTextAnswer_${index}" name="model[${index}].CorrectAnswer" required>
+                            </div>
+                        `;
+            }
+
+            questionContent.innerHTML = formContent;
+        }
+
+        function removeQuestion(button) {
+            const questionForm = button.closest('.question-form');
+            questionForm.remove();
+            questionCounter--;
+            updateQuestionCounters();
+        }
+
+        function setCorrectAnswer(questionIndex, optionIndex) {
+            // Reset all checkboxes for the current question
+            document.querySelectorAll(`#Choices_${questionIndex}_0, #Choices_${questionIndex}_1, #Choices_${questionIndex}_2, #Choices_${questionIndex}_3`)
+                .forEach((checkbox, idx) => {
+                    if (idx !== optionIndex) {
+                        checkbox.checked = false;
+                    }
+                });
+
+            // Set the correct answer text
+            const correctAnswerInput = document.getElementById(`CorrectAnswer_${questionIndex}`);
+            const correctOption = document.getElementById(`Choices_${questionIndex}_${optionIndex}`);
+            correctAnswerInput.value = correctOption.value;
+        }
+    </script>
+}

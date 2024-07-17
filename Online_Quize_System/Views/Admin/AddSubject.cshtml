@@ -1,0 +1,22 @@
+﻿@using Infrastructure.ViewModels
+@model SubjectViewModel
+@{
+    
+    Layout = "_Dashboard";
+}
+<h1>Add New Subject</h1>
+<form asp-action="AddSubject" asp-controller="Admin">
+    <div>
+        <label asp-for="Name" class="control-label col-md-2"> Name</label>
+        <input type="text" name="name"  asp-for="Name" class="form-control" />
+    </div>
+    <div>
+        <label asp-for="MaxDegree" class="control-label col-md-2"> MaxDegree</label>
+        <input type="text" name="MaxDegree"  asp-for="MaxDegree" class="form-control" />
+    </div>
+    <div>
+        <label asp-for="MinDegree" class="control-label col-md-2"> MinDegree</label>
+        <input type="text" name="MinDegree" asp-for="MinDegree" class="form-control" />
+    </div>
+    <button type="submit" value="Add" class="btn btn-primary"> Add</button>
+</form>

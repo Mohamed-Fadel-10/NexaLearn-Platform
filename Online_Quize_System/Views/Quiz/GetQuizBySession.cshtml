@@ -1,0 +1,10 @@
+﻿@using Entities.Models
+@model Quiz
+
+<form asp-action="StartQuiz" asp-controller="Quiz">
+    <div>
+        <label asp-for="SessionID" class="control-label col-md-2">SessionId</label>
+        <input type="text" name="SessionID" asp-for="SessionID" class="form-control" />
+    </div>
+    <button type="submit" value="Start" class="btn btn-primary">Start</button>
+</form>

@@ -1,0 +1,18 @@
+﻿@using Entities.Models
+@model ICollection<ApplicationUser>
+@{
+    Layout = "_Dashboard";
+}
+<form asp-action="DeleteUser" asp-controller="Admin" method="post">
+    <div>
+        <h3>Select a User</h3>
+        <select class="form-control" name="id">
+            @foreach (var user in Model)
+            {
+                <option value="@user.Id">@user.Name</option>
+            }
+        </select>
+        <br />
+        <button type="submit" class="btn btn-danger" value="Delete">Delete</button>
+    </div>
+</form>

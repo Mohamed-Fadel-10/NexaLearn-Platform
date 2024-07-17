@@ -1,0 +1,25 @@
+﻿@using Entities.Models
+@model IEnumerable<Quiz>
+@{
+    ViewData["Title"] = "ListOfQuizzes";
+    Layout = "_Dashboard";
+}
+<h2> All Quizzes That Created Until Now</h2>
+@foreach(var item in Model)
+{
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title"><b>@item.Name</b></h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text"><strong>@item.Description</strong></p>
+            <h5 class="card-text">Degree: @item.TotalDegree</h5>
+            <h5 class="card-text">Duration :@item.Duration</h5>
+            <a asp-action="Details" asp-controller="Quiz" asp-route-id="@item.Id" class="btn btn-primary">Quiz Details</a>
+            <a asp-action="Edit" asp-controller="Quiz" asp-route-id="@item.Id" class="btn btn-primary">Update</a>
+            <a asp-action="Delete" asp-controller="Quiz" asp-route-id="@item.Id" class="btn btn-primary">Delete</a>
+
+        </div>
+    </div>
+    
+}

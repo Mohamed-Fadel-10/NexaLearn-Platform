@@ -1,0 +1,110 @@
+﻿@using Infrastructure.ViewModels
+@model QuizViewModel
+
+@{
+    ViewData["Title"] = "Create Quiz";
+    Layout = "_Dashboard";
+}
+
+<h2>Create Quiz</h2>
+<head>
+    <style>
+        .quiz-settings-container, .sidebar {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .form-control, .form-check-input {
+            margin-bottom: 10px;
+        }
+
+        .question-form {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .question-counter {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 50%;
+        }
+
+        .delete-question {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar h4 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<div class="quiz-settings-container">
+    <form id="quizSettingsForm" asp-action="AddQuiz" asp-controller="Quiz">
+        <div class="form-group">
+            <label asp-for="Name">Quiz Name</label>
+            <input asp-for="Name" type="text" class="form-control" id="Name" name="Name" required>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description">Description</label>
+            <textarea asp-for="Description" class="form-control" id="Description" name="Description" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+            <label asp-for="TotalDegree">Total Degree</label>
+            <input type="number" asp-for="TotalDegree" class="form-control" id="TotalDegree" name="TotalDegree" required>
+        </div>
+        <div class="form-group">
+            <label asp-for="PassingDegree">Passing Degree</label>
+            <input asp-for="PassingDegree" type="number" class="form-control" id="PassingDegree" name="PassingDegree" required>
+        </div>
+        <div class="form-group">
+            <label asp-for="Duration">Duration (hh:mm:ss)</label>
+            <input asp-for="Duration" type="text" class="form-control" id="Duration" name="Duration" placeholder="hh:mm:ss" required pattern="^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$">
+        </div>
+        <div class="form-group">
+            <label asp-for="QuestionNumber">Question Numbers</label>
+            <input asp-for="QuestionNumber" type="number" class="form-control" id="QuestionNumber" name="QuestionNumber" required>
+        </div>
+        <div class="form-check">
+            <input asp-for="IsPrivate" class="form-check-input" type="checkbox" id="IsPrivate" name="IsPrivate">
+            <label asp-for="IsPrivate" class="form-check-label" for="IsPrivate">Private Quiz</label>
+        </div>
+        <button type="submit" class="btn btn-secondary" id="saveQuizSettingsBtn">Save and Continue</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script>
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const durationInput = document.getElementById('Duration');
+            const pattern = /^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
+
+            if (!pattern.test(durationInput.value)) {
+                alert('Please enter the duration in hh:mm:ss format.');
+                e.preventDefault(); // Prevent form submission
+            }
+        });
+    </script>
+}

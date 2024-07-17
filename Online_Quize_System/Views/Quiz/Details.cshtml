@@ -1,0 +1,62 @@
+﻿@using Infrastructure.ViewModels
+@model QuizViewModel
+@{
+    Layout = "_Dashboard";
+}
+<div class="quiz-container">
+    <h2 class="quiz-title">QuizAura</h2>
+    <div class="quiz-details">
+        <h3>Quiz Details</h3>
+        <p><strong>Name:</strong> @Model.Name</p>
+        <p><strong>Description:</strong> @Model.Description</p>
+        <p><strong>Total Degree:</strong> @Model.TotalDegree</p>
+        <p><strong>Duration:</strong> @Model.Duration minutes</p>
+        <p><strong>Number of Questions:</strong> @Model.QuestionNumber</p>
+        <p><strong>Private Quiz:</strong> @(Model.IsPrivate ? "Yes" : "No")</p>
+        <p><strong>Session ID:</strong> @Model.SessionID</p>
+        <p><strong>Creator Name:</strong> @Model.CreatorName</p>
+        <p class="creation-date">Created 2 days ago</p>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #dcdcdc;
+        }
+
+        .quiz-title {
+            font-size: 2.5em;
+            text-align: center;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+
+        .quiz-details {
+            font-size: 1.2em;
+            color: #555555;
+        }
+
+        .quiz-details h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #333333;
+        }
+
+        .quiz-details p {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .quiz-details .creation-date {
+            font-style: italic;
+            color: #888888;
+        }
+    </style>
+}

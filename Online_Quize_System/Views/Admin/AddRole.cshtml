@@ -1,0 +1,13 @@
+﻿@using Infrastructure.ViewModels
+@model AddRoleViewModel
+@{
+    Layout = "_Dashboard";
+}
+<form asp-action="AddRole" asp-controller="Admin" >
+    <div>
+        <label  class="control-label col-md-2" asp-for="Name"> Name</label>
+        <input type="text" name="name" class="form-control" asp-for="Name"/>
+    </div>
+    <button type="submit" value="Add" class="btn btn-primary" id="role"> Add Role</button>
+
+</form>

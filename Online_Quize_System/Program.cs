@@ -1,0 +1,66 @@
+using Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Services.Interfaces;
+using Services.Services;
+using Entities.Models;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<QuizContext>(option =>
+{
+    option.UseSqlServer(builder.Configuration.GetConnectionString("defualtConnection"));
+});
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=> {
+
+    options.Password.RequireDigit = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+    options.SignIn.RequireConfirmedEmail = true;
+}).AddEntityFrameworkStores<QuizContext>().AddDefaultTokenProviders(); ;
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IQuizService,QuizService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailConfiguration"));
+builder.Services.AddAuthentication()
+.AddCookie()
+.AddGoogle(GoogleDefaults.AuthenticationScheme,googleOptions =>
+{
+   
+    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.Run();

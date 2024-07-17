@@ -1,0 +1,33 @@
+﻿@using Infrastructure.ViewModels
+@model QuizViewModel
+@{
+    ViewData["Title"] = "SessionNumber";
+}
+<h1>Quiz Session : @Model.Name</h1>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Description</th>
+            <th scope="col">TotalDegree</th>
+            <th scope="col">PassingDegree</th>
+            <th scope="col">IsPrivate</th>
+            <th scope="col">Duration</th>
+            <th scope="col">CreatedOn</th>
+            <th scope="col">SessionID</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td scope="col">@Model.Description</td>
+            <td scope="col">@Model.TotalDegree</td>
+            <td scope="col">@Model.PassingDegree</td>
+            <td scope="col">@Model.IsPrivate</td>
+            <td scope="col">@Model.Duration</td>
+            <td scope="col">@Model.CreatedOn</td>
+            <td scope="col">@Model.SessionID</td>
+            <td><a asp-action="StartQuiz" asp-controller="Quiz" asp-route-SessionID="@Model.SessionID" name="SessionID">Go To Quiz</a></td>
+        </tr>
+    </tbody>
+</table>

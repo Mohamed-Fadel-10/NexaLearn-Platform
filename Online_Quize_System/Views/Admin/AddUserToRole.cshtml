@@ -1,0 +1,19 @@
+﻿@using Infrastructure.ViewModels
+@model AddUserToRoleViewModel
+@{
+    Layout = "_Dashboard";
+}
+<form asp-action="AddUserToRole" asp-controller="Admin">
+    <div>
+        <select asp-for="UserID" asp-items="ViewBag.students" class="form-control">
+            <option value="" class="form-control">Select a Student</option>
+        </select>
+    </div>
+    <div>
+        <select asp-for="RoleID" asp-items="ViewBag.roles" class="form-control">
+            <option value="" class="form-control">Select a Role</option>
+        </select>
+    </div>
+    <button type="submit" value="Add" class="btn btn-primary" id="role"> Add To Role</button>
+
+</form>

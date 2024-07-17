@@ -1,0 +1,32 @@
+﻿@using Infrastructure.ViewModels
+@model AddUserViewModel
+@{
+    Layout = "_Dashboard";
+}
+<h1 style="text-align:center;"> Add New User</h1>
+<form asp-action="AddUser" asp-controller="Admin">
+    <div>
+        <label asp-for="Name" class="form-label">Name</label>
+            <input type="text" asp-for="Name" name="Name" placeholder="Name" class="form-control"></input>
+    </div>
+    <br/>
+        <div>
+        <label asp-for="UserName" class="form-label">UserName</label>
+            <input type="text" asp-for="UserName" name="UserName" placeholder="UserName" class="form-control"></input>
+        </div>
+        <br />
+
+        <div>
+        <label asp-for="Email" class="form-label">Email</label>
+            <input type="email" asp-for="Email" name="Email" placeholder="Email" class="form-control"></input>
+        </div>
+        <br />
+
+        <div>
+        <label asp-for="Password" class="form-label">Password</label>
+            <input type="password" asp-for="Password" name="Password" placeholder="Password" class="form-control"></input>
+        </div>
+    <div>
+        <button type="submit" class="btn btn-primary" value="Submit">Submit<</button>
+    </div>
+</form>
