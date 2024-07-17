@@ -15,7 +15,6 @@
     </div>
 
     <div id="quiz-container" class="container quiz-container">
-        <!-- سيتم هنا إضافة الأسئلة ديناميكياً -->
     </div>
 
     <div class="quiz-footer text-center mt-3">
@@ -143,7 +142,6 @@
             questionHtml += `</div></div>`;
             container.innerHTML = questionHtml;
 
-            // تحديث العداد
             document.getElementById('question-counter').innerText = `${index + 1} of ${questions.length} Questions`;
         }
 
@@ -193,7 +191,6 @@
             document.getElementById('quiz-form').submit();
         }
 
-        // عرض أول سؤال عند تحميل الصفحة
         displayQuestion(currentQuestionIndex);
     </script>
 }

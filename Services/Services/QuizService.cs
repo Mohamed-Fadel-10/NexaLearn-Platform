@@ -112,7 +112,8 @@ namespace Services.Services
                     Description= quiz.Description,
                     Duration= quiz.Duration,
                     TotalDegree= quiz.TotalDegree,
-                    Questions= quiz.Questions.Select(s=>new QuestionViewModel
+                    Questions= quiz.Questions
+                    .Select( s=>new QuestionViewModel
                     {
                         Id=s.Id,
                         QuestionText= s.Title,
@@ -203,7 +204,7 @@ namespace Services.Services
                 };
             }
 
-            return new QuizViewModel();//{ IsDone = false, Model = null, Message = "Quiz Not Found" };
+            return new QuizViewModel();
         }
     }
 }

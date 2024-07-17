@@ -67,7 +67,7 @@
             <input type="hidden" name="QuizId" value="@ViewBag.Id" />
 
             <div id="questionsContainer">
-                <!-- Question forms will be dynamically added here -->
+
             </div>
             <button type="button" class="btn btn-secondary btn-block" id="addQuestionBtn">Add Question</button>
             <button type="submit" class="btn btn-primary">Save Quiz</button>
@@ -209,7 +209,6 @@
         }
 
         function setCorrectAnswer(questionIndex, optionIndex) {
-            // Reset all checkboxes for the current question
             document.querySelectorAll(`#Choices_${questionIndex}_0, #Choices_${questionIndex}_1, #Choices_${questionIndex}_2, #Choices_${questionIndex}_3`)
                 .forEach((checkbox, idx) => {
                     if (idx !== optionIndex) {
@@ -217,7 +216,6 @@
                     }
                 });
 
-            // Set the correct answer text
             const correctAnswerInput = document.getElementById(`CorrectAnswer_${questionIndex}`);
             const correctOption = document.getElementById(`Choices_${questionIndex}_${optionIndex}`);
             correctAnswerInput.value = correctOption.value;
