@@ -111,6 +111,7 @@ namespace Online_Quize_System.Controllers
             return NotFound();
 
         }
+
         public async Task<IActionResult> Edit(int id)
         {
             var Response = await _quizService.GetById(id);

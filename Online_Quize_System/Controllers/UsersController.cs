@@ -28,16 +28,15 @@ namespace Online_Quize_System.Controllers
 
             if (model == null || !model.Any())
             {
-                return Content("not Valid Model");
+                return Content("Not Valid Model");
             }
 
             var response = await _usersService.Evaluate(model);
             if (response.IsDone)
             {
-                return Content("Evaluated");
+                return RedirectToAction("Index","Home");
             }
-
-            return Content("not Evaluated");
+            return Content("There Is a Problem Occurred , Please Try again");
         }
         public IActionResult Submit()
         {

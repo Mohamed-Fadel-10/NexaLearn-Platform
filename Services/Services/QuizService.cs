@@ -27,6 +27,7 @@ namespace Services.Services
                 var quiz = new Quiz();
                 var question = new Question();
                 quiz.Name = model.Name;
+                quiz.CreatedOn=DateTime.Now;
                 quiz.Description = model.Description;
                 quiz.TotalDegree = model.TotalDegree;
                 quiz.QuestionNumbers = model.QuestionNumber;
@@ -176,12 +177,14 @@ namespace Services.Services
             var quiz = await _context.Quiz.FirstOrDefaultAsync(q => q.Id == id);
             if (quiz != null)
             {
-                 _context.Quiz.Remove(quiz);
+                var questions = _context.Question.Where(q => q.QuizId == id).ToList();
+                _context.Question.RemoveRange(questions);
+                _context.Quiz.Remove(quiz);
                 await _context.SaveChangesAsync();
                 return new Response { IsDone = true, Message="Quiz Deleted Successfully" };
 
             }
-            return new Response { IsDone = false, Model = null };
+            return new Response { IsDone = false, Model = null};
         }
         public async Task<QuizViewModel> Details(int id)
         {
