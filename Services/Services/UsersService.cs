@@ -28,6 +28,8 @@ namespace Services.Services
             UsersEvaluationViewModel userdata = new UsersEvaluationViewModel();
             var questionIds = model.Select(x => x.QuestionID).ToList();
 
+            userdata.QuestionsNumber = questionIds.Count;
+
             var questions = await _context.Question
                 .Where(q => questionIds.Contains(q.Id))
                 .ToListAsync();
@@ -61,21 +63,39 @@ namespace Services.Services
                     {
                         if (multipleChoiceAnswers.TryGetValue(item.QuestionID, out var correctAnswer))
                         {
-                            item.Score = (item.Answer == correctAnswer) ? question.Points : 0;
+                            if(item.Answer == correctAnswer)
+                            {
+                                item.Score = question.Points;
+                                userdata.CorrectAnswerCount+=1;
+                            }
+                            else
+                            item.Score = 0;
                         }
                     }
                     else if (question.QuestionType == QuestionType.TrueFalse)
                     {
                         if (trueFalseAnswers.TryGetValue(item.QuestionID, out var correctAnswer))
                         {
-                            item.Score = (item.Answer == correctAnswer) ? question.Points : 0;
+                            if (item.Answer == correctAnswer)
+                            {
+                                item.Score = question.Points;
+                                userdata.CorrectAnswerCount+=1;
+                            }
+                            else
+                                item.Score = 0;
                         }
                     }
                     else
                     {
                         if(ShortTextAnswers.TryGetValue(item.QuestionID,out var correctAnswer))
                         {
-                            item.Score= item.Answer == correctAnswer ? question.Points : 0;
+                            if (item.Answer == correctAnswer)
+                            {
+                                item.Score = question.Points;
+                                userdata.CorrectAnswerCount+=1;
+                            }
+                            else
+                                item.Score = 0;
                         }
                     }
 
@@ -98,13 +118,18 @@ namespace Services.Services
                 .Where(u=>u.UserId==userdata.UserId&&u.QuizID==userdata.QuizID)
                 .Select(u => u.Score)
                 .Sum();
+            var currentQuiz = await _context.Quiz.FirstOrDefaultAsync(q => q.Id == userdata.QuizID);
             return new UsersEvaluationViewModel()
             {
                 UserId = userdata.UserId,
                 UserName = await _context.Users.Where(u => u.Id == userdata.UserId).Select(u => u.UserName).FirstOrDefaultAsync(),
-                QuizSession = await _context.Quiz.Where(q=>q.Id == userdata.QuizID).Select(u => u.SessionID).FirstOrDefaultAsync(),
+                QuizSession = currentQuiz.SessionID,
                 QuizID=userdata.QuizID,
                 Score = userdata.Score,
+                QuizName= currentQuiz.Name,
+                TotalDegree = currentQuiz.TotalDegree,
+                QuestionsNumber=userdata.QuestionsNumber,
+                CorrectAnswerCount=userdata.CorrectAnswerCount,
             };
         }
     }

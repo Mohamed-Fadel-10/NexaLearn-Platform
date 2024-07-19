@@ -1,0 +1,102 @@
+﻿@using Infrastructure.ViewModels
+@model UsersEvaluationViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .quiz-container {
+            background-color: white;
+            padding: 40px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin: 20px auto;
+        }
+
+        .result-circle {
+            width: 150px;
+            height: 150px;
+            border: 10px solid #28a745;
+            border-radius: 50%;
+            line-height: 130px;
+            font-size: 2em;
+            color: #555;
+            position: relative;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e9f7ec;
+        }
+
+        .details {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+            .details div {
+                margin: 10px 0;
+                font-size: 1.1em;
+            }
+
+        .subject {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10">
+                <div class="quiz-container">
+                    <div class="header text-center">
+                        <h2>Quiz Results</h2>
+                    </div>
+                    <div class="result text-center">
+                        <div class="result-circle">
+                            @(Model.Score * 100 / Model.TotalDegree)%
+                        </div>
+                    </div>
+                    <div class="details text-center">
+                        <div>You Get @Model.Score of @Model.TotalDegree in This Quiz</div>
+                        <div>Quiz Name: @Model.QuizName</div>
+                        <div>Total Degree: @Model.TotalDegree</div>
+                        <div>Score: @Model.Score</div>
+                        <div>Total Questions: @Model.QuestionsNumber</div>
+                        <div>Correct Answers: @Model.CorrectAnswerCount</div>
+                    </div>
+                    <div class="button-container text-center">
+                        <a asp-action="ReviewQuiz" class="btn btn-primary">Review Quiz</a>
+                    </div>
+                    <div class="subject text-center">
+                        Quiz Session: @Model.QuizSession
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

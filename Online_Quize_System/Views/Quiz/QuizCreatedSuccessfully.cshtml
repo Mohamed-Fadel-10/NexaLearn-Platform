@@ -1,33 +1,68 @@
-﻿@using Infrastructure.ViewModels
-@model QuizViewModel
-@{
-    ViewData["Title"] = "SessionNumber";
-}
-<h1>Quiz Session : @Model.Name</h1>
-<br />
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Description</th>
-            <th scope="col">TotalDegree</th>
-            <th scope="col">PassingDegree</th>
-            <th scope="col">IsPrivate</th>
-            <th scope="col">Duration</th>
-            <th scope="col">CreatedOn</th>
-            <th scope="col">SessionID</th>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    @{
+        Layout = "_Dashboard";
+    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Quiz System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .quiz-session-container {
+            width: 100%;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow-x: auto;
+        }
 
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td scope="col">@Model.Description</td>
-            <td scope="col">@Model.TotalDegree</td>
-            <td scope="col">@Model.PassingDegree</td>
-            <td scope="col">@Model.IsPrivate</td>
-            <td scope="col">@Model.Duration</td>
-            <td scope="col">@Model.CreatedOn</td>
-            <td scope="col">@Model.SessionID</td>
-            <td><a asp-action="StartQuiz" asp-controller="Quiz" asp-route-SessionID="@Model.SessionID" name="SessionID">Go To Quiz</a></td>
-        </tr>
-    </tbody>
-</table>
+        .table th, .table td {
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .table th, .table td {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+            <h1 class="text-center">Quiz Details:</h1>
+            <br />
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Total Degree</th>
+                        <th scope="col">Passing Degree</th>
+                        <th scope="col">Is Private</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Created On</th>
+                        <th scope="col">Session ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.Name</td>
+                        <td>@Model.Description</td>
+                        <td>@Model.TotalDegree</td>
+                        <td>@Model.PassingDegree</td>
+                        <td>@Model.IsPrivate</td>
+                        <td>@Model.Duration</td>
+                        <td>@Model.CreatedOn.ToString("g")</td> <!-- formatting datetime -->
+                        <td>@Model.SessionID</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

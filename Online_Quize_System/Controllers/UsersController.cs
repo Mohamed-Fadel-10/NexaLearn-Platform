@@ -39,7 +39,7 @@ namespace Online_Quize_System.Controllers
             if (response != null)
             {
                 await _hubContext.Clients.All.SendAsync("ReceiveNotification", response.QuizID,response.QuizSession, response.UserId, response.UserName,response.Score, DateTime.UtcNow.ToString("o"));
-                return RedirectToAction("Index", "Home");
+                return View("QuizResult", response);
             }
             return Content("There Is a Problem Occurred , Please Try again");
         }

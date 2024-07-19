@@ -75,6 +75,7 @@ namespace Online_Quize_System.Controllers
                         TotalDegree=quiz.TotalDegree,
                         PassingDegree= (double)quiz.PassingScore,
                         IsPrivate=quiz.IsPrivate,
+                        Name=quiz.Name
                     });
                 }
                 return View("AddQuestions");
