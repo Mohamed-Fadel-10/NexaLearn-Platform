@@ -7,6 +7,7 @@ using Entities.Models;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Infrastructure.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +26,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=> {
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
     options.SignIn.RequireConfirmedEmail = true;
-}).AddEntityFrameworkStores<QuizContext>().AddDefaultTokenProviders(); ;
+}).AddEntityFrameworkStores<QuizContext>().AddDefaultTokenProviders();
+
+// Injection for Services
+builder.Services.AddSignalR();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IQuizService,QuizService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
@@ -59,6 +63,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<QuizHub>("/QuizHub");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -11,6 +11,6 @@ namespace Services.Interfaces
 {
     public interface IUsersService
     {
-        public Task<Response> Evaluate(List<UsersEvaluationViewModel> model);
+        public Task<UsersEvaluationViewModel> Evaluate(List<UsersEvaluationViewModel> model);
     }
 }

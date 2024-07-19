@@ -19,13 +19,13 @@ namespace Services.Services
             _context = context;
         }
 
-        public async Task<Response> Evaluate(List<UsersEvaluationViewModel> model)
+        public async Task<UsersEvaluationViewModel> Evaluate(List<UsersEvaluationViewModel> model)
         {
             if (model == null)
             {
-                return new Response() { IsDone = false, Model = null };
+                return new UsersEvaluationViewModel();
             }
-
+            UsersEvaluationViewModel userdata = new UsersEvaluationViewModel();
             var questionIds = model.Select(x => x.QuestionID).ToList();
 
             var questions = await _context.Question
@@ -89,11 +89,23 @@ namespace Services.Services
                         Score = item.Score
                     });
                 }
-            }
+                userdata.QuizID = item.QuizID;
+                userdata.UserId = item.UserId;
+            }           
             await _context.UsersQuestionsQuizzes.AddRangeAsync(usersQuestionsQuizzes);
             await _context.SaveChangesAsync();
-
-            return new Response() { IsDone = true };
+            userdata.Score = usersQuestionsQuizzes
+                .Where(u=>u.UserId==userdata.UserId&&u.QuizID==userdata.QuizID)
+                .Select(u => u.Score)
+                .Sum();
+            return new UsersEvaluationViewModel()
+            {
+                UserId = userdata.UserId,
+                UserName = await _context.Users.Where(u => u.Id == userdata.UserId).Select(u => u.UserName).FirstOrDefaultAsync(),
+                QuizSession = await _context.Quiz.Where(q=>q.Id == userdata.QuizID).Select(u => u.SessionID).FirstOrDefaultAsync(),
+                QuizID=userdata.QuizID,
+                Score = userdata.Score,
+            };
         }
     }
 }

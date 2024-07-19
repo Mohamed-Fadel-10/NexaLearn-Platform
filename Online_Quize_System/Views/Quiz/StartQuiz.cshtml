@@ -107,12 +107,20 @@
 }
 
 @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
     <script>
-        let questions = @Html.Raw(JsonConvert.SerializeObject(Model.Questions));
-        let currentQuestionIndex = 0;
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/QuizHub")
+            .build();
+
+        connection.start().catch(err => console.error(err.toString()));
+
         let userId = '@ViewBag.UserId';
         let quizId = '@Model.QuizID';
-
+        let UserName = '@ViewBag.UserName';
+        let quizSession = '@Model.SessionID';
+        let questions = @Html.Raw(JsonConvert.SerializeObject(Model.Questions));
+        let currentQuestionIndex = 0;
         let answers = [];
 
         function displayQuestion(index) {
@@ -193,14 +201,19 @@
                 }
             }
         }
-
         function finishQuiz() {
             const answerData = getSelectedAnswer();
             answers.push(answerData);
 
             document.getElementById('answers').value = JSON.stringify(answers);
             document.getElementById('quiz-form').submit();
-            alert("Quiz Has Finished , You Will be Redirected To The Home Page");
+
+            const submissionDate = new Date().toISOString();
+            connection.invoke("NotifyAdmin", quizId, quizSession, userId, UserName , submissionDate)
+                .then(() => {
+                    alert("Quiz has finished, you will be redirected to the home page.");
+                })
+                .catch(err => console.error(err.toString()));
         }
 
         displayQuestion(currentQuestionIndex);
@@ -241,4 +254,5 @@
             }
         }, 1000);
     </script>
+
 }

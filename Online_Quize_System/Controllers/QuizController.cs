@@ -97,6 +97,8 @@ namespace Online_Quize_System.Controllers
                 var userId = HttpContext.User
                     .FindFirstValue(ClaimTypes.NameIdentifier);
                 ViewBag.userId = userId;
+                var UserName = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                ViewBag.UserName = UserName;
                 return View("StartQuiz",Response);
             }
             return View("NotFoundPage");

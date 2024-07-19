@@ -9,9 +9,12 @@ namespace Infrastructure.ViewModels
     public class UsersEvaluationViewModel
     {
         public string UserId { get; set; }
+        public string UserName { get; set; }
         public int QuizID { get; set; }
         public int QuestionID { get; set; }
         public string? Answer { get; set; }
         public double? Score { get; set; }
+        public string? QuizSession { get; set; }
+
     }
 }
