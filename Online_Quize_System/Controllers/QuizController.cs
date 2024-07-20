@@ -104,6 +104,7 @@ namespace Online_Quize_System.Controllers
             }
             return View("NotFoundPage");
         }
+        [Authorize]
         public async Task<IActionResult> GetAllQuizzes()
         {
             var Response = await _quizService.GetAllQuizzes();

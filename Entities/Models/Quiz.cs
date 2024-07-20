@@ -16,7 +16,8 @@ namespace Entities.Models
         public DateTime? CreatedOn { get; set; }
         public TimeSpan? Duration { get; set; }
         public int? QuestionNumbers { get; set; }
-        public bool IsPrivate { get; set; } = false; // private by default
+        public bool IsPrivate { get; set; } = true; // Private by default
+        public bool IsEnabled { get; set; } = false;// Disabled by default  
         public double? PassingScore { get; set; }
         public string? SessionID { get; set; }
         [ForeignKey("Creator")]
