@@ -18,5 +18,7 @@ namespace Services.Interfaces
         public Task<Response> UpdateQuiz(QuizViewModel model, int id);
         public Task<Response> DeleteQuiz(int id);
         public Task<QuizViewModel> Details(int id);
+        public Task<Response> MakePrivate(int id, bool isPrivate);
+        public Task<Response> MakeEnabled(int id, bool IsEnabled);
     }
 }

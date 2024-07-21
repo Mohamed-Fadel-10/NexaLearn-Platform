@@ -209,5 +209,27 @@ namespace Services.Services
 
             return new QuizViewModel();
         }
+        public async Task<Response> MakePrivate(int id, bool isPrivate)
+        {
+            var Quiz =await _context.Quiz.FirstOrDefaultAsync(q => q.Id == id);
+            if(Quiz!= null)
+            {
+                Quiz.IsPrivate=isPrivate;
+                await _context.SaveChangesAsync();
+                return new Response { IsDone = true };
+            }
+            return new Response { IsDone = false };
+        }
+        public async Task<Response> MakeEnabled(int id, bool IsEnabled)
+        {
+            var Quiz = await _context.Quiz.FirstOrDefaultAsync(q => q.Id == id);
+            if (Quiz != null)
+            {
+                Quiz.IsEnabled = IsEnabled;
+                await _context.SaveChangesAsync();
+                return new Response { IsDone = true };
+            }
+            return new Response { IsDone = false };
+        }
     }
 }

@@ -5,21 +5,22 @@
     Layout = "_Dashboard";
 }
 
-<div class="container-fluid mt-4">
+<div class="main-div">
     <div class="table-responsive-md">
-        <table class="table">
+        <table class="table table-hover">
             <thead class="thead-dark">
                 <tr>
-                    <th>Quiz Name</th>
-                    <th>Description</th>
-                    <th>Total Degree</th>
-                    <th>Passing Degree</th>
-                    <th>Duration</th>
-                    <th>Created On</th>
-                    <th>Question Numbers</th>
-                    <th>SessionID</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th scope="row">Quiz Name</th>
+                    <th scope="row">Description</th>
+                    <th scope="row">Total Degree</th>
+                    <th scope="row">Passing Degree</th>
+                    <th scope="row">Duration</th>
+                    <th scope="row">Created On</th>
+                    <th scope="row">Question Numbers</th>
+                    <th scope="row">SessionID</th>
+                    <th scope="row">IsPrivate</th>
+                    <th scope="row">IsEnabled</th>
+                    <th scope="row">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,10 +35,15 @@
                         <td>@item.CreatedOn?.ToString("dd MMM yyyy")</td>
                         <td>@item.QuestionNumbers</td>
                         <td>@item.SessionID</td>
-                        <td>@item.IsPrivate</td>
+                        <td>
+                            <input type="checkbox" class="toggle-private" data-id="@item.Id" @(item.IsPrivate ? "checked" : "") />
+                        </td>
+                        <td>
+                            <input type="checkbox" class="toggle-enabled" data-id="@item.Id" @(item.IsEnabled ? "checked" : "") />
+                        </td>
                         <td>
                             <a asp-action="Details" asp-controller="Quiz" asp-route-id="@item.Id">Details</a>|
-                            <a asp-action="Edit" asp-controller="Quiz" asp-route-id="@item.Id" >Edit</a>|
+                            <a asp-action="Edit" asp-controller="Quiz" asp-route-id="@item.Id">Edit</a>|
                             <a asp-action="Delete" asp-controller="Quiz" asp-route-id="@item.Id">Delete</a>
                         </td>
                     </tr>
@@ -48,19 +54,58 @@
 </div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.toggle-private').change(function () {
+                var quizId = $(this).data('id');
+                var isPrivate = $(this).is(':checked');
+                $.ajax({
+                    url: '/Quiz/TogglePrivate',
+                    type: 'POST',
+                    data: {
+                        id: quizId,
+                        isPrivate: isPrivate
+                    },
+                    success: function (response) {
+                        console.log('Private status updated');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error updating private status');
+                    }
+                });
+            });
+
+            $('.toggle-enabled').change(function () {
+                var quizId = $(this).data('id');
+                var isEnabled = $(this).is(':checked');
+                $.ajax({
+                    url: '/Quiz/ToggleEnabled',
+                    type: 'POST',
+                    data: {
+                        id: quizId,
+                        isEnabled: isEnabled
+                    },
+                    success: function (response) {
+                        console.log('Enabled status updated');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error updating enabled status');
+                    }
+                });
+            });
+        });
+    </script>
 }
 
 <style>
-    .container-fluid {
-        padding: 0;
-    }
-
     .table {
         width: 100%;
         margin-bottom: 20px;
+    }
+    .main-div{
+        margin-top:-20px;
     }
 
         .table th, .table td {
@@ -73,7 +118,6 @@
     }
 
     .thead-dark th {
-        background-color: #343a40;
         color: #fff;
     }
 </style>

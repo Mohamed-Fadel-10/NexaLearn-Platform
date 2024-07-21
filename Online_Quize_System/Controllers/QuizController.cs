@@ -91,7 +91,7 @@ namespace Online_Quize_System.Controllers
         }
       [HttpPost]
       [Authorize]
-        public async Task<IActionResult> StartQuiz(string SessionID)
+        public async Task<IActionResult>StartQuiz(string SessionID)
         {
             var Response = await _quizService.GetQuiz(SessionID.Trim());
             if (Response != null) {
@@ -156,6 +156,25 @@ namespace Online_Quize_System.Controllers
             return View("NotFoundPage");
 
         }
-
+        [HttpPost]
+        public async Task<IActionResult> TogglePrivate(int id,bool isPrivate)
+        {
+            var Response = await _quizService.MakePrivate(id, isPrivate);
+            if (Response.IsDone)
+            {
+                return Content("Done");
+            }
+            return Content("False");
+        }
+        [HttpPost]
+        public async Task<IActionResult> ToggleEnabled(int id, bool isEnabled)
+        {
+            var Response = await _quizService.MakeEnabled(id, isEnabled);
+            if (Response.IsDone)
+            {
+                return Content("Done");
+            }
+            return Content("False");
+        }
     }
 }
