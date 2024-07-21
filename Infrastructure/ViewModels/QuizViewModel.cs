@@ -16,6 +16,7 @@ namespace Infrastructure.ViewModels
         public double PassingDegree { get; set; }
         public int? QuestionNumber { get; set;  }
         public string? CreatorName { get; set; }
+        public int SubjectId { get; set; }  
         public bool IsPrivate { get; set; } = false;
        public TimeSpan? Duration { get; set; }
         public DateTime CreatedOn { get; set; }= DateTime.Now;

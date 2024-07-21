@@ -56,7 +56,7 @@ namespace Services.Services
             {
                 var section = new Section();
                 section.Name = model.Name;
-                section.Address = model.Address;
+                section.Place = model.Address;
                 section.SubjectId = model.SubjectId;
                 section.Capacity = model.Capacity;
                 await _context.Sections.AddAsync(section);

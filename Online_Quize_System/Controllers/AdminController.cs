@@ -141,9 +141,9 @@ namespace Online_Quize_System.Controllers
             ModelState.AddModelError("", "Please Select User To Delete It");
             return View();
         }
-        public IActionResult AdminNotifications()
+        public IActionResult UsersEvaluations()
         {         
-            return View("AdminNotifications");
+            return View("UsersEvaluations");
         }
 
 

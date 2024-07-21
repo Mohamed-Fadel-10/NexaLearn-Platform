@@ -33,6 +33,7 @@ namespace Services.Services
                 quiz.QuestionNumbers = model.QuestionNumber;
                 quiz.PassingScore = model.PassingDegree;
                 quiz.IsPrivate = model.IsPrivate;
+                quiz.SubjectId = model.SubjectId;
                 quiz.CreatorId = CreatorId;
                 quiz.SessionID= Guid.NewGuid().ToString();
                 quiz.Duration = model.Duration;

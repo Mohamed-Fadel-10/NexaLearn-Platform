@@ -12,7 +12,7 @@ namespace Entities.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int? Capacity { get; set; }
-        public string? Address { get; set; }
+        public string? Place { get; set; }
         [ForeignKey("Subject")]
         public int SubjectId { get; set; }
         public virtual Subject Subject { get; set; }

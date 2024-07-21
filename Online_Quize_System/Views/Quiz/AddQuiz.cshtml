@@ -34,6 +34,9 @@
             <label asp-for="QuestionNumber">Question Numbers</label>
             <input asp-for="QuestionNumber" type="number" class="form-control" id="QuestionNumber" name="QuestionNumber" required>
         </div>
+        <select asp-for="SubjectId" asp-items="ViewBag.subjects" class="form-control">
+            <option value="" class="form-control">Select a Subject</option>
+        </select>
         <div class="form-check">
             <input asp-for="IsPrivate" class="form-check-input" type="checkbox" id="IsPrivate" name="IsPrivate">
             <label asp-for="IsPrivate" class="form-check-label" for="IsPrivate">Private Quiz</label>

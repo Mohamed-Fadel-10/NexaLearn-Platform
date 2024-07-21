@@ -13,5 +13,7 @@ namespace Entities.Models
         public int? MaxDegree { get; set; }
         public int? MinDegree { get; set; }
         public virtual ICollection<Section> Sections  { get; set; }= new List<Section>();
+        public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
+
     }
 }

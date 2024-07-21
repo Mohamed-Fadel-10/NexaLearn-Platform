@@ -26,7 +26,7 @@ namespace Online_Quize_System.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> AddQuiz()
+        public async Task<IActionResult> AddQuiz() 
         {
             var model = new QuizViewModel();
             var subjects = await _adminService.GetAllSubjects();

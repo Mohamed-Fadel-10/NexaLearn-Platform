@@ -22,7 +22,10 @@ namespace Entities.Models
         public string? SessionID { get; set; }
         [ForeignKey("Creator")]
         public string CreatorId { get; set; }
+        [ForeignKey("Subject")]
+        public int SubjectId { get; set; }
         public virtual ApplicationUser Creator { get; set; }
+        public virtual Subject Subject { get; set; }
         public virtual ICollection<Question>? Questions { get; set; }= new List<Question>();
         public virtual ICollection<UsersQuestionsQuiz> UsersEvaluations { get; set; } = new List<UsersQuestionsQuiz>();
 
