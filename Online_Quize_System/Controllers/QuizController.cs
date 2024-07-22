@@ -25,14 +25,14 @@ namespace Online_Quize_System.Controllers
             _adminService = adminService;
         }
 
-        [Authorize]
-        public async Task<IActionResult> AddQuiz() 
-        {
-            var model = new QuizViewModel();
-            var subjects = await _adminService.GetAllSubjects();
-            ViewBag.subjects = new SelectList(subjects, "Id", "Name");
-            return View(model);
-            }
+        //[Authorize]
+        //public async Task<IActionResult> AddQuiz() 
+        //{
+        //    var model = new QuizViewModel();
+        //    var subjects = await _adminService.GetAllSubjects();
+        //    ViewBag.subjects = new SelectList(subjects, "Id", "Name");
+        //    return View(model);
+        //    }
         [HttpPost]
 
         public async Task<IActionResult> AddQuiz(QuizViewModel model)
@@ -108,9 +108,9 @@ namespace Online_Quize_System.Controllers
         public async Task<IActionResult> GetAllQuizzes()
         {
             var Response = await _quizService.GetAllQuizzes();
-            if (Response.IsDone)
+            if (Response.Any())
             {
-                return View("ListOfQuizzes", Response.Model);
+                return View("ListOfQuizzes", Response);
             }
             return NotFound();
 

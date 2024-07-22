@@ -11,16 +11,23 @@ namespace Online_Quize_System.Controllers
     public class AdminController : Controller
     {
         private readonly IAdminService _adminService;
-        public AdminController(IAdminService _adminService)
+        private readonly ISubjectService _subjectService;
+        private readonly ISectionService _sectionService;
+        private readonly IQuizService _quizService;
+        public AdminController(IAdminService _adminService, ISubjectService subjectService, 
+            ISectionService sectionService, IQuizService quizService)
         {
             this._adminService = _adminService;
+            _subjectService = subjectService;
+            _sectionService = sectionService;
+            _quizService = quizService;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var users= await _adminService.GetAllUsers();
+            var users = await _adminService.GetAllUsers();
             ViewBag.UsersNumbers = users.Count();
-            var subjects = await _adminService.GetAllSubjects();
+            var subjects = await _subjectService.GetAllSubjects();
             ViewBag.subjects = subjects.Count();
             return View();
         }
@@ -46,7 +53,7 @@ namespace Online_Quize_System.Controllers
 
         public async Task<IActionResult> AddSection()
         {
-            var subjects= await _adminService.GetAllSubjects();
+            var subjects = await _subjectService.GetAllSubjects();
             ViewBag.Subjects = new SelectList(subjects, "Id", "Name");
             return View();
         }
@@ -141,9 +148,27 @@ namespace Online_Quize_System.Controllers
             ModelState.AddModelError("", "Please Select User To Delete It");
             return View();
         }
-        public IActionResult UsersEvaluations()
-        {         
+        [Authorize]
+        public async Task<IActionResult> UsersEvaluations()
+        {
+            var subjects = await _subjectService.GetAllSubjects();
+            ViewBag.subjects = new SelectList(subjects, "Id", "Name");
+            var sections = await _sectionService.GetAllSections();
+            ViewBag.sections = new SelectList(sections, "Id", "Name");
+            var quizzes = await _quizService.GetAllQuizzes();
+            ViewBag.quizzes = new SelectList(quizzes, "Id", "Name");
             return View("UsersEvaluations");
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Filtrations(FilterUsersEvaluationViewModel model)
+        {
+            var response = await _adminService.Filtrations(model);
+            if (response != null && response.Any())
+            {
+                return Json(response); 
+            }
+            return Json(new List<UsersEvaluationViewModel>());
         }
 
 

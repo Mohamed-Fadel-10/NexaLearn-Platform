@@ -1,12 +1,27 @@
-﻿@{
+﻿@using Infrastructure.ViewModels
+@model FilterUsersEvaluationViewModel
+@{
     ViewData["Title"] = "Quiz Notifications";
     Layout = "_Dashboard";
 }
 
 <h2>Quiz Notifications</h2>
 
+<form id="filterForm" class="form-inline mb-3">
+    <select asp-for="SubjectId" asp-items="ViewBag.subjects" class="form-control mr-2" id="subjectSelect">
+        <option value="">Select Subject</option>
+    </select>
+    <select asp-for="SectionId" asp-items="ViewBag.sections" class="form-control mr-2" id="sectionSelect">
+        <option value="">Select Section</option>
+    </select>
+    <select asp-for="QuizId" asp-items="ViewBag.quizzes" class="form-control mr-2" id="quizSelect">
+        <option value="">Select Quiz</option>
+    </select>
+    <button class="btn btn-outline-success" type="button" id="searchButton">Search</button>
+</form>
+
 <table id="notificationsTable" class="table table-bordered">
-    <thead>
+    <thead class="thead-dark">
         <tr>
             <th>Quiz ID</th>
             <th>Quiz Session</th>
@@ -14,22 +29,22 @@
             <th>UserName</th>
             <th>Score</th>
             <th>Submission Date</th>
+            <th>Subject</th>
         </tr>
     </thead>
     <tbody id="notificationsBody">
-
-   </tbody>
+    </tbody>
 </table>
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script>
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/quizHub")
             .build();
 
-        connection.on("ReceiveNotification", (quizId, quizSession, userId, UserName,score, submissionDate) => {
-
+        connection.on("ReceiveNotification", (quizId, quizSession, userId, userName, score, submissionDate, subject) => {
             const tableBody = document.getElementById("notificationsBody");
             const row = document.createElement("tr");
 
@@ -41,13 +56,12 @@
             quizSessionCell.innerText = quizSession;
             row.appendChild(quizSessionCell);
 
-
             const userIdCell = document.createElement("td");
             userIdCell.innerText = userId;
             row.appendChild(userIdCell);
 
             const userNameCell = document.createElement("td");
-            userNameCell.innerText = UserName;
+            userNameCell.innerText = userName;
             row.appendChild(userNameCell);
 
             const scoreCell = document.createElement("td");
@@ -58,9 +72,69 @@
             submissionDateCell.innerText = submissionDate;
             row.appendChild(submissionDateCell);
 
+            const subjectCell = document.createElement("td");
+            subjectCell.innerText = subject;
+            row.appendChild(subjectCell);
+
+
             tableBody.appendChild(row);
         });
 
         connection.start().catch(err => console.error(err.toString()));
+
+        $('#searchButton').on('click', function () {
+            const subject = $('#subjectSelect').val();
+            const section = $('#sectionSelect').val();
+            const quiz = $('#quizSelect').val();
+
+            $.ajax({
+                url: '@Url.Action("Filtrations", "Admin")',
+                type: 'GET',
+                data: {
+                    subjectId: subject,
+                    sectionId: section,
+                    quizId: quiz
+                },
+                success: function (data) {
+                    console.log(data);
+                    const tableBody = $('#notificationsBody');
+                    tableBody.empty();
+
+                    data.forEach(item => {
+                        const row = $('<tr></tr>');
+
+                        const quizIdCell = $('<td></td>').text(item.quizID);
+                        const quizSessionCell = $('<td></td>').text(item.quizSession);
+                        const userIdCell = $('<td></td>').text(item.userId);
+                        const userNameCell = $('<td></td>').text(item.userName);
+                        const scoreCell = $('<td></td>').text(item.score);
+                        const submissionDateCell = $('<td></td>').text(item.submissionDate);
+                        const subjectCell = $('<td></td>').text(item.subject);
+
+                        row.append(quizIdCell, quizSessionCell, userIdCell, userNameCell, scoreCell, submissionDateCell, subjectCell);
+                        tableBody.append(row);
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching filtered data:', error);
+                }
+            });
+        });
     </script>
 }
+
+<style>
+    .form-inline {
+        display: flex;
+        align-items: center;
+    }
+
+        .form-inline .form-control, .form-inline .btn {
+            margin: 0 5px;
+        }
+
+    .table th, .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+</style>

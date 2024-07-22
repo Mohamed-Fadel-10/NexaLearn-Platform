@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Services.Interfaces
 {
-    public interface IUsersService
+    public interface IStudentService
     {
         public Task<UsersEvaluationViewModel> Evaluate(List<UsersEvaluationViewModel> model);
     }

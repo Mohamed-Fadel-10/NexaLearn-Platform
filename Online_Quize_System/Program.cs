@@ -33,8 +33,10 @@ builder.Services.AddSignalR();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IQuizService,QuizService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
-builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailConfiguration"));
 builder.Services.AddAuthentication()
 .AddCookie()

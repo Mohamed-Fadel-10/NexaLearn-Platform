@@ -10,9 +10,9 @@ namespace Online_Quize_System.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly IUsersService _usersService;
+        private readonly IStudentService _usersService;
         private readonly IHubContext<QuizHub> _hubContext;
-        public UsersController(IUsersService _usersService, IHubContext<QuizHub> _hubContext) {
+        public UsersController(IStudentService _usersService, IHubContext<QuizHub> _hubContext) {
             this._usersService = _usersService;
             this._hubContext= _hubContext;
         }
@@ -38,7 +38,7 @@ namespace Online_Quize_System.Controllers
             var response = await _usersService.Evaluate(model);
             if (response != null)
             {
-                await _hubContext.Clients.All.SendAsync("ReceiveNotification", response.QuizID,response.QuizSession, response.UserId, response.UserName,response.Score, DateTime.UtcNow.ToString("o"));
+                await _hubContext.Clients.All.SendAsync("ReceiveNotification", response.QuizID,response.QuizSession, response.UserId, response.UserName,response.Score, DateTime.UtcNow.ToString("o"),response.Subject);
                 return View("QuizResult", response);
             }
             return Content("There Is a Problem Occurred , Please Try again");

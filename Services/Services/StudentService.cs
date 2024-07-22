@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace Services.Services
 {
-    public class UsersService : IUsersService
+    public class StudentService : IStudentService
     {
         private readonly QuizContext _context;
-        public UsersService(QuizContext context)
+        public StudentService(QuizContext context)
         {
             _context = context;
         }
@@ -106,7 +106,8 @@ namespace Services.Services
                         UserId = item.UserId,
                         QuizID = item.QuizID,
                         QuestionID = item.QuestionID,
-                        Score = item.Score
+                        Score = item.Score,
+                        SubmissionDate=DateTime.Now,                  
                     });
                 }
                 userdata.QuizID = item.QuizID;
@@ -119,6 +120,8 @@ namespace Services.Services
                 .Select(u => u.Score)
                 .Sum();
             var currentQuiz = await _context.Quiz.FirstOrDefaultAsync(q => q.Id == userdata.QuizID);
+            var currentSubject= await _context.Subjects.FirstOrDefaultAsync(s=>s.Id==currentQuiz.SubjectId);
+
             return new UsersEvaluationViewModel()
             {
                 UserId = userdata.UserId,
@@ -130,6 +133,7 @@ namespace Services.Services
                 TotalDegree = currentQuiz.TotalDegree,
                 QuestionsNumber=userdata.QuestionsNumber,
                 CorrectAnswerCount=userdata.CorrectAnswerCount,
+                Subject=currentSubject.Name
             };
         }
     }

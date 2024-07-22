@@ -22,6 +22,7 @@ namespace Entities.Models
         public virtual Quiz Quiz { get; set; }
         public string? Answer { get; set; }
         public double? Score { get; set; }
+        public DateTime? SubmissionDate { get; set; }
 
 
     }

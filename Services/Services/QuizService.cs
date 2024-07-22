@@ -135,15 +135,15 @@ namespace Services.Services
             }
             return new QuizViewModel();
         }
-        public async Task<Response> GetAllQuizzes()
+        public async Task<List<Quiz>> GetAllQuizzes()
         {
             var quizzes = await _context.Quiz.Include(q => q.Questions).AsNoTracking().ToListAsync();
             if (quizzes.Any())
             {
-                return new Response { IsDone = true, Model = quizzes };
+                return quizzes;
             }
 
-            return new Response { IsDone = false, Model = null };
+            return new List<Quiz>();
         }
         public async Task<Response> GetById(int id)
         {

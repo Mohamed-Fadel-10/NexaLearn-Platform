@@ -12,7 +12,7 @@ namespace Infrastructure.ViewModels
         public string? UserName { get; set; }
         public int QuizID { get; set; }
         public string? QuizName { get; set; }
-        public int? CorrectAnswerCount { get; set; } = 0;
+        public int? CorrectAnswerCount { get; set; } = 0; 
         public int? QuestionsNumber { get; set; }
         public int QuestionID { get; set; }
         public string? Answer { get; set; }
@@ -20,6 +20,10 @@ namespace Infrastructure.ViewModels
         public string? QuizSession { get; set; }
       
         public double? TotalDegree { get; set; }
+        public DateTime? SubmissionDate { get; set; }
+        public string? Section { get; set; }
+        public  string? Subject { get; set; }
+
 
     }
 }

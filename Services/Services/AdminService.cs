@@ -74,16 +74,6 @@ namespace Services.Services
             };
 
         }
-        public async Task<List<Subject>> GetAllSubjects()
-        {
-            var subjects = await _context.Subjects.Include(s => s.Sections).ToListAsync();
-            if (subjects.Any())
-            {
-                return subjects;
-            }
-            return new List<Subject>();
-
-        }
         public async Task<List<ApplicationUser>> GetAllUsers()
         {
             var students = await _context.Users.ToListAsync();
@@ -174,9 +164,61 @@ namespace Services.Services
             return new Response { IsDone = false, Message = "User Not Found" };
 
         }
-        //public async Task<Response> Details()
-        //{
+        public async Task<List<UsersEvaluationViewModel>> Filtrations(FilterUsersEvaluationViewModel model)
+        {
+            if (model != null)
+            {
+                var students = _context.UsersQuestionsQuizzes
+                            .Join(_context.Quiz,
+                                  uqq => uqq.QuizID,
+                                  q => q.Id,
+                                  (uqq, q) => new { uqq, q })
+                            .Join(_context.Subjects,
+                                  uq => uq.q.SubjectId,
+                                  su => su.Id,
+                                  (uq, su) => new { uq.uqq, uq.q, su })
+                            .Join(_context.Sections,
+                                  suq => suq.su.Id,
+                                  se => se.SubjectId,
+                                  (suq, se) => new { suq.uqq, suq.q, suq.su, se })
+                            .Join(_context.Users,
+                                  se => se.uqq.UserId,
+                                  us => us.Id,
+                                  (se, us) => new { se.uqq, se.q, se.su, se.se, us.UserName });
 
-        //}
+                if (model.QuizId.HasValue)
+                {
+                    students = students.Where(c => c.q.Id == model.QuizId);
+                }
+
+                if (model.SubjectId.HasValue)
+                {
+                    students = students.Where(c => c.su.Id == model.SubjectId);
+                }
+
+                if (model.SectionId.HasValue)
+                {
+                    students = students.Where(c => c.se.Id == model.SectionId);
+                }
+
+                return await students
+                              .GroupBy(g => new { g.q.Id, g.q.SessionID, g.uqq.UserId, g.UserName, g.su.Name })
+                              .Select(s => new UsersEvaluationViewModel
+                              {
+                                  QuizID = s.Key.Id,
+                                  QuizSession = s.Key.SessionID,
+                                  UserId = s.Key.UserId,
+                                  Score = s.Sum(uqq => uqq.uqq.Score),
+                                  SubmissionDate = s.Max(uqq => uqq.uqq.SubmissionDate),
+                                  UserName = s.Key.UserName,
+                                  Subject = s.Key.Name,
+                              })
+                              .ToListAsync();
+            }
+
+            return new List<UsersEvaluationViewModel>();
+        }
+
+
     }
 }
