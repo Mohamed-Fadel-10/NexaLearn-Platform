@@ -121,6 +121,10 @@ namespace Services.Services
                 .Sum();
             var currentQuiz = await _context.Quiz.FirstOrDefaultAsync(q => q.Id == userdata.QuizID);
             var currentSubject= await _context.Subjects.FirstOrDefaultAsync(s=>s.Id==currentQuiz.SubjectId);
+            var currentSection = _context.Sections
+                .Join(_context.Users, se => se.Id, u => u.SectionId, (se, u) => new { Section = se, User = u })
+                .FirstOrDefault();
+                
 
             return new UsersEvaluationViewModel()
             {
@@ -133,7 +137,8 @@ namespace Services.Services
                 TotalDegree = currentQuiz.TotalDegree,
                 QuestionsNumber=userdata.QuestionsNumber,
                 CorrectAnswerCount=userdata.CorrectAnswerCount,
-                Subject=currentSubject.Name
+                Subject=currentSubject.Name,
+                Section= currentSection.Section.Name,
             };
         }
     }

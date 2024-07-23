@@ -182,9 +182,11 @@ namespace Services.Services
                                   se => se.SubjectId,
                                   (suq, se) => new { suq.uqq, suq.q, suq.su, se })
                             .Join(_context.Users,
-                                  se => se.uqq.UserId,
-                                  us => us.Id,
-                                  (se, us) => new { se.uqq, se.q, se.su, se.se, us.UserName });
+                                  se => se.se.Id,
+                                  us => us.SectionId,
+                                  (se, us) => new { se.uqq, se.q, se.su, se.se, us.UserName ,us.Id })
+                            .Where(s=>s.uqq.UserId==s.Id);
+                
 
                 if (model.QuizId.HasValue)
                 {
@@ -200,9 +202,10 @@ namespace Services.Services
                 {
                     students = students.Where(c => c.se.Id == model.SectionId);
                 }
+                var result= await students.ToListAsync();
 
-                return await students
-                              .GroupBy(g => new { g.q.Id, g.q.SessionID, g.uqq.UserId, g.UserName, g.su.Name })
+                return result
+                              .GroupBy(g => new { g.q.Id, g.q.SessionID, g.uqq.UserId, g.UserName, g.su.Name,g.se })
                               .Select(s => new UsersEvaluationViewModel
                               {
                                   QuizID = s.Key.Id,
@@ -212,8 +215,11 @@ namespace Services.Services
                                   SubmissionDate = s.Max(uqq => uqq.uqq.SubmissionDate),
                                   UserName = s.Key.UserName,
                                   Subject = s.Key.Name,
+                                  Section=s.Key.se.Name
                               })
-                              .ToListAsync();
+                              .OrderByDescending(s=>s.SubmissionDate)
+                              .ThenBy(s=>s.Score)
+                              .ToList();
             }
 
             return new List<UsersEvaluationViewModel>();

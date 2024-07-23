@@ -14,6 +14,8 @@ namespace Online_Quize_System.Controllers
         private readonly ISubjectService _subjectService;
         private readonly ISectionService _sectionService;
         private readonly IQuizService _quizService;
+        private readonly ILogger<AdminController> _logger;
+
         public AdminController(IAdminService _adminService, ISubjectService subjectService, 
             ISectionService sectionService, IQuizService quizService)
         {
