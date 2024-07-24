@@ -12,11 +12,12 @@ namespace Entities.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int? Capacity { get; set; }
+        public string Code { get; set; } 
         public string? Place { get; set; }
         [ForeignKey("Subject")]
         public int SubjectId { get; set; }
         public virtual Subject Subject { get; set; }
-        public virtual ICollection<ApplicationUser> Students { get; set;}= new List<ApplicationUser>();
+        public virtual ICollection<StudentsSections> StudentsSections { get; set; } = new List<StudentsSections>();
 
     }
 }

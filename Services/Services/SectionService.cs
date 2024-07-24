@@ -24,5 +24,34 @@ namespace Services.Services
             return new List<Section>();
 
         }
+        public async Task<List<Section>> SectionsBySubjectID(int id)
+        {
+            var sections = await _context.Sections
+                .Where(s=>s.SubjectId==id)
+                .ToListAsync();
+            if (sections.Any())
+            {
+                return sections;
+            }
+            return new List<Section>();
+
+        }
+        public async Task<List<Section>> StudentSections(string userId)
+        {
+            var sections= _context.Sections
+                .Join(_context.StudentsSections,
+                s=>s.Id,
+                ss=>ss.SectionId,
+                (s, ss) => new {Section=s,StudentSections=ss})
+                .Where(s=>s.StudentSections.UserId==userId)
+                .Select(s=>s.Section)
+                .ToList();
+            if (sections.Any())
+            {
+                return sections;
+            }
+            return new List<Section>();
+
+        }
     }
 }

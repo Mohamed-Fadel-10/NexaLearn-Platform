@@ -12,5 +12,6 @@ namespace Services.Interfaces
     public interface IStudentService
     {
         public Task<UsersEvaluationViewModel> Evaluate(List<UsersEvaluationViewModel> model);
+        public Task<Section> Enroll(string code, string UserID);
     }
 }

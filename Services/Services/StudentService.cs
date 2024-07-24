@@ -122,9 +122,9 @@ namespace Services.Services
             var currentQuiz = await _context.Quiz.FirstOrDefaultAsync(q => q.Id == userdata.QuizID);
             var currentSubject= await _context.Subjects.FirstOrDefaultAsync(s=>s.Id==currentQuiz.SubjectId);
             var currentSection = _context.Sections
-                .Join(_context.Users, se => se.Id, u => u.SectionId, (se, u) => new { Section = se, User = u })
+                .Join(_context.StudentsSections, se => se.Id, ss => ss.SectionId, (se, ss) => new { Section = se, User = ss })
                 .FirstOrDefault();
-                
+
 
             return new UsersEvaluationViewModel()
             {
@@ -141,5 +141,17 @@ namespace Services.Services
                 Section= currentSection.Section.Name,
             };
         }
+        public async Task<Section> Enroll(string code,string UserID)
+        {
+            var section = await _context.Sections.FirstOrDefaultAsync(s => s.Code == code);
+            if(section != null)
+            {
+                await _context.StudentsSections.AddAsync(new StudentsSections { SectionId = section.Id, UserId = UserID });
+                await _context.SaveChangesAsync();
+                return section;
+            }
+            return new Section();
+        }
+
     }
 }

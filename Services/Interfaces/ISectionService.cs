@@ -10,5 +10,8 @@ namespace Services.Interfaces
     public interface ISectionService
     {
         public Task<List<Section>> GetAllSections();
+        public Task<List<Section>> SectionsBySubjectID(int id);
+        public Task<List<Section>> StudentSections(string userId);
+
     }
 }

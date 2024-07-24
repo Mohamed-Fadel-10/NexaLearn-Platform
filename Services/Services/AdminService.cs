@@ -181,12 +181,12 @@ namespace Services.Services
                                   suq => suq.su.Id,
                                   se => se.SubjectId,
                                   (suq, se) => new { suq.uqq, suq.q, suq.su, se })
-                            .Join(_context.Users,
+                            .Join(_context.StudentsSections,
                                   se => se.se.Id,
-                                  us => us.SectionId,
-                                  (se, us) => new { se.uqq, se.q, se.su, se.se, us.UserName ,us.Id })
-                            .Where(s=>s.uqq.UserId==s.Id);
-                
+                                  ss => ss.SectionId,
+                                  (se, ss) => new { se.uqq, se.q, se.su, se.se, ss.SectionId, ss.UserId })
+                            .Where(s => s.uqq.UserId == s.UserId);
+
 
                 if (model.QuizId.HasValue)
                 {
@@ -205,7 +205,7 @@ namespace Services.Services
                 var result= await students.ToListAsync();
 
                 return result
-                              .GroupBy(g => new { g.q.Id, g.q.SessionID, g.uqq.UserId, g.UserName, g.su.Name,g.se })
+                              .GroupBy(g => new { g.q.Id, g.q.SessionID, g.uqq.UserId, g.su.Name,g.se })
                               .Select(s => new UsersEvaluationViewModel
                               {
                                   QuizID = s.Key.Id,
@@ -213,7 +213,7 @@ namespace Services.Services
                                   UserId = s.Key.UserId,
                                   Score = s.Sum(uqq => uqq.uqq.Score),
                                   SubmissionDate = s.Max(uqq => uqq.uqq.SubmissionDate),
-                                  UserName = s.Key.UserName,
+                                  UserName = _context.Users.FirstOrDefault(u=>u.Id==s.Key.UserId).UserName,
                                   Subject = s.Key.Name,
                                   Section=s.Key.se.Name
                               })
