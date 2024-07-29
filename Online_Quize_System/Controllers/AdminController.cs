@@ -14,15 +14,16 @@ namespace Online_Quize_System.Controllers
         private readonly ISubjectService _subjectService;
         private readonly ISectionService _sectionService;
         private readonly IQuizService _quizService;
-        private readonly ILogger<AdminController> _logger;
+        private readonly IMaterialsService _materialsService;
 
-        public AdminController(IAdminService _adminService, ISubjectService subjectService, 
-            ISectionService sectionService, IQuizService quizService)
+        public AdminController(IAdminService _adminService, ISubjectService _subjectService, 
+            ISectionService _sectionService, IQuizService _quizService, IMaterialsService _materialsService)
         {
             this._adminService = _adminService;
-            _subjectService = subjectService;
-            _sectionService = sectionService;
-            _quizService = quizService;
+            this._subjectService = _subjectService;
+            this._sectionService = _sectionService;
+            this._quizService = _quizService;
+            this._materialsService = _materialsService;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -132,7 +133,6 @@ namespace Online_Quize_System.Controllers
         public  async Task<IActionResult> DeleteUser()
         {
             var users = await _adminService.GetAllUsers();
-           // ViewData["users"] = new SelectList(users, "Id", "Name");
             return View(users);
         }
         [HttpPost]
@@ -172,6 +172,42 @@ namespace Online_Quize_System.Controllers
             }
             return Json(new List<UsersEvaluationViewModel>());
         }
+
+        [Authorize]
+        public async Task<IActionResult> AddMaterials()
+        {
+            var subjects = await _subjectService.GetAllSubjects();
+            ViewBag.subjects = new SelectList(subjects, "Id", "Name");
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddMaterials(AddMaterialsViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _materialsService.AddMaterials(model);
+                if (response.IsDone)
+                {               
+                    return RedirectToAction("Index");
+                }
+                return View();
+            }
+            ModelState.AddModelError("", "Model Data Not Valid");
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetSections(int subjectId)
+        {
+            var sections = await _sectionService.SectionsBySubjectID(subjectId);
+
+            var sectionList = sections.Select(s => new {
+                value = s.Id,  
+                text = s.Name  
+            }).ToList();
+
+            return Json(sectionList);
+        }
+
 
 
     }

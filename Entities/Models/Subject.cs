@@ -15,5 +15,6 @@ namespace Entities.Models
         public virtual ICollection<Section> Sections  { get; set; }= new List<Section>();
         public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 
+
     }
 }

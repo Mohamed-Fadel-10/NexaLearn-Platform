@@ -18,6 +18,7 @@ namespace Entities.Models
         public int SubjectId { get; set; }
         public virtual Subject Subject { get; set; }
         public virtual ICollection<StudentsSections> StudentsSections { get; set; } = new List<StudentsSections>();
+        public virtual ICollection<Materials> Materials { get; set; } = new List<Materials>();
 
     }
 }

@@ -27,6 +27,10 @@ namespace Online_Quize_System.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            return View();
+        }
+        public async Task<IActionResult> Sections()
+        {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var response = await _sectionService.StudentSections(userId);
             return View(response);

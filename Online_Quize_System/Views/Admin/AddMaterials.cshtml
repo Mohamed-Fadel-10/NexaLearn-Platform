@@ -1,0 +1,73 @@
+﻿@using Infrastructure.ViewModels
+@model AddMaterialsViewModel
+@{
+    Layout = "_Dashboard";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Materials</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Materials</h1>
+        <form asp-action="AddMaterials" asp-controller="Admin" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label asp-for="Title">Title</label>
+                <input type="text" asp-for="Title" class="form-control" id="Title" name="Title" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" for="Description">Description</label>
+                <textarea class="form-control" asp-for="Description" id="Description" name="Description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label asp-for="Files">Files</label>
+                <input type="file" asp-for="Files" class="form-control" id="Files" name="Files" multiple>
+            </div>
+            <div class="form-group">
+                <label asp-for="SubjectID">Subject</label>
+                <select asp-for="SubjectID" asp-items="ViewBag.subjects" class="form-control" id="SubjectId">
+                    <option value="">Select a Subject</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="SectionId">Section</label>
+                <select class="form-control" asp-for="SectionId" name="SectionId">
+                    <option value="">Select a Section</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Materials</button>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#SubjectId').change(function () {
+                var subjectId = $(this).val();
+                if (subjectId) {
+                    $.ajax({
+                        url: '@Url.Action("GetSections", "Admin")',
+                        type: 'GET',
+                        data: { subjectId: subjectId },
+                        success: function (data) {
+                            var sectionSelect = $('#SectionId');
+                            sectionSelect.empty();
+                            sectionSelect.append('<option value="">Select a Section</option>');
+                            $.each(data, function (index, section) {
+                                sectionSelect.append('<option value="' + section.value + '">' + section.text + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#SectionId').empty();
+                    $('#SectionId').append('<option value="">Select a Section</option>');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

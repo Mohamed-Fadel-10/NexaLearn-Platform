@@ -37,6 +37,8 @@ builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<ISectionService, SectionService>();
+builder.Services.AddScoped<IMaterialsService, MaterialsService>();
+
 builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailConfiguration"));
 builder.Services.AddAuthentication()
 .AddCookie()

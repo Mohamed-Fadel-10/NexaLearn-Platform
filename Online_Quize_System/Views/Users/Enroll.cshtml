@@ -2,15 +2,43 @@
     ViewData["Title"] = "Enroll in a Section";
 }
 
-<div class="container">
-    <h2>@ViewData["Title"]</h2>
-    <h2> Enter Section Code :</h2>
-    <form asp-action="Enroll" asp-controller="Users" method="post">
-        <div class="form-group">
-            <label for="sectionCode">Section Code</label>
-            <input type="text" id="code" name="code" class="form-control" />
-        </div>
-
-        <button type="submit" class="btn btn-primary">Enroll Now</button>
-    </form>
+<div class="container d-flex flex-column justify-content-center align-items-center" style="height: 100vh;">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
+        <h2 class="text-center">@ViewData["Title"]</h2>
+        <form asp-action="Enroll" asp-controller="Users" method="post">
+            <div class="form-group mb-3">
+                <label for="sectionCode" class="form-label">Section Code</label>
+                <input type="text" id="code" name="code" class="form-control form-control-lg" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100">Enroll Now</button>
+        </form>
+    </div>
 </div>
+
+<style>
+    body {
+        background: url('~/img/quiz.jpeg') no-repeat center center fixed;
+        background-size: cover;
+        background-color: #f8f9fa; /* Fallback color */
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.9); /* Semi-transparent background for readability */
+    }
+
+    .form-label {
+        font-weight: bold;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+</style>

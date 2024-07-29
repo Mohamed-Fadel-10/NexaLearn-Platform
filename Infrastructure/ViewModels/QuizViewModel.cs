@@ -18,7 +18,9 @@ namespace Infrastructure.ViewModels
         public string? CreatorName { get; set; }
         public int SubjectId { get; set; }  
         public bool IsPrivate { get; set; } = false;
-       public TimeSpan? Duration { get; set; }
+        public bool IsEnabled{ get; set; }
+
+        public TimeSpan? Duration { get; set; }
         public DateTime CreatedOn { get; set; }= DateTime.Now;
         public List<QuestionViewModel>? Questions { get; set; } = new List<QuestionViewModel>();
 

@@ -1,0 +1,223 @@
+﻿@using Entities.Models
+@model List<Section>
+@{
+    ViewData["Title"] = "Sections";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }    
+        .container-fluid {
+            display: flex;
+            margin-top: 60px; 
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        .main-content {
+            flex: 2;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #fff;
+            margin-top: 35px;
+        }
+
+        .sidebar {
+            flex: 0.4;
+            padding: 20px;
+            border-left: 1px solid #000;
+            background-color: #343a40;
+            overflow-y: auto;
+            margin-left: 30px;
+            margin-top: 35px
+        }
+
+            .sidebar h2 {
+                color: #fff;
+                font-size: 24px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+        .section-item {
+            border: 1px solid #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            background-color: #495057;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            color: #fff;
+        }
+
+            .section-item:hover {
+                background-color: #6c757d;
+            }
+
+            .section-item h5 {
+                margin: 0;
+                font-size: 18px;
+            }
+
+            .section-item p {
+                margin: 0;
+                font-size: 14px;
+                color: #adb5bd;
+            }
+
+        .update-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #fff;
+            width: 80%; 
+        }
+
+            .update-card h5 {
+                margin: 0 0 10px 0;
+                font-size: 20px;
+            }
+
+            .update-card p {
+                margin: 0;
+                font-size: 16px;
+                color: #6c757d;
+            }
+
+        .enroll-link {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #fff;
+            background-color: #007bff;
+            transition: background-color 0.3s ease;
+        }
+
+            .enroll-link:hover {
+                background-color: #0056b3;
+                color:white;
+                text-decoration:none;
+            }
+
+        .material-file {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+            .material-file a {
+                margin-left: 10px;
+                color: #007bff;
+                text-decoration: none;
+                border: 1px solid #007bff;
+                padding: 5px 10px;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+            }
+
+                .material-file a:hover {
+                    background-color: #007bff;
+                    color: #fff;
+                }
+
+        .pdf-viewer {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+            overflow: auto;
+        }
+
+        .image-viewer {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .text-viewer {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <partial name="_Nav">
+    <div class="container-fluid">
+        <div class="main-content" id="main-content">
+            <h1>Section Details</h1>
+            <div id="section-details">
+                <p>Select a section to view its details and materials.</p>
+            </div>
+        </div>
+        <div class="sidebar">
+            <h2>Enrolled Sections</h2>
+            @foreach (var item in Model)
+            {
+                <div class="section-item" onclick="loadSection('@item.Id')">
+                    <h5>@item.Name</h5>
+                </div>
+            }
+            <a asp-action="Enroll" asp-controller="Users" class="enroll-link">ENROLL+</a>
+        </div>
+    </div>
+
+    <script>
+        function loadSection(sectionId) {
+            $.ajax({
+                url: '@Url.Action("GetSectionDetails", "Section")',
+                type: 'GET',
+                data: { sectionId: sectionId },
+                success: function (data) {
+                    var sectionDetails = $('#section-details');
+                    sectionDetails.empty();
+                    sectionDetails.append('<h1>' + data.sectionName + '</h1>');
+                    $.each(data.materials, function (index, material) {
+                        var card = $('<div class="update-card"></div>');
+                        card.append('<h5>' + material.title + '</h5>');
+                        card.append('<p>' + material.description + '</p>');
+                         
+                        if (material.filePath) {
+                            var encodedFilePath = encodeURIComponent(material.filePath);
+                            var downloadUrl = '@Url.Action("DownloadFile", "Section")' + '?filePath=' + encodedFilePath;
+                            var fileElement = '<div class="material-file"><a href="' + downloadUrl + '">Download File</a></div>';
+
+                            card.append(fileElement);
+                            sectionDetails.append(card);
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error: " + error);
+                }
+            });
+        }
+
+        function navigate(targetUrl) {
+            var fileName = targetUrl.substring(targetUrl.lastIndexOf('/') + 1);
+            window.open(targetUrl, '_blank');
+        }
+    </script>
+</body>
+</html>

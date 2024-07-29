@@ -44,6 +44,8 @@ namespace Infrastructure.Data
             modelBuilder.Entity<StudentsSections>()
                 .HasKey(uqq => new { uqq.SectionId,uqq.UserId });
 
+            
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -59,6 +61,7 @@ namespace Infrastructure.Data
         public virtual DbSet<ShortText> ShortText { get; set; }
         public virtual DbSet<UsersQuestionsQuiz> UsersQuestionsQuizzes { get; set; }
         public virtual DbSet<StudentsSections> StudentsSections { get; set; }
+        public virtual DbSet<Materials> Materials { get; set; }
 
 
 

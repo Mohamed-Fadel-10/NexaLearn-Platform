@@ -113,6 +113,39 @@ namespace Infrastructure.Migrations
                     b.ToTable("FeedBack");
                 });
 
+            modelBuilder.Entity("Entities.Models.Materials", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SectionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SectionId");
+
+                    b.ToTable("Materials");
+                });
+
             modelBuilder.Entity("Entities.Models.MultipleChoice", b =>
                 {
                     b.Property<int>("Id")
@@ -545,6 +578,17 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Entities.Models.Materials", b =>
+                {
+                    b.HasOne("Entities.Models.Section", "Section")
+                        .WithMany("Materials")
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Section");
+                });
+
             modelBuilder.Entity("Entities.Models.MultipleChoice", b =>
                 {
                     b.HasOne("Entities.Models.Question", "Question")
@@ -777,6 +821,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Entities.Models.Section", b =>
                 {
+                    b.Navigation("Materials");
+
                     b.Navigation("StudentsSections");
                 });
 
