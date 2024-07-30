@@ -6,6 +6,9 @@ using Services.Interfaces;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using Infrastructure.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Online_Quiz_System.Controllers
 {
@@ -64,5 +67,32 @@ namespace Online_Quiz_System.Controllers
             byte[] fileBytes = System.IO.File.ReadAllBytes(fullName);
             return File(fileBytes, "application/pdf");
         }
+        public async Task<IActionResult> SectionsWithStudents()
+        {
+            ViewBag.sections = new SelectList(await _sectionService.GetAllSections(), "Id", "Name");
+            var data = await _sectionService.SectionsWithStudentsNumbers(null);
+            return View(data);
+        }
+
+        public async Task<IActionResult> GetSectionData(int sectionId)
+        {
+            var data = await _sectionService.SectionsWithStudentsNumbers(sectionId);
+            return Json(data);
+        }
+
+        public async Task<IActionResult> StudentsSection()
+        {
+            ViewBag.sections = new SelectList(await _sectionService.GetAllSections(), "Id", "Name");
+            var data = await _sectionService.StudentsInSection(null);
+            return View(data);
+        }
+
+        public async Task<IActionResult> StudentsInSection(int sectionId)
+        {
+            var data = await _sectionService.StudentsInSection(sectionId);
+            return Json(data);
+        }
+
+
     }
 }

@@ -15,5 +15,7 @@ namespace Services.Interfaces
         public Task<List<Section>> StudentSections(string userId);
         public Task<List<SectionMaterialsViewModel>> GetSectionDetails(int sectionId);
 
+        public Task<List<SectionStudentsDataViewModel>> SectionsWithStudentsNumbers(int? sectionId=null);
+        public Task<List<SectionStudentsDataViewModel>> StudentsInSection(int? sectionId = null);
     }
 }

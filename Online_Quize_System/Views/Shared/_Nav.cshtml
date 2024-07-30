@@ -6,11 +6,13 @@
         <a asp-action="Index" asp-controller="Home">Home</a>
         <a asp-action="Sections" asp-controller="Users">Sections</a>
         <a asp-action="GetQuizBySession" asp-controller="Quiz">JoinQuiz</a>
+        <a asp-action="Enroll" asp-controller="Users">JoinSection</a>
+
     </div>
     @if (!User.Identity.IsAuthenticated)
     {
         <div class="auth-buttons">
-            <a asp-action="LogIn" asp-controller="Account" class="btn">Login / Play</a>
+            <a asp-action="LogIn" asp-controller="Account" class="logIn-btn">Login / Play</a>
             <a asp-action="Register" asp-controller="Account" class="btn">Try for Free</a>
         </div>
     }

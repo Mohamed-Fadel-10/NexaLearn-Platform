@@ -66,7 +66,7 @@ namespace Services.Services
                         Title = m.Title,
                         Description = m.Description,
                         CreatedAt = m.CreatedAt,
-                        FilePath = m.FilePath // Ensure the full file path is saved in the database
+                        FilePath = m.FilePath 
                     }).ToList()
                 })
                 .ToListAsync();
@@ -78,6 +78,61 @@ namespace Services.Services
 
             return new List<SectionMaterialsViewModel>();
         }
+        public async Task<List<SectionStudentsDataViewModel>> SectionsWithStudentsNumbers(int? sectionId = null)
+        {
+            var result = await _context.Sections
+                .Join(_context.StudentsSections,
+                s => s.Id,
+                ss => ss.SectionId,
+                (s, ss) => new { Section = s, StudentSections = ss }).ToListAsync();
+
+            if (sectionId.HasValue)
+            {
+                result = result.Where(s => s.Section.Id == sectionId).ToList();
+            }
+
+            if (result.Any())
+                return result
+                    .GroupBy(s => new { s.Section.Name ,s.Section.Code })
+                    .Select(g => new SectionStudentsDataViewModel
+                    {
+                        StudentsNumber = g.Count(),
+                        SectionName = g.Key.Name,
+                        SectionCode=g.Key.Code
+                    })
+                    .ToList();
+
+            return new List<SectionStudentsDataViewModel>();
+        }
+
+        public async Task<List<SectionStudentsDataViewModel>> StudentsInSection(int? sectionId=null)
+        {
+            var result =await  _context.Users
+                .Join(_context.StudentsSections,
+                u => u.Id,
+                ss => ss.UserId,
+                (u, ss) => new { Student = u, StudentSection = ss })
+                .Join(_context.Sections,
+                ss => ss.StudentSection.SectionId,
+                s => s.Id,
+                (ss, s) => new { StudentSection = ss, Section = s }
+                ).AsNoTracking()
+                .ToListAsync();
+            if( sectionId.HasValue)
+            {
+                result = result.Where(s => s.Section.Id == sectionId).ToList();
+            }
+            if(result.Any())
+            {
+                return result.Select(s => new SectionStudentsDataViewModel
+                {
+                    StudentName=s.StudentSection.Student.Name,
+                    SectionName=s.Section.Name
+                }).ToList();
+            }
+            return new List<SectionStudentsDataViewModel>();
+        }
+
 
     }
 }

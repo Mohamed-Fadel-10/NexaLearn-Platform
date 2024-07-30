@@ -20,7 +20,7 @@
             <h1>Welcome to NexaLearn</h1>
             <p>Experience the ultimate online quiz platform. Take quizzes, view your scores, and access section-specific study materials with ease.</p>
             <p>Engage in real-time quizzing and enhance your learning with interactive features. Get started today and join the NexaLearn community.</p>
-            <a href="#">Get started for free</a>
+            <a asp-action="Register" asp-controller="Account">Get started for free</a>
         </div>
         <div class="image-content">
             <img src="~/img/Section2.1.jpg" alt="Hero Image">
@@ -46,7 +46,7 @@
             </div>
         </div>
         <div class="responsive-container-block Container bottomContainer">
-            <img class="mainImg" src="~/img/Quiz.png">
+            <img class="mainImg" src="~/img/StudyLogos.jpg">
             <div class="allText bottomText">
                 <p class="text-blk headingText">
                     Our Vision
@@ -66,7 +66,7 @@
 
     <div class="second-hero-section">
         <div class="image-content">
-            <img src="~/img/97350-OKYIEE-393.jpg" alt="Second Hero Image">
+            <img src="~/img/Quiz..png" alt="Second Hero Image">
         </div>
         <div class="text-content">
             <h2>Online Quizzing Made Easy</h2>
@@ -76,9 +76,7 @@
         </div>
     </div>
 
-    <div class="footer">
-        <p>&copy; 2024 NexaLearn. All rights reserved.</p>
-    </div>
+    <partial name="_Footer"></partial>
 </body>
 </html>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>

@@ -1,0 +1,82 @@
+﻿@using Infrastructure.ViewModels
+@model List<SectionStudentsDataViewModel>
+@{
+    ViewData["Title"] = "Sections with Students Numbers";
+    Layout = "_Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form id="filterForm" class="form-inline mb-3">
+    <select asp-items="ViewBag.sections" class="form-control mr-2" id="sectionSelect">
+        <option value="">Select Section</option>
+    </select>
+    <button class="btn btn-outline-success" type="button" id="searchButton">Search</button>
+</form>
+
+<div class="table-responsive">
+    <table id="sectionsTable" class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Student Name</th>
+                <th> Section Name</th>
+            </tr>
+        </thead>
+        <tbody id="sectionsBody">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.StudentName</td>
+                    <td>@item.SectionName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $('#searchButton').on('click', function () {
+            const sectionId = $('#sectionSelect').val();
+
+            $.ajax({
+                url: '@Url.Action("StudentsInSection", "Section")',
+                type: 'GET',
+                data: { sectionId: sectionId },
+                success: function (data) {
+                    const tableBody = $('#sectionsBody');
+                    tableBody.empty();
+
+                    data.forEach(item => {
+                        const row = $('<tr></tr>');
+                        const studentNameCell = $('<td></td>').text(item.studentName);
+                        const sectionNameCell = $('<td></td>').text(item.sectionName);
+
+                        row.append(studentNameCell, sectionNameCell);
+                        tableBody.append(row);
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching section data:', error);
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .form-inline {
+        display: flex;
+        align-items: center;
+    }
+
+        .form-inline .form-control, .form-inline .btn {
+            margin: 0 5px;
+        }
+
+    .table th, .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+</style>

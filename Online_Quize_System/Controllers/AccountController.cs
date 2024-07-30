@@ -122,23 +122,33 @@ namespace Online_Quize_System.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> LogIn(LogInViewModel model,string ReturnUrl=null)
+        public async Task<IActionResult> LogIn(LogInViewModel model, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
-                var Response = await _accountService.LogInAsync(model);
-                if (Response.IsDone)
+                var response = await _accountService.LogInAsync(model);
+
+                if (response.IsDone)
                 {
-                    if (!string.IsNullOrEmpty(ReturnUrl))
+                    if (User.IsInRole("Admin"))
                     {
-                        return Redirect(ReturnUrl);
+                        return RedirectToAction("Index", "Admin");
                     }
+
+                    if (!string.IsNullOrEmpty(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+
                     return RedirectToAction("Index", "Home");
                 }
-                ModelState.AddModelError("", "incorrect username or Password");
+
+                ModelState.AddModelError("", "Incorrect username or password");
             }
+
             return View(model);
         }
+
         public async Task<IActionResult> LogOut()
         {
           await _accountService.LogOut();

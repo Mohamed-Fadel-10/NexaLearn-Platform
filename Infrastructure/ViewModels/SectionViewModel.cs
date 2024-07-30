@@ -18,7 +18,6 @@ namespace Infrastructure.ViewModels
         [MaxLength(5,ErrorMessage ="Address Must Be Less Than 5 Char")]
         public string? Address { get; set; }
         public int SubjectId { get; set; }
-        //public List<SelectListItem> Subjects { get; set; }
         public virtual ICollection<ApplicationUser> Students { get; set; } = new List<ApplicationUser>();
 
     }
