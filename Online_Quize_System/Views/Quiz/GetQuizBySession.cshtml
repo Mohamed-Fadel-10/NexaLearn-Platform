@@ -1,10 +1,30 @@
 ﻿@using Entities.Models
 @model Quiz
 
-<form asp-action="StartQuiz" asp-controller="Quiz">
-    <div>
-        <label asp-for="SessionID" class="control-label col-md-2">SessionId</label>
-        <input type="text" name="SessionID" asp-for="SessionID" class="form-control" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Quiz</title>
+    <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
+    <link href="~/css/quizesession.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="form-container">
+        <div class="form-box">
+            <h2>Start Quiz</h2>
+            <form asp-action="StartQuiz" asp-controller="Quiz">
+                <div>
+                    <label asp-for="SessionID" class="control-label">Session ID</label>
+                    <input type="text" name="SessionID" asp-for="SessionID" class="form-control" />
+                </div>
+                <button type="submit" value="Start">Start</button>
+            </form>
+        </div>
     </div>
-    <button type="submit" value="Start" class="btn btn-primary">Start</button>
-</form>
+    <script src="~/js/particles.js"></script>
+</body>
+</html>

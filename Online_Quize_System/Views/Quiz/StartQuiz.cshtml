@@ -10,22 +10,25 @@
           ? Model.Duration.Value.ToString(@"hh\:mm\:ss", CultureInfo.InvariantCulture)
           : "";
 }
-
-<p id="demo"></p>
+<head>
+    <link href="~/css/quiz.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
 <div class="quiz-wrapper">
+    <div id="demo"></div> 
+
     <div class="quiz-header text-center">
         <h2 class="quiz-title">@Model.Name</h2>
         <p class="quiz-description">@Model.Description</p>
-        <span class="quiz-score">Score: 0 / @Model.TotalDegree</span>
     </div>
 
-    <div id="quiz-container" class="container quiz-container">
-    </div>
+    <div id="quiz-container" class="container quiz-container"></div>
 
     <div class="quiz-footer text-center mt-3">
+        <button id="previous-button" class="btn btn-secondary ml-2" onclick="previousQuestion()" style="display: none;">Previous</button>
         <span id="question-counter">1 of @Model.Questions.Count() Questions</span>
         <button id="next-button" class="btn btn-primary ml-2" onclick="nextQuestion()">Next</button>
-        <button id="finish-button" class="btn btn-success ml-2" onclick="finishQuiz()">Finish</button>
+        <button id="finish-button" class="btn btn-success ml-2" onclick="finishQuiz()" style="display: none;">Finish</button>
     </div>
 
     <form id="quiz-form" method="post" action="@Url.Action("Evaluate", "Users")">
@@ -33,78 +36,6 @@
         <input type="hidden" name="answers" id="answers">
     </form>
 </div>
-
-@section Styles {
-    <style>
-        .quiz-wrapper {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #202020;
-            border: 1px solid #444;
-            border-radius: 8px;
-            color: #fff;
-        }
-
-        #demo {
-            text-align: center;
-            font-size: 60px;
-            margin-top: 0px;
-        }
-
-        .quiz-header {
-            background-color: #333;
-            padding: 20px;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .quiz-title {
-            color: #ff00ff;
-        }
-
-        .quiz-description {
-            color: #ff00ff;
-        }
-
-        .quiz-score {
-            color: #ff00ff;
-            display: block;
-            margin-top: 10px;
-        }
-
-        .card {
-            margin-bottom: 20px;
-            margin-top: 20px;
-            border: 1px solid #444;
-            background-color: #333;
-            color: #fff;
-        }
-
-        .form-check-label {
-            margin-left: 5px;
-        }
-
-        .quiz-footer {
-            background-color: #333;
-            padding: 10px;
-            border-radius: 0 0 8px 8px;
-        }
-
-        .form-check-input:checked + .form-check-label {
-            background-color: #444;
-            border-color: #444;
-            color: #ff00ff;
-        }
-
-        .form-check-input + .form-check-label {
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: 4px;
-            display: block;
-            cursor: pointer;
-        }
-    </style>
-}
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
@@ -121,7 +52,7 @@
         let quizSession = '@Model.SessionID';
         let questions = @Html.Raw(JsonConvert.SerializeObject(Model.Questions));
         let currentQuestionIndex = 0;
-        let answers = [];
+        let answers = JSON.parse(localStorage.getItem(`quiz-${quizId}-answers`)) || [];
 
         function displayQuestion(index) {
             const question = questions[index];
@@ -129,39 +60,43 @@
             container.innerHTML = '';
 
             let questionHtml = `<div class="card">
-                                                <div class="card-body">
-                                                    <h4 class="card-title">Question ${index + 1}</h4>
-                                                    <h5 class="card-text">${question.QuestionText}</h5>
-                                                    <p class="card-text">Hint: ${question.Hint}</p>
-                                                    <p class="card-text">Points: ${question.Points}</p>
-                                            `;
+                                    <div class="card-body">
+                                        <h4 class="card-title">Question ${index + 1}</h4>
+                                        <h5 class="card-text">${question.QuestionText}</h5>
+                                        <p class="card-text">Hint: ${question.Hint}</p>
+                                        <p class="card-text">Points: ${question.Points}</p>
+                                `;
+
+            const storedAnswer = answers.find(a => a.QuestionID === question.Id)?.Answer;
 
             if (question.Type === 2 /* TrueFalse */) {
                 questionHtml += `<div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="option" id="true" value="true">
-                                                    <label class="form-check-label" for="true">True</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="option" id="false" value="false">
-                                                    <label class="form-check-label" for="false">False</label>
-                                                </div>`;
+                                        <input class="form-check-input" type="radio" name="option" id="true" value="true" ${storedAnswer === "true" ? "checked" : ""}>
+                                        <label class="form-check-label" for="true">True</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="option" id="false" value="false" ${storedAnswer === "false" ? "checked" : ""}>
+                                        <label class="form-check-label" for="false">False</label>
+                                    </div>`;
             } else if (question.Type === 3 /* MultipleChoice */) {
                 question.Options.forEach((option, i) => {
                     questionHtml += `<div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="option" id="option${i}" value="${option.Text}">
-                                                        <label class="form-check-label" for="option${i}">${option.Text}</label>
-                                                    </div>`;
+                                            <input class="form-check-input" type="radio" name="option" id="option${i}" value="${option.Text}" ${storedAnswer === option.Text ? "checked" : ""}>
+                                            <label class="form-check-label" for="option${i}">${option.Text}</label>
+                                        </div>`;
                 });
             } else if (question.Type === 1 /* ShortText */) {
                 questionHtml += `<div class="form-group">
-                                                    <input type="text" class="form-control" name="answer" id="answer" placeholder="Your answer">
-                                                </div>`;
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Your answer" value="${storedAnswer || ''}">
+                                    </div>`;
             }
 
             questionHtml += `</div></div>`;
             container.innerHTML = questionHtml;
 
             document.getElementById('question-counter').innerText = `${index + 1} of ${questions.length} Questions`;
+
+            document.getElementById('previous-button').style.display = index === 0 ? 'none' : 'block';
         }
 
         function getSelectedAnswer() {
@@ -190,31 +125,58 @@
 
         function nextQuestion() {
             const answerData = getSelectedAnswer();
-            answers.push(answerData);
+            answers[currentQuestionIndex] = answerData;
+            localStorage.setItem(`quiz-${quizId}-answers`, JSON.stringify(answers));
 
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 displayQuestion(currentQuestionIndex);
+
                 if (currentQuestionIndex === questions.length - 1) {
                     document.getElementById('next-button').style.display = 'none';
                     document.getElementById('finish-button').style.display = 'block';
                 }
+
+                if (currentQuestionIndex > 0) {
+                    document.getElementById('previous-button').style.display = 'block';
+                }
             }
         }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+
+                document.getElementById('next-button').style.display = 'block';
+                document.getElementById('finish-button').style.display = 'none';
+
+                if (currentQuestionIndex === 0) {
+                    document.getElementById('previous-button').style.display = 'none';
+                }
+            }
+        }
+
         function finishQuiz() {
             const answerData = getSelectedAnswer();
-            answers.push(answerData);
+            answers[currentQuestionIndex] = answerData;
+            localStorage.setItem(`quiz-${quizId}-answers`, JSON.stringify(answers));
 
             document.getElementById('answers').value = JSON.stringify(answers);
             document.getElementById('quiz-form').submit();
 
+            localStorage.removeItem(`quiz-${quizId}-answers`);
+
+            sessionStorage.removeItem(`quiz-${quizId}-end-time`);
+
             const submissionDate = new Date().toISOString();
-            connection.invoke("NotifyAdmin", quizId, quizSession, userId, UserName , submissionDate)
+            connection.invoke("NotifyAdmin", quizId, quizSession, userId, UserName, submissionDate)
                 .then(() => {
                     alert("Quiz has finished, you will be redirected to the home page.");
                 })
                 .catch(err => console.error(err.toString()));
         }
+
 
         displayQuestion(currentQuestionIndex);
 
@@ -223,36 +185,39 @@
     </script>
     <script>
         var countDownDuration = "@formattedDuration".split(":");
-        var countDownDate = new Date();
-        countDownDate.setHours(countDownDate.getHours() + parseInt(countDownDuration[0]));
-        countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(countDownDuration[1]));
-        countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(countDownDuration[2]));
+        var storedEndTime = sessionStorage.getItem(`quiz-${quizId}-end-time`);
+        var endTime;
 
-        // Update the count down every 1 second
-        var x = setInterval(function () {
-
-            // Get today's date and time
+        if (storedEndTime) {
+            endTime = parseInt(storedEndTime);
+        } else {
             var now = new Date().getTime();
+            endTime = now + (parseInt(countDownDuration[0]) * 3600000) + (parseInt(countDownDuration[1]) * 60000) + (parseInt(countDownDuration[2]) * 1000);
+            sessionStorage.setItem(`quiz-${quizId}-end-time`, endTime);
+        }
 
-            // Find the distance between now and the count down date
-            var distance = countDownDate.getTime() - now;
+        var x = setInterval(function () {
+            var now = new Date().getTime();
+            var remainingTime = endTime - now;
 
-            // Time calculations for days, hours, minutes and seconds
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            sessionStorage.setItem(`quiz-${quizId}-end-time`, endTime);
 
-            // Output the result in an element with id="demo"
-            document.getElementById("demo").innerHTML = hours + "h "
-                + minutes + "m " + seconds + "s ";
+            var hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
-            // If the count down is over, write some text
-            if (distance < 0) {
+            document.getElementById("demo").innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
+
+            if (remainingTime < 0) {
                 clearInterval(x);
+                sessionStorage.removeItem(`quiz-${quizId}-end-time`);
                 window.location.href = '@Url.Content("~/Templets/QuizEnded.html")';
-
             }
         }, 1000);
     </script>
+
+
+
+
 
 }

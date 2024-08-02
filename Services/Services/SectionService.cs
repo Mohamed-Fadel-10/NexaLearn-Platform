@@ -1,5 +1,6 @@
 ﻿using Entities.Models;
 using Infrastructure.Data;
+using Infrastructure.Response;
 using Infrastructure.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
@@ -15,6 +16,35 @@ namespace Services.Services
     {
         private readonly QuizContext _context;
         public SectionService(QuizContext context) { _context = context; }
+
+
+        public async Task<Response> AddSection(SectionViewModel model)
+        {
+            if (model != null)
+            {
+                var section = new Section();
+                section.Name = model.Name;
+                section.Place = model.Address;
+                section.Code = Guid.NewGuid().ToString().Substring(1, 8);
+                section.SubjectId = model.SubjectId;
+                section.Capacity = model.Capacity;
+                await _context.Sections.AddAsync(section);
+                await _context.SaveChangesAsync();
+                return new Response
+                {
+                    IsDone = true,
+                    Model = model
+                };
+            }
+            return new Response
+            {
+                IsDone = false,
+                Model = null
+            };
+
+        }
+
+
         public async Task<List<Section>> GetAllSections()
         {
             var sections = await _context.Sections.ToListAsync();
@@ -80,27 +110,20 @@ namespace Services.Services
         }
         public async Task<List<SectionStudentsDataViewModel>> SectionsWithStudentsNumbers(int? sectionId = null)
         {
-            var result = await _context.Sections
-                .Join(_context.StudentsSections,
-                s => s.Id,
-                ss => ss.SectionId,
-                (s, ss) => new { Section = s, StudentSections = ss }).ToListAsync();
-
+            var result = _context.Sections.ToList();
             if (sectionId.HasValue)
             {
-                result = result.Where(s => s.Section.Id == sectionId).ToList();
+                result = result.Where(s=>s.Id==sectionId).ToList();
             }
 
             if (result.Any())
                 return result
-                    .GroupBy(s => new { s.Section.Name ,s.Section.Code })
-                    .Select(g => new SectionStudentsDataViewModel
+                    .Select(s => new SectionStudentsDataViewModel
                     {
-                        StudentsNumber = g.Count(),
-                        SectionName = g.Key.Name,
-                        SectionCode=g.Key.Code
-                    })
-                    .ToList();
+                      SectionName=  s.Name,
+                      StudentsNumber = _context.StudentsSections.Count(ss => ss.SectionId == s.Id),
+                      SectionCode=s.Code
+                    }).ToList();
 
             return new List<SectionStudentsDataViewModel>();
         }

@@ -93,15 +93,20 @@ namespace Online_Quize_System.Controllers
       [Authorize]
         public async Task<IActionResult>StartQuiz(string SessionID)
         {
+            var userId = HttpContext.User
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
             var Response = await _quizService.GetQuiz(SessionID.Trim());
             if (Response != null) {
-                var userId = HttpContext.User
-                    .FindFirstValue(ClaimTypes.NameIdentifier);
-                ViewBag.userId = userId;
-                var UserName = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                ViewBag.UserName = UserName;
-                return View("StartQuiz",Response);
-            }
+                var isOpened = await _quizService.IsOpened(userId, Response.QuizID);
+                if (!isOpened)
+                {
+                    ViewBag.userId = userId;
+                    var UserName = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                    ViewBag.UserName = UserName;
+                    return View("StartQuiz", Response);
+                }
+                return View("QuizAccessDenied");       
+            } 
             return View("NotFoundPage");
         }
         [Authorize]

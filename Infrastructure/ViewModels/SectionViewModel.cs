@@ -15,9 +15,10 @@ namespace Infrastructure.ViewModels
         public string Name { get; set; }
         public int? Capacity { get; set; }
         [Required]
-        [MaxLength(5,ErrorMessage ="Address Must Be Less Than 5 Char")]
+        [MaxLength(20,ErrorMessage ="Address Must Be Less Than 20 Char")]
         public string? Address { get; set; }
         public int SubjectId { get; set; }
+        public string? Code { get; set; }
         public virtual ICollection<ApplicationUser> Students { get; set; } = new List<ApplicationUser>();
 
     }

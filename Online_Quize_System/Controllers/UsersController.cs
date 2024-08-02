@@ -29,6 +29,7 @@ namespace Online_Quize_System.Controllers
         {
             return View();
         }
+        [Authorize]
         public async Task<IActionResult> Sections()
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -76,7 +77,7 @@ namespace Online_Quize_System.Controllers
                 var response = await _usersService.Enroll(code, userId);
                 if (response!=null)
                 {
-                return RedirectToAction("Index");
+                return RedirectToAction("Sections");
                 }  
                 else
                 {

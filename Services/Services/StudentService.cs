@@ -112,7 +112,12 @@ namespace Services.Services
                 }
                 userdata.QuizID = item.QuizID;
                 userdata.UserId = item.UserId;
-            }           
+            }
+            // For Check in another Time if User Opened This Quiz Before we set Here Flag as True
+            if (await _context.OpenedQuizzes.FirstOrDefaultAsync(s => s.UserId == userdata.UserId && s.QuizId == userdata.QuizID) == null) { 
+            await _context.OpenedQuizzes.AddAsync(new OpenedQuizzes { IsOpened = true ,QuizId=userdata.QuizID,UserId=userdata.UserId});
+            }
+
             await _context.UsersQuestionsQuizzes.AddRangeAsync(usersQuestionsQuizzes);
             await _context.SaveChangesAsync();
             userdata.Score = usersQuestionsQuizzes
@@ -144,11 +149,17 @@ namespace Services.Services
         public async Task<Section> Enroll(string code,string UserID)
         {
             var section = await _context.Sections.FirstOrDefaultAsync(s => s.Code == code);
-            if(section != null)
+            if (section != null)
             {
-                await _context.StudentsSections.AddAsync(new StudentsSections { SectionId = section.Id, UserId = UserID });
-                await _context.SaveChangesAsync();
-                return section;
+                var isEnrolled = await _context.StudentsSections.FirstOrDefaultAsync(s => s.SectionId == section.Id && s.UserId == UserID);
+                if (isEnrolled != null)
+                {
+                    await _context.StudentsSections.AddAsync(new StudentsSections { SectionId = section.Id, UserId = UserID });
+                    await _context.SaveChangesAsync();
+                    return section;
+                }
+                return new Section();
+          
             }
             return new Section();
         }

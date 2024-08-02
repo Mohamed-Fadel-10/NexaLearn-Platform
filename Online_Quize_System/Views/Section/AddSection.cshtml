@@ -5,7 +5,7 @@
     Layout = "_Dashboard";
 }
 <h1>Add New Section</h1>
-<form asp-action="AddSection" asp-controller="Admin">
+<form asp-action="AddSection" asp-controller="Section">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div>
@@ -21,7 +21,7 @@
         <input type="text" name="Address" asp-for="Address" class="form-control" />
         <span asp-validation-for="Address" class="text-danger"></span>
     </div>
-    <br/>
+    <br />
     <select asp-for="SubjectId" asp-items="ViewBag.Subjects" class="form-control">
         <option value="" class="form-control">Select a Subject</option>
     </select>

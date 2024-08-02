@@ -50,30 +50,7 @@ namespace Services.Services
             };
 
         }
-        public async Task<Response> AddSection(SectionViewModel model)
-        {
-            if (model != null)
-            {
-                var section = new Section();
-                section.Name = model.Name;
-                section.Place = model.Address;
-                section.SubjectId = model.SubjectId;
-                section.Capacity = model.Capacity;
-                await _context.Sections.AddAsync(section);
-                await _context.SaveChangesAsync();
-                return new Response
-                {
-                    IsDone = true,
-                    Model = model
-                };
-            }
-            return new Response
-            {
-                IsDone = false,
-                Model = null
-            };
-
-        }
+       
         public async Task<List<ApplicationUser>> GetAllUsers()
         {
             var students = await _context.Users.ToListAsync();

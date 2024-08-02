@@ -232,5 +232,19 @@ namespace Services.Services
             }
             return new Response { IsDone = false };
         }
+        public async Task<bool> IsOpened(string UserId, int QuizID)
+        {
+            if (!string.IsNullOrEmpty(UserId) && QuizID != 0)
+            {
+                var isOpened = await _context.OpenedQuizzes
+                    .FirstOrDefaultAsync(q => q.QuizId == QuizID && q.UserId==UserId);
+                if(isOpened != null)
+                {
+                    return isOpened.IsOpened ? true : false;
+                }
+                return false;
+            }
+            return false;
+        }
     }
 }

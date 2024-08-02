@@ -1,0 +1,133 @@
+.quiz-wrapper {
+    max-width: 900px; 
+    margin: 100px auto 20px auto; 
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    color: #333;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; 
+}
+
+#demo {
+    text-align: center;
+    font-size: 24px;
+    color: #ff0000;
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #fff7f7;
+    border: 2px solid #ff0000;
+    border-radius: 8px;
+}
+
+.quiz-header {
+    background-color: #91cbf7;
+    padding: 20px;
+    border-radius: 8px 8px 0 0;
+    color: #ffffff;
+
+}
+
+.quiz-title {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.quiz-description {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.quiz-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background-color: #f7f9fc;
+    border: none;
+    margin-top: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 26px; 
+    font-weight: bold;
+    color: #333;
+}
+
+.card-text {
+    font-size: 20px; 
+    margin-top: 10px;
+    font-weight: bold;
+    color: #666;
+}
+
+.form-check {
+    margin-top: 10px;
+    font-size: 18px; 
+}
+
+.form-check-input {
+    display: none; 
+}
+
+.form-check-label {
+    color: #333;
+    background-color: #f0f0f0;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 100%; 
+    box-sizing: border-box;
+    margin-top: 10px; 
+}
+
+    .form-check-label::before {
+        content: attr(data-number); 
+        background-color: #ffffff;
+        border: 2px solid #ddd;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+.form-check-input:checked + .form-check-label {
+    background-color: #91cbf7;
+    color: #ffffff;
+    border-color: #91cbf7;
+}
+
+.form-check-label:hover {
+    background-color: #e0e0e0;
+}
+
+.btn {
+    font-size: 18px; 
+    padding: 10px 20px;
+}
+#next-button {
+    background-color: #ff9900;
+    border-style: none;
+    border-color: #ff9900;
+}
+
+#question-counter {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 20px;
+}

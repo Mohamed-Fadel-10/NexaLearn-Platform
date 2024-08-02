@@ -9,18 +9,21 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Infrastructure.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Services.Services;
 
 namespace Online_Quiz_System.Controllers
 {
     public class SectionController : Controller
     {
         private readonly ISectionService _sectionService;
+        private readonly ISubjectService _subjectService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public SectionController(ISectionService sectionService, IWebHostEnvironment webHostEnvironment)
+        public SectionController(ISectionService sectionService, IWebHostEnvironment webHostEnvironment, ISubjectService subjectService)
         {
             _sectionService = sectionService;
             _webHostEnvironment = webHostEnvironment;
+            _subjectService = subjectService;
         }
 
         public IActionResult Index()
@@ -28,6 +31,27 @@ namespace Online_Quiz_System.Controllers
             return View();
         }
 
+        public async Task<IActionResult> AddSection()
+        {
+            var subjects = await _subjectService.GetAllSubjects();
+            ViewBag.Subjects = new SelectList(subjects, "Id", "Name");
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddSection(SectionViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var Response = await _sectionService.AddSection(model);
+                if (Response.IsDone)
+                {
+                    return RedirectToAction("SectionsWithStudents", "Section");
+                }
+                return View();
+            }
+            return View();
+        }
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetSectionDetails(int sectionId)
         {
@@ -39,7 +63,6 @@ namespace Online_Quiz_System.Controllers
             return Content("Not Found");
         }
 
-        // Action method to download a file
         [HttpGet]
         public IActionResult DownloadFile(string filePath)
         {

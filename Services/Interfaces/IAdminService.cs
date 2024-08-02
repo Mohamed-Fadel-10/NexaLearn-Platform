@@ -13,7 +13,6 @@ namespace Services.Interfaces
     public interface IAdminService
     {
         public Task<Response> AddSubject(SubjectViewModel model);
-        public Task<Response> AddSection(SectionViewModel model);
         public Task<List<ApplicationUser>> GetAllUsers();
 
         public Task<List<IdentityRole>> GetAllRoles();

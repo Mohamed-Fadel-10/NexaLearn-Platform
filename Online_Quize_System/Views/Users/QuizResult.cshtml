@@ -1,162 +1,111 @@
 ﻿@using Infrastructure.ViewModels
 @model UsersEvaluationViewModel
 
-<!DOCTYPE html>
-<html lang="en">
+@{
+    var percentage = (double)Model.Score * 100 / Model.TotalDegree;
+    var greenAngle = (Model.Score * 360 / Model.TotalDegree);
+    var redAngle = 360 - greenAngle;
+    var isPassed = percentage > 50;
+}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Results</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .quiz-container {
-            background-color: white;
-            padding: 40px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            margin: 20px auto;
-            text-align: center;
-        }
-
-        .result-circle {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            line-height: 130px;
-            font-size: 2em;
-            color: #555;
-            position: relative;
-            margin: 0 auto 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #e9f7ec;
-            background: conic-gradient(#28a745 @(Model.Score * 360 / Model.TotalDegree)deg, #fff 0);
-        }
-
-        .card-text{
-            text-align:center;
-            margin-bottom:5px;
-
-        }
-
-        .Incorrect{
-            background-color: #dc3545;
-
-        }
-
-        .details {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            margin: 20px 0;
-            text-align: left;
-        }
-
-            .details .card {
-                margin: 10px;
-                width: 45%;
-            }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-            .btn-primary:hover {
-                background-color: #0056b3;
-                border-color: #0056b3;
-            }
-
-        .correct-answer {
-            color: #28a745;
-            font-size: 1.5em;
-        }
-
-        .incorrect-answer {
-            color: black;
-            font-size: 1.5em;
-        }
-
-        .subject {
-            text-align: center;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-    </style>
+    <link href="~/css/quizresult.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 </head>
-<body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10 col-sm-12">
-                <div class="quiz-container">
-                    <div class="header text-center">
-                        <h2>Quiz Results</h2>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+            <div class="quiz-container" style="background-color:@(isPassed ? "#91cbf7" : "#ff9900");">
+                <div class="result text-center">
+                    <div class="result-circle" style="background: conic-gradient(#28a745 0% @(greenAngle)deg, #dc3545 @(greenAngle)deg 360deg);">
+                        <span>@percentage%</span>
                     </div>
-                    <div class="result text-center">
-                        <div class="result-circle">
-                            @(Model.Score * 100 / Model.TotalDegree)%
-                        </div>
-                    </div>
-                    <div class="details">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Quiz Name</h5>
-                                <p class="card-text">@Model.QuizName</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Degree</h5>
-                                <p class="card-text">@Model.TotalDegree</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Score</h5>
-                                <p class="card-text">@Model.Score</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Questions</h5>
-                                <p class="card-text">@Model.QuestionsNumber</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Correct Answers</h5>
-                                <p class="card-text">
-                                    <i class="fas fa-check-circle correct-answer"></i>
-                                    @Model.CorrectAnswerCount
-                                </p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body Incorrect">
-                                <h5 class="card-title">Incorrect Answers</h5>
-                                <p class="card-text">
-                                    <i class="fas fa-times-circle incorrect-answer"></i>
-                                    @(Model.QuestionsNumber - Model.CorrectAnswerCount)
-                                </p>
-                            </div>
+                </div>
+                <div class="details">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Quiz Name</h5>
+                            <p class="card-text">@Model.QuizName</p>
                         </div>
                     </div>
-                    <div class="button-container text-center">
-                        <a asp-action="ReviewQuiz" class="btn btn-primary">Review Quiz</a>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Degree</h5>
+                            <p class="card-text">@Model.TotalDegree</p>
+                        </div>
                     </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Score</h5>
+                            <p class="card-text">@Model.Score</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Questions</h5>
+                            <p class="card-text">@Model.QuestionsNumber</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Correct Answers</h5>
+                            <p class="card-text">
+                                <i class="fas fa-check-circle correct-answer"></i>
+                                @Model.CorrectAnswerCount
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body Incorrect">
+                            <h5 class="card-title">Incorrect Answers</h5>
+                            <p class="card-text">
+                                <i class="fas fa-times-circle incorrect-answer"></i>
+                                @(Model.QuestionsNumber - Model.CorrectAnswerCount)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-container text-center">
+                    <a asp-action="ReviewQuiz" class="btn btn-primary">Review Quiz</a>
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
-</body>
-</html>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm//core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+
+@if (isPassed)
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var duration = 60 * 10;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                var timeLeft = end - Date.now();
+
+                if (timeLeft <= 0) {
+                    return;
+                }
+
+                confetti({
+                    particleCount: 100,
+                    startVelocity: 30,
+                    spread: 360,
+                    origin: {
+                        x: Math.random(),
+                        y: Math.random() - 0.2
+                    }
+                });
+
+                requestAnimationFrame(frame);
+            }());
+        });
+    </script>
+}

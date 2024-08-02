@@ -62,6 +62,7 @@ namespace Infrastructure.Data
         public virtual DbSet<UsersQuestionsQuiz> UsersQuestionsQuizzes { get; set; }
         public virtual DbSet<StudentsSections> StudentsSections { get; set; }
         public virtual DbSet<Materials> Materials { get; set; }
+        public virtual DbSet<OpenedQuizzes> OpenedQuizzes { get; set; }
 
 
 

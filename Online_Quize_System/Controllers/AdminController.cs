@@ -22,7 +22,7 @@ namespace Online_Quize_System.Controllers
             this._adminService = _adminService;
             this._subjectService = _subjectService;
             this._sectionService = _sectionService;
-            this._quizService = _quizService;
+            this._quizService = _quizService; 
             this._materialsService = _materialsService;
         }
         [HttpGet]
@@ -54,27 +54,7 @@ namespace Online_Quize_System.Controllers
             return View();
         }
 
-        public async Task<IActionResult> AddSection()
-        {
-            var subjects = await _subjectService.GetAllSubjects();
-            ViewBag.Subjects = new SelectList(subjects, "Id", "Name");
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddSection(SectionViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var Response = await _adminService.AddSection(model);
-                if (Response.IsDone)
-                {
-                    return RedirectToAction("Index");
-                }
-                return View();
-            }
-            return View();
-        }
+       
         [Authorize(Roles = "Admin")]
 
         public IActionResult AddRole()
