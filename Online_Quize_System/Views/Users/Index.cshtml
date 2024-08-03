@@ -1,0 +1,93 @@
+﻿@using Infrastructure.ViewModels
+@model List<UserProfileDataViewModel>
+@{
+    ViewData["Title"] = "Users";
+    Layout = "_Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@* <form id="filterForm" class="form-inline mb-3">
+    <select asp-items="ViewBag.sections" class="form-control mr-2" id="sectionSelect">
+        <option value="">Select Section</option>
+    </select>
+    <button class="btn btn-outline-success" type="button" id="searchButton">Search</button>
+</form> *@
+
+<div class="table-responsive">
+    <table id="sectionsTable" class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Major</th>
+                <th>Email</th>
+                <th>UserName</th>
+
+            </tr>
+        </thead>
+        <tbody id="sectionsBody">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Phone</td>
+                    <td>@item.Major</td>
+                    <td>@item.Email</td>
+                    <td>@item.UserName</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $('#searchButton').on('click', function () {
+            const sectionId = $('#sectionSelect').val();
+
+            $.ajax({
+                url: '@Url.Action("Index", "Users")',
+                type: 'GET',
+                // data: { sectionId: sectionId },
+                success: function (data) {
+                    const tableBody = $('#sectionsBody');
+                    tableBody.empty();
+
+                    data.forEach(item => {
+                        const row = $('<tr></tr>');
+                        const NameCell = $('<td></td>').text(item.name);
+                        const PhoneCell = $('<td></td>').text(item.phone);
+                        const MajorCell = $('<td></td>').text(item.major);
+                        const EmailCell = $('<td></td>').text(item.email);
+                        const UserNameCell = $('<td></td>').text(item.username);
+
+                        row.append(NameCell, PhoneCell, MajorCell, EmailCell, UserNameCell);
+                        tableBody.append(row);
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching section data:', error);
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .form-inline {
+        display: flex;
+        align-items: center;
+    }
+
+        .form-inline .form-control, .form-inline .btn {
+            margin: 0 5px;
+        }
+
+    .table th, .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+</style>

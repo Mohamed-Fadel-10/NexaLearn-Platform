@@ -1,0 +1,145 @@
+﻿@using Infrastructure.ViewModels
+@model UserProfileDataViewModel
+
+<head>
+    <link rel="stylesheet" href="~/css/profile.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            margin-top: 40px;
+        }
+
+        .profile-card {
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .card-header {
+            background-color: #007bff;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .profile-photo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+            .profile-photo img {
+                border-radius: 50%;
+                width: 150px;
+                height: 150px;
+                object-fit: cover;
+                border: 4px solid #007bff;
+            }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .detail-row {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #007bff;
+            flex: 1;
+        }
+
+        .detail-value {
+            color: #333333;
+            flex: 2;
+            text-align: left;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+        .text-center {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<div class="container mt-5">
+    <div class="card shadow-sm profile-card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Edit Profile</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" asp-controller="Account" method="post" enctype="multipart/form-data">
+                <div class="profile-photo">
+                    <img src="@Model.PhotoPath" alt="Profile Photo">
+                </div>
+                <div class="profile-details">
+                    <div class="detail-row">
+                        <label asp-for="Name" class="detail-label"></label>
+                        <input asp-for="Name" class="form-control detail-value" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label asp-for="UserName" class="detail-label"></label>
+                        <input asp-for="UserName" class="form-control detail-value" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label asp-for="Email" class="detail-label"></label>
+                        <input asp-for="Email" class="form-control detail-value" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label asp-for="Major" class="detail-label"></label>
+                        <input asp-for="Major" class="form-control detail-value" />
+                        <span asp-validation-for="Major" class="text-danger"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label asp-for="Phone" class="detail-label"></label>
+                        <input asp-for="Phone" class="form-control detail-value" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label asp-for="Photo" class="detail-label">Profile Photo</label>
+                        <input asp-for="Photo" type="file" class="form-control-file" />
+                        <span asp-validation-for="Photo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

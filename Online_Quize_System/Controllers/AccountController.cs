@@ -4,12 +4,14 @@ using Infrastructure.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Services.Interfaces;
 using Services.Services;
+using System.Security.Claims;
 
 namespace Online_Quize_System.Controllers
 {
@@ -178,6 +180,39 @@ namespace Online_Quize_System.Controllers
                 });
             
             return RedirectToAction("Index", "Home");
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var userId = HttpContext.User
+                   .FindFirstValue(ClaimTypes.NameIdentifier);
+            var response= await _accountService.UserData(userId);
+            return View(response);
+        }
+        public async Task<IActionResult> ProfileEdit ()
+        {
+            var userId = HttpContext.User
+                   .FindFirstValue(ClaimTypes.NameIdentifier);
+            var response = await _accountService.UserData(userId);
+            return View(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(UserProfileDataViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = HttpContext.User
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
+              var response=  await _accountService.Profile(model, userId);
+                if (response.IsDone)
+                {
+                    return RedirectToAction("Profile"); 
+                }
+            }
+            ModelState.AddModelError("", "Error in Data Model try Again");
+            return RedirectToAction();
         }
 
     }

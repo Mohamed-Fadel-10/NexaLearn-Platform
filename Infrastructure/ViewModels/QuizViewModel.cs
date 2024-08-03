@@ -17,12 +17,12 @@ namespace Infrastructure.ViewModels
         public int? QuestionNumber { get; set;  }
         public string? CreatorName { get; set; }
         public int SubjectId { get; set; }  
-        public bool IsPrivate { get; set; } = false;
+        public bool IsPrivate { get; set; }
         public bool IsEnabled{ get; set; }
 
         public TimeSpan? Duration { get; set; }
-        public DateTime CreatedOn { get; set; }= DateTime.Now;
-        public List<QuestionViewModel>? Questions { get; set; } = new List<QuestionViewModel>();
+        public DateTime? CreatedOn { get; set; }
+        public List<QuestionViewModel>? Questions { get; set; } 
 
     }
 }

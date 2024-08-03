@@ -27,7 +27,8 @@ namespace Online_Quize_System.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            return View();
+            var response = await _usersService.GetAll();
+            return View(response);
         }
         [Authorize]
         public async Task<IActionResult> Sections()

@@ -1,0 +1,64 @@
+﻿@using Infrastructure.ViewModels
+@model UserProfileDataViewModel
+@{
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "_Dashboard";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}
+<head>
+    <link rel="stylesheet" href="~/css/profile.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ 
+</head>
+
+<div class="container mt-5">
+    <div class="card shadow-sm profile-card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Profile</h2>
+        </div>
+        <div class="card-body">
+            <div class="profile-photo">
+                <img src="@Model.PhotoPath" alt="Profile Photo">
+            </div>
+            <div class="profile-details">
+                <div class="detail-row">
+                    <div class="detail-col">
+                        <div class="detail-label"><i class="fas fa-user"></i> Full Name:</div>
+                        <div class="detail-value">@Model.Name</div>
+                    </div>
+                    <div class="detail-col">
+                        <div class="detail-label"><i class="fas fa-envelope"></i> Email:</div>
+                        <div class="detail-value">@Model.Email</div>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-col">
+                        <div class="detail-label"><i class="fas fa-graduation-cap"></i> Major:</div>
+                        <div class="detail-value">@Model.Major</div>
+                    </div>
+                    <div class="detail-col">
+                        <div class="detail-label"><i class="fas fa-user-tag"></i> UserName:</div>
+                        <div class="detail-value">@Model.UserName</div>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-col">
+                        <div class="detail-label"><i class="fas fa-phone"></i> Phone:</div>
+                        <div class="detail-value">@Model.Phone</div>
+                    </div>
+                    <!-- يمكنك إضافة حقول إضافية هنا -->
+                </div>
+            </div>
+            <div class="text-center">
+                <a asp-action="ProfileEdit" asp-controller="Account" class="btn btn-primary">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+</div>

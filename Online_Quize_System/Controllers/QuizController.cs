@@ -96,7 +96,7 @@ namespace Online_Quize_System.Controllers
             var userId = HttpContext.User
                     .FindFirstValue(ClaimTypes.NameIdentifier);
             var Response = await _quizService.GetQuiz(SessionID.Trim());
-            if (Response != null) {
+            if (Response!=null && Response.CreatedOn!=null) {
                 var isOpened = await _quizService.IsOpened(userId, Response.QuizID);
                 if (!isOpened)
                 {
@@ -107,7 +107,7 @@ namespace Online_Quize_System.Controllers
                 }
                 return View("QuizAccessDenied");       
             } 
-            return View("NotFoundPage");
+            return View("NotFoundQuiz");
         }
         [Authorize]
         public async Task<IActionResult> GetAllQuizzes()

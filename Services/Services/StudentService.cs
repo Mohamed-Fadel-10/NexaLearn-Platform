@@ -163,6 +163,22 @@ namespace Services.Services
             }
             return new Section();
         }
+        public async Task<List<UserProfileDataViewModel>> GetAll()
+        {
+            var users= await _context.Users
+                .Select(s => new UserProfileDataViewModel
+                {
+                    Name = s.Name,
+                    Email=s.Email,
+                    UserName=s.UserName,
+                    Phone=s.PhoneNumber,
+                    Major=s.Major
+                })
+                .ToListAsync();
+
+            return users.Any() ? users : new List<UserProfileDataViewModel>();
+
+        }
 
     }
 }

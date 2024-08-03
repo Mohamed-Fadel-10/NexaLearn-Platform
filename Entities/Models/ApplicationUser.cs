@@ -12,6 +12,7 @@ namespace Entities.Models
     {
         public string Name { get; set; }
         public string? Major { get; set; }
+        public string? Photo { get; set; }
         public virtual ICollection<Quiz>?CreatedQuizzes { get; set; }
         public virtual ICollection<UsersQuestionsQuiz> UsersEvaluations { get; set; } = new List<UsersQuestionsQuiz>();
         public virtual ICollection<UsersQuizFeedbacks> UsersQuizFeedbacks { get; set; } = new List<UsersQuizFeedbacks>();

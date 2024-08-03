@@ -14,7 +14,8 @@ namespace Services.Interfaces
         public Task<Response> RegisterAsync(RegisterViewModel model);
         public Task<Response> LogInAsync(LogInViewModel model);
         public Task LogOut();
-
+        public Task<UserProfileDataViewModel> UserData(string userId);
+        public Task<Response> Profile(UserProfileDataViewModel model, string userId);
 
     }
 }

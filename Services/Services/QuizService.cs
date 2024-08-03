@@ -113,6 +113,7 @@ namespace Services.Services
                     Name= quiz.Name,
                     Description= quiz.Description,
                     Duration= quiz.Duration,
+                    CreatedOn=quiz.CreatedOn,
                     TotalDegree= quiz.TotalDegree,
                     Questions= quiz.Questions
                     .Select( s=>new QuestionViewModel
@@ -133,7 +134,7 @@ namespace Services.Services
 
                 return QuizWithQuestions;
             }
-            return new QuizViewModel();
+            return new QuizViewModel() { CreatedOn = null };
         }
         public async Task<List<Quiz>> GetAllQuizzes()
         {

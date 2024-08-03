@@ -13,5 +13,6 @@ namespace Services.Interfaces
     {
         public Task<UsersEvaluationViewModel> Evaluate(List<UsersEvaluationViewModel> model);
         public Task<Section> Enroll(string code, string UserID);
+        public Task<List<UserProfileDataViewModel>> GetAll();
     }
 }

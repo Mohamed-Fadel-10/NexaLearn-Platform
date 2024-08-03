@@ -1,26 +1,70 @@
-﻿<div class="header">
-    <div class="logo">
-        <a asp-action="Index" asp-controller="Home">NexaLearn</a>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <a asp-action="Index" asp-controller="Home">NexaLearn</a>
+        </div>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="nav-items">
+            <a asp-action="Index" asp-controller="Home">Home</a>
+            <a asp-action="Sections" asp-controller="Users">Sections</a>
+            <a asp-action="GetQuizBySession" asp-controller="Quiz">JoinQuiz</a>
+            <a asp-action="Enroll" asp-controller="Users">JoinSection</a>
+        </div>
+        <div class="auth-buttons">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <span class="welcome-message">Welcome, @User.Identity.Name</span>
+                <a asp-controller="Account" asp-action="Profile" class="profile-btn">
+                    <i class="fas fa-user" style="font-size: 24px;"></i>
+                </a>
+                <a class="logout-btn btn" asp-area="" asp-controller="Account" asp-action="LogOut">LogOut</a>
+            }
+            else
+            {
+                <a asp-action="LogIn" asp-controller="Account" class="logIn-btn">Login / Play</a>
+                <a asp-action="Register" asp-controller="Account" class="btn">Try for Free</a>
+            }
+        </div>
     </div>
-    <div class="nav-items">
+    <div class="nav-items-mobile">
         <a asp-action="Index" asp-controller="Home">Home</a>
         <a asp-action="Sections" asp-controller="Users">Sections</a>
         <a asp-action="GetQuizBySession" asp-controller="Quiz">JoinQuiz</a>
         <a asp-action="Enroll" asp-controller="Users">JoinSection</a>
-
+        <div class="auth-buttons-mobile">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <span class="welcome-message">Welcome, @User.Identity.Name</span>
+                <a asp-controller="Account" asp-action="Profile" class="profile-btn">
+                    <i class="fas fa-user" style="font-size: 24px;"></i>
+                </a>
+                <a class="logout-btn btn" asp-area="" asp-controller="Account" asp-action="LogOut">LogOut</a>
+            }
+            else
+            {
+                <a asp-action="LogIn" asp-controller="Account" class="logIn-btn">Login / Play</a>
+                <a asp-action="Register" asp-controller="Account" class="btn">Try for Free</a>
+            }
+        </div>
     </div>
-    @if (!User.Identity.IsAuthenticated)
-    {
-        <div class="auth-buttons">
-            <a asp-action="LogIn" asp-controller="Account" class="logIn-btn">Login / Play</a>
-            <a asp-action="Register" asp-controller="Account" class="btn">Try for Free</a>
-        </div>
-    }
-    else
-    {
-        <div class="auth-buttons">
-            <span class="welcome-message">Welcome, @User.Identity.Name</span>
-            <a class="btn btn-outline-dark" asp-area="" asp-controller="Account" asp-action="LogOut">LogOut</a>
-        </div>
-    }
-</div>
+
+    <script>
+        function toggleMenu() {
+            const navItems = document.querySelector('.nav-items-mobile');
+            navItems.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
