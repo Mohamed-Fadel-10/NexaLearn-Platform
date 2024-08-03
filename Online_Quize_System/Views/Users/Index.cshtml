@@ -51,7 +51,6 @@
             $.ajax({
                 url: '@Url.Action("Index", "Users")',
                 type: 'GET',
-                // data: { sectionId: sectionId },
                 success: function (data) {
                     const tableBody = $('#sectionsBody');
                     tableBody.empty();

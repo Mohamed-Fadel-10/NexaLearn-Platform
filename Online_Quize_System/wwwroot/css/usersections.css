@@ -1,4 +1,4 @@
-<style >
+
 body {
     font-family: 'Nunito', sans-serif;
     background-color: #f8f9fa;
@@ -154,7 +154,6 @@ body {
     height: auto;
 }
 
-/* Responsive Styles */
 @media (max-width: 992px) {
     .container-fluid {
         flex-direction: column;
@@ -203,4 +202,4 @@ body {
     }
 }
 
-</style >
+

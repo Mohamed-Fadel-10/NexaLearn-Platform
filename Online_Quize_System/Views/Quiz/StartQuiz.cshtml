@@ -157,27 +157,6 @@
             }
         }
 
-        function finishQuiz() {
-            const answerData = getSelectedAnswer();
-            answers[currentQuestionIndex] = answerData;
-            localStorage.setItem(`quiz-${quizId}-answers`, JSON.stringify(answers));
-
-            document.getElementById('answers').value = JSON.stringify(answers);
-            document.getElementById('quiz-form').submit();
-
-            localStorage.removeItem(`quiz-${quizId}-answers`);
-
-            sessionStorage.removeItem(`quiz-${quizId}-end-time`);
-
-            const submissionDate = new Date().toISOString();
-            connection.invoke("NotifyAdmin", quizId, quizSession, userId, UserName, submissionDate)
-                .then(() => {
-                    alert("Quiz has finished, you will be redirected to the home page.");
-                })
-                .catch(err => console.error(err.toString()));
-        }
-
-
         displayQuestion(currentQuestionIndex);
 
         /////////////////////////////////////////////
@@ -211,7 +190,7 @@
             if (remainingTime < 0) {
                 clearInterval(x);
                 sessionStorage.removeItem(`quiz-${quizId}-end-time`);
-                finishQuiz(); // Call finishQuiz function when time is up
+                finishQuiz(); 
             }
         }, 1000);
 

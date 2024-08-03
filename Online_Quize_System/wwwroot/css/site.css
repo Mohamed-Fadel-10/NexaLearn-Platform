@@ -22,14 +22,14 @@
 }
 
     .header .logo {
-        margin-left: 40px; /* Add margin to the left for better spacing */
+        margin-left: 40px; 
     }
 
         .header .logo a {
             color: #000;
             text-decoration: none;
             font-weight: bold;
-            font-size: 26px; /* Slightly increase font size */
+            font-size: 26px; 
         }
 
     .header .nav-items {
@@ -45,7 +45,7 @@
             color: #000;
             text-decoration: none;
             font-weight: bold;
-            font-size: 18px; /* Increase font size */
+            font-size: 18px; 
             padding: 10px;
         }
 
@@ -64,10 +64,10 @@
         color: #ffffff;
         background-color: #ff9900;
         border: none;
-        padding: 8px 15px; /* Increase padding for a larger button */
+        padding: 8px 15px; 
         text-decoration: none;
         border-radius: 5px;
-        font-size: 16px; /* Increase font size */
+        font-size: 16px;
         margin-left: 10px;
     }
 
@@ -79,8 +79,7 @@
 
     .header .btn:hover {
         background-color: white;
-/*        border-style: solid;
-*/       border-width: 1px;
+       border-width: 1px;
         border-color: #cc7a00;
         color: black;
     }
@@ -92,7 +91,7 @@
 .welcome-message {
     margin-right: 15px;
     font-weight: bold;
-    font-size: 18px; /* Increase font size */
+    font-size: 18px;
 }
 
 .menu-toggle {
@@ -223,7 +222,6 @@
                 opacity:0.7;
             }
 
-    /* Responsive Styles */
     @media (max-width: 1024px) {
         .hero-section {
             flex-direction: column;
