@@ -25,7 +25,12 @@ namespace Services.Services
             this._signIn = _signIn;
             this._context = _context;
         }
-
+        private async Task<ApplicationUser> GetUser(string userId)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(s => s.Id == userId);
+            return user !=null ? user :new ApplicationUser();
+        }
         public async Task<Response> RegisterAsync(RegisterViewModel model)
         {
             var user = new ApplicationUser();
@@ -63,7 +68,8 @@ namespace Services.Services
         }
         public async Task<UserProfileDataViewModel> UserData(string userId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(s => s.Id == userId);
+            var user = await GetUser(userId);
+
             if (user != null)
             {
                 return new UserProfileDataViewModel()
@@ -81,7 +87,7 @@ namespace Services.Services
 
         public async Task<Response> Profile(UserProfileDataViewModel model, string userId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(s => s.Id == userId);
+            var user = await GetUser(userId);
             if (user != null)
             {
                 if (model.Photo != null)
@@ -114,5 +120,32 @@ namespace Services.Services
             return new Response { IsDone = false, Message = "User Not Found" };
         }
 
+
+        public async Task<Response> ChangePassword(ChangePasswordViewModel model,string userId)
+        {
+            var user = await GetUser(userId);
+            if (user != null)
+            {  
+                var result = await _userManager
+                    .ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    await _signIn.RefreshSignInAsync(user);
+                    return new Response { IsDone = true, Message = "Password Changed Successfully" };
+                }
+                return new Response { IsDone = false, Message = "Not Correct Password",Model=model };
+            }
+            return new Response { IsDone = false, Message = "User Not Found" };
+        }
+        public async Task<bool> CheckCurrentPassword(string currentPassword,string userId)
+        {
+            var user = await GetUser(userId);
+            if (user != null)
+            {
+                var isCorrect = await _userManager.CheckPasswordAsync(user, currentPassword);
+                return isCorrect ? true : false;
+            }
+            return false;
+        }    
     }
 }

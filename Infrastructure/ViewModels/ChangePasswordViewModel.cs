@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
-namespace Infrastructure.ViewModels
+public class ChangePasswordViewModel
 {
-    public class ForgetPasswordViewModel
-    {
-        public string Email { get; set;}
-    }
+    [Required]
+    public string CurrentPassword { get; set; }
+
+    [Required]
+    public string NewPassword { get; set; }
+
+    [Required]
+    [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+    public string ConfirmPassword { get; set; }
 }

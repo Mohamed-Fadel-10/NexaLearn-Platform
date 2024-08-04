@@ -12,10 +12,10 @@
 }
 <head>
     <link rel="stylesheet" href="~/css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
- 
 </head>
 
 <div class="container mt-5">
@@ -53,11 +53,15 @@
                         <div class="detail-label"><i class="fas fa-phone"></i> Phone:</div>
                         <div class="detail-value">@Model.Phone</div>
                     </div>
-                    <!-- يمكنك إضافة حقول إضافية هنا -->
                 </div>
             </div>
             <div class="text-center">
-                <a asp-action="ProfileEdit" asp-controller="Account" class="btn btn-primary">Edit Profile</a>
+                <a asp-action="ProfileEdit" asp-controller="Account" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+                <a asp-action="ChangePassword" asp-controller="Account" class="btn btn-secondary ml-2">
+                    <i class="fas fa-key"></i> Change Password
+                </a>
             </div>
         </div>
     </div>

@@ -215,5 +215,45 @@ namespace Online_Quize_System.Controllers
             return RedirectToAction();
         }
 
+        [Authorize]
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var response = await _accountService.ChangePassword(model, userId);
+
+                if (response.IsDone)
+                {
+                    TempData["SuccessMessage"] = "Password changed successfully!";
+                    return RedirectToAction("Profile");
+                }
+
+                ModelState.AddModelError("", "Cannot Change Password Now, Try Again");
+                return View(response.Model);
+            }
+
+            return View();
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyCurrentPassword(string currentPassword)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!await _accountService.CheckCurrentPassword(currentPassword, userId))
+            {
+                return Json($"Current password is incorrect.");
+            }
+
+            return Json(true);
+        }
+
     }
 }

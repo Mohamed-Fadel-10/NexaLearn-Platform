@@ -16,6 +16,7 @@ namespace Services.Interfaces
         public Task LogOut();
         public Task<UserProfileDataViewModel> UserData(string userId);
         public Task<Response> Profile(UserProfileDataViewModel model, string userId);
-
+        public Task<Response> ChangePassword(ChangePasswordViewModel model, string userId);
+        public Task<bool> CheckCurrentPassword(string currentPassword, string userId);
     }
 }
