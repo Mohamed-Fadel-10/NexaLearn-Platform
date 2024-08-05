@@ -25,6 +25,7 @@ namespace Online_Quize_System.Controllers
             this._quizService = _quizService; 
             this._materialsService = _materialsService;
         }
+        [Authorize(Roles ="Admin")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -34,6 +35,7 @@ namespace Online_Quize_System.Controllers
             ViewBag.subjects = subjects.Count();
             return View();
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddSubject()
         {
             return View();
@@ -56,7 +58,6 @@ namespace Online_Quize_System.Controllers
 
        
         [Authorize(Roles = "Admin")]
-
         public IActionResult AddRole()
         {
             return View();
@@ -91,6 +92,7 @@ namespace Online_Quize_System.Controllers
             }
             return Content("Wrong");
         }
+        [Authorize(Roles = "Admin")]
         public IActionResult AddUser()
         {
             return View();
@@ -110,7 +112,8 @@ namespace Online_Quize_System.Controllers
             }
             return View(model);
         }
-        public  async Task<IActionResult> DeleteUser()
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteUser()
         {
             var users = await _adminService.GetAllUsers();
             return View(users);
@@ -130,7 +133,7 @@ namespace Online_Quize_System.Controllers
             ModelState.AddModelError("", "Please Select User To Delete It");
             return View();
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UsersEvaluations()
         {
             var subjects = await _subjectService.GetAllSubjects();
@@ -141,8 +144,9 @@ namespace Online_Quize_System.Controllers
             ViewBag.quizzes = new SelectList(quizzes, "Id", "Name");
             return View("UsersEvaluations");
         }
-        [Authorize]
+
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Filtrations(FilterUsersEvaluationViewModel model)
         {
             var response = await _adminService.Filtrations(model);
@@ -153,7 +157,8 @@ namespace Online_Quize_System.Controllers
             return Json(new List<UsersEvaluationViewModel>());
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> AddMaterials()
         {
             var subjects = await _subjectService.GetAllSubjects();
@@ -176,6 +181,8 @@ namespace Online_Quize_System.Controllers
             return View();
         }
         [HttpGet]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> GetSections(int subjectId)
         {
             var sections = await _sectionService.SectionsBySubjectID(subjectId);

@@ -18,5 +18,7 @@ namespace Services.Interfaces
         public Task<Response> Profile(UserProfileDataViewModel model, string userId);
         public Task<Response> ChangePassword(ChangePasswordViewModel model, string userId);
         public Task<bool> CheckCurrentPassword(string currentPassword, string userId);
+        public Task<bool> IsFoundUserName(string currentUserId, string newUserName);
+        public Task<bool> IsFoundEmail(string currentUserId, string newEmail);
     }
 }

@@ -57,7 +57,7 @@ namespace Services.Services
                 {
                     return new Response() { IsDone = true, Message = "LogIn Process Done Successfully", Model = model };
                 }
-                return new Response() { IsDone = true, Message = "Invalid LogIn", Model = null! };
+                return new Response() { IsDone = false, Message = "Invalid LogIn", Model = null! };
             }
             return new Response() { IsDone = false, Message = "User Not Found", Model = null! };
         }
@@ -103,7 +103,7 @@ namespace Services.Services
                     user.Photo = fileName;
                 }
 
-                if (model.Email != null && await _userManager.FindByEmailAsync(model.Email) == null)
+                   if (model.Email != null && await _userManager.FindByEmailAsync(model.Email) == null)
                     {
                         user.Email = model.Email;
                     }
@@ -146,6 +146,25 @@ namespace Services.Services
                 return isCorrect ? true : false;
             }
             return false;
-        }    
+        }
+
+        public async Task<bool> IsFoundUserName(string currentUserId, string newUserName)
+        {
+            var user = await _userManager.FindByNameAsync(newUserName);
+            if (user != null && user.Id != currentUserId)
+            {
+                return true; 
+            }
+            return false;
+        }
+        public async Task<bool> IsFoundEmail(string currentUserId, string newEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(newEmail);
+            if (user != null && user.Id != currentUserId)
+            {
+                return true; 
+            }
+            return false;
+        }
     }
 }

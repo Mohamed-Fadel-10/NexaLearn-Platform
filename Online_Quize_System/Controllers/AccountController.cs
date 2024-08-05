@@ -232,7 +232,6 @@ namespace Online_Quize_System.Controllers
 
                 if (response.IsDone)
                 {
-                    TempData["SuccessMessage"] = "Password changed successfully!";
                     return RedirectToAction("Profile");
                 }
 
@@ -254,6 +253,30 @@ namespace Online_Quize_System.Controllers
 
             return Json(true);
         }
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyCurrentUserName(string userName)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (await _accountService.IsFoundUserName(userId, userName))
+            {
+                return Json($"UserName is already taken by another user.");
+            }
+
+            return Json(true);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyCurrentEmail(string email)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (await _accountService.IsFoundEmail(userId, email))
+            {
+                return Json($"Email is already taken by another user.");
+            }
+
+            return Json(true);
+        }
+
 
     }
 }

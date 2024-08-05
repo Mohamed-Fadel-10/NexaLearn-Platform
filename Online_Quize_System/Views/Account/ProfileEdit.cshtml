@@ -67,21 +67,37 @@
 
         .detail-row {
             display: flex;
+            flex-direction: column;
             width: 100%;
-            justify-content: space-between;
             margin-bottom: 15px;
+            position: relative;
         }
 
         .detail-label {
             font-weight: bold;
             color: #007bff;
             flex: 1;
+            display: flex;
+            align-items: center;
         }
 
         .detail-value {
             color: #333333;
             flex: 2;
             text-align: left;
+            margin-top: 5px;
+        }
+
+        .custom-validation-error {
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 5px;
+            position: relative;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
         }
 
         .btn-primary {
@@ -98,6 +114,7 @@
             margin-top: 20px;
         }
     </style>
+
 </head>
 
 <div class="container mt-5">
@@ -114,32 +131,42 @@
                     <div class="detail-row">
                         <label asp-for="Name" class="detail-label"><i class="fas fa-user"></i> Name</label>
                         <input asp-for="Name" class="form-control detail-value" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                        <span asp-validation-for="Name" class="custom-validation-error"></span>
                     </div>
                     <div class="detail-row">
                         <label asp-for="UserName" class="detail-label"><i class="fas fa-user-tag"></i> UserName</label>
-                        <input asp-for="UserName" class="form-control detail-value" />
-                        <span asp-validation-for="UserName" class="text-danger"></span>
+                        <input asp-for="UserName" class="form-control detail-value"
+                               data-val="true"
+                               data-val-remote="@Url.Action("VerifyCurrentUserName", "Account")"
+                               data-val-remote-additionalfields="*.CurrentPassword"
+                               data-val-remote-type="post"
+                               data-val-remote-url="@Url.Action("VerifyCurrentUserName", "Account")" />
+                        <span asp-validation-for="UserName" class="custom-validation-error"></span>
                     </div>
                     <div class="detail-row">
                         <label asp-for="Email" class="detail-label"><i class="fas fa-envelope"></i> Email</label>
-                        <input asp-for="Email" class="form-control detail-value" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <input asp-for="Email" class="form-control detail-value"
+                               data-val="true"
+                               data-val-remote="@Url.Action("VerifyCurrentEmail", "Account")"
+                               data-val-remote-additionalfields="*.CurrentPassword"
+                               data-val-remote-type="post"
+                               data-val-remote-url="@Url.Action("VerifyCurrentEmail", "Account")" />
+                        <span asp-validation-for="Email" class="custom-validation-error"></span>
                     </div>
                     <div class="detail-row">
                         <label asp-for="Major" class="detail-label"><i class="fas fa-graduation-cap"></i> Major</label>
                         <input asp-for="Major" class="form-control detail-value" />
-                        <span asp-validation-for="Major" class="text-danger"></span>
+                        <span asp-validation-for="Major" class="custom-validation-error"></span>
                     </div>
                     <div class="detail-row">
                         <label asp-for="Phone" class="detail-label"><i class="fas fa-phone"></i> Phone</label>
                         <input asp-for="Phone" class="form-control detail-value" />
-                        <span asp-validation-for="Phone" class="text-danger"></span>
+                        <span asp-validation-for="Phone" class="custom-validation-error"></span>
                     </div>
                     <div class="detail-row">
                         <label asp-for="Photo" class="detail-label"><i class="fas fa-camera"></i> Profile Photo</label>
                         <input asp-for="Photo" type="file" class="form-control-file" />
-                        <span asp-validation-for="Photo" class="text-danger"></span>
+                        <span asp-validation-for="Photo" class="custom-validation-error"></span>
                     </div>
                 </div>
                 <div class="text-center">

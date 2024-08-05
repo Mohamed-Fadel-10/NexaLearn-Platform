@@ -17,24 +17,25 @@ namespace Online_Quize_System.Controllers
         private readonly IQuizService _quizService;
         private readonly IAdminService _adminService;
         private readonly QuizContext _context;
+        private readonly ISubjectService _subjectService;
 
-        public QuizController(IQuizService _quizService, QuizContext _context, IAdminService adminService)
+        public QuizController(IQuizService _quizService, QuizContext _context, IAdminService adminService, ISubjectService subjectService)
         {
             this._quizService = _quizService;
             this._context = _context;
             _adminService = adminService;
+            _subjectService = subjectService;
         }
 
-        //[Authorize]
-        //public async Task<IActionResult> AddQuiz() 
-        //{
-        //    var model = new QuizViewModel();
-        //    var subjects = await _adminService.GetAllSubjects();
-        //    ViewBag.subjects = new SelectList(subjects, "Id", "Name");
-        //    return View(model);
-        //    }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AddQuiz()
+        {
+            var model = new QuizViewModel();
+            var subjects = await _subjectService.GetAllSubjects();
+            ViewBag.subjects = new SelectList(subjects, "Id", "Name");
+            return View(model);
+        }
         [HttpPost]
-
         public async Task<IActionResult> AddQuiz(QuizViewModel model)
         {
             if (ModelState.IsValid)
@@ -50,7 +51,7 @@ namespace Online_Quize_System.Controllers
             return RedirectToAction("AddQuiz", model);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult AddQuestions(int id)
         {
             var model = new List<QuestionViewModel>();
@@ -109,7 +110,7 @@ namespace Online_Quize_System.Controllers
             } 
             return View("NotFoundQuiz");
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllQuizzes()
         {
             var Response = await _quizService.GetAllQuizzes();
@@ -120,7 +121,7 @@ namespace Online_Quize_System.Controllers
             return NotFound();
 
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var Response = await _quizService.GetById(id);
@@ -141,6 +142,7 @@ namespace Online_Quize_System.Controllers
             return View("Edit",model);
 
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var Response = await _quizService.DeleteQuiz(id);
@@ -151,6 +153,7 @@ namespace Online_Quize_System.Controllers
             return NotFound();
 
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details([FromRoute] int id)
         {
             var Response = await _quizService.Details(id);
@@ -162,6 +165,8 @@ namespace Online_Quize_System.Controllers
 
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> TogglePrivate(int id,bool isPrivate)
         {
             var Response = await _quizService.MakePrivate(id, isPrivate);
@@ -172,6 +177,8 @@ namespace Online_Quize_System.Controllers
             return Content("False");
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> ToggleEnabled(int id, bool isEnabled)
         {
             var Response = await _quizService.MakeEnabled(id, isEnabled);

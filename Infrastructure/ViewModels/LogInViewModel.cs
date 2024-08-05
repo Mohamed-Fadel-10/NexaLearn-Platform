@@ -14,6 +14,7 @@ namespace Infrastructure.ViewModels
         [Required(ErrorMessage ="UserName Field Required")]
         public string UserName { get; set; }
         [Required(ErrorMessage = "Password Field Required")]
+        [DataType(DataType.Password,ErrorMessage ="In Correct Password")]
         public string Password { get; set; }
 
 
