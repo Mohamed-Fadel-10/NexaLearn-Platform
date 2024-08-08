@@ -21,6 +21,8 @@
             <a asp-action="Sections" asp-controller="Users">Sections</a>
             <a asp-action="GetQuizBySession" asp-controller="Quiz">JoinQuiz</a>
             <a asp-action="Enroll" asp-controller="Users">JoinSection</a>
+            <a asp-action="Index" asp-controller="ChatRoom">Chat</a>
+
         </div>
         <div class="auth-buttons">
             @if (User.Identity.IsAuthenticated)
@@ -43,6 +45,7 @@
         <a asp-action="Sections" asp-controller="Users">Sections</a>
         <a asp-action="GetQuizBySession" asp-controller="Quiz">JoinQuiz</a>
         <a asp-action="Enroll" asp-controller="Users">JoinSection</a>
+        <a asp-action="Index" asp-controller="ChatRoom">Chat</a>
         <div class="auth-buttons-mobile">
             @if (User.Identity.IsAuthenticated)
             {

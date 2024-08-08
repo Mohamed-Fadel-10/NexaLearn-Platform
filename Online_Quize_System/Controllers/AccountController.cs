@@ -156,6 +156,7 @@ namespace Online_Quize_System.Controllers
           await _accountService.LogOut();
            return RedirectToAction("Index","Home");
         }
+        #region External LogIN
         [HttpGet]
         public async Task GoogleLogIn()
         {
@@ -176,11 +177,14 @@ namespace Online_Quize_System.Controllers
                     claim.OriginalIssuer,
                     claim.Type,
                     claim.Value
-                   
+
                 });
-            
+
             return RedirectToAction("Index", "Home");
         }
+        #endregion
+
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Profile()

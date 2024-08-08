@@ -25,6 +25,7 @@ namespace Online_Quize_System.Controllers
             this._subjectService= _subjectService;
             this._sectionService= _sectionService;
         }
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Index()
         {
             var response = await _usersService.GetAll();
@@ -76,19 +77,24 @@ namespace Online_Quize_System.Controllers
         {           
                 var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var response = await _usersService.Enroll(code, userId);
-                if (response!=null)
-                {
+            if (response.IsDone)
+            {
                 return RedirectToAction("Sections");
-                }  
-                else
-                {
-                ModelState.AddModelError("", "Section Id Not Found");
-                return RedirectToAction("Enroll");
-               }
+            }
+            else if (!response.IsDone && response.Message == "You Already Enrolled In This Section Before")
+            {
+                ViewBag.Message = "You Already Enrolled In This Section Before";
+                return View("SectionMessagePage");
+            }
+            else
+            {
+                ViewBag.Message = "Section Not Found !";
+                return View("SectionMessagePage");
+            }
 
         }
+         
 
-       
 
     }
 }

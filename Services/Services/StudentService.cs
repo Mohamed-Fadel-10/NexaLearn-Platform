@@ -146,22 +146,21 @@ namespace Services.Services
                 Section= currentSection.Section.Name,
             };
         }
-        public async Task<Section> Enroll(string code,string UserID)
+        public async Task<Response> Enroll(string code,string UserID)
         {
             var section = await _context.Sections.FirstOrDefaultAsync(s => s.Code == code);
             if (section != null)
             {
                 var isEnrolled = await _context.StudentsSections.FirstOrDefaultAsync(s => s.SectionId == section.Id && s.UserId == UserID);
-                if (isEnrolled != null)
+                if (isEnrolled == null)
                 {
                     await _context.StudentsSections.AddAsync(new StudentsSections { SectionId = section.Id, UserId = UserID });
                     await _context.SaveChangesAsync();
-                    return section;
+                    return new Response { IsDone=true,Message="Enrolled Succeeded"};
                 }
-                return new Section();
-          
+                return new Response { IsDone = false, Message = "You Already Enrolled In This Section Before" };
             }
-            return new Section();
+            return new Response { IsDone = false, Message = "Section Not Found" };
         }
         public async Task<List<UserProfileDataViewModel>> GetAll()
         {

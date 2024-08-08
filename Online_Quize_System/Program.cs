@@ -38,16 +38,18 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<IMaterialsService, MaterialsService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
-builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailConfiguration"));
-builder.Services.AddAuthentication()
-.AddCookie()
-.AddGoogle(GoogleDefaults.AuthenticationScheme,googleOptions =>
+builder.Services.AddAuthentication(options =>
 {
-   
-    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-});
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+        .AddCookie()
+        .AddGoogle(options =>
+        {
+            options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+            options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        });
 
 var app = builder.Build();
 
@@ -64,10 +66,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<QuizHub>("/QuizHub");
+app.MapHub<ChatHub>("/ChatHub");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
