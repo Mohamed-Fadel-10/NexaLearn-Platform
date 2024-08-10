@@ -2,15 +2,17 @@
 using Infrastructure.Data;
 using Infrastructure.Response;
 using Infrastructure.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
+
+
+
 
 namespace Services.Services
 {
@@ -19,11 +21,20 @@ namespace Services.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signIn;
         private readonly QuizContext _context;
-        public AccountService(UserManager<ApplicationUser> _userManager, SignInManager<ApplicationUser> _signIn, QuizContext _context)
+        private readonly IEmailService _emailService;
+        private readonly IUrlHelperFactory _urlHelperFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+
+        public AccountService(UserManager<ApplicationUser> _userManager, SignInManager<ApplicationUser> _signIn,
+            QuizContext _context, IEmailService _emailService, IUrlHelperFactory _urlHelperFactory, IHttpContextAccessor _httpContextAccessor)
         {
             this._userManager = _userManager;
             this._signIn = _signIn;
             this._context = _context;
+            this._emailService = _emailService;
+            this._urlHelperFactory = _urlHelperFactory;
+            this._httpContextAccessor = _httpContextAccessor;
         }
         private async Task<ApplicationUser> GetUser(string userId)
         {
@@ -52,7 +63,7 @@ namespace Services.Services
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user is not null)
             {
-                SignInResult result = await _signIn.PasswordSignInAsync(user, model.Password, false, false);
+                var result = await _signIn.PasswordSignInAsync(user, model.Password, false, false);
                 if (result.Succeeded)
                 {
                     return new Response() { IsDone = true, Message = "LogIn Process Done Successfully", Model = model };
@@ -166,5 +177,39 @@ namespace Services.Services
             }
             return false;
         }
+        public async Task<Response> ForgetPassword(ForgetPasswordViewModel model)
+        {
+
+           var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return new Response { IsDone = false, Message = "Email Not Found !" };
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var urlHelper = _urlHelperFactory.GetUrlHelper(new ActionContext(_httpContextAccessor.HttpContext, new RouteData(), new ActionDescriptor()));
+            var resetLink = urlHelper.Action("ResetPassword", "Account", new { userId = user.Id, token }, _httpContextAccessor.HttpContext.Request.Scheme);
+            string emailBody = $"<h1>Reset Password</h1><p>Please click the following link to reset your password:</p><a href='{resetLink}'>Reset Password</a>";
+
+            await _emailService.SendEmailAsync(model.Email, "Reset Password", emailBody);
+
+            return new Response { IsDone = true, Message = "Reset Password Email Sent Successfully!" };
+        }
+       public async Task<Response> ResetPassword(ResetPasswordViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                return new Response { IsDone = false, Message = "User Not Found" };
+            }
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+            if (resetPassResult.Succeeded)
+            {
+                return new Response { IsDone = true ,Message="Password has Reset Successfully"};
+            }
+            return new Response { IsDone = false, Message = "Failed Process ! Try Again" };
+
+        }
+
+
     }
 }

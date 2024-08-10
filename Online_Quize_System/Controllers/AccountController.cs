@@ -281,6 +281,64 @@ namespace Online_Quize_System.Controllers
             return Json(true);
         }
 
+        public  IActionResult ForgetPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _accountService.ForgetPassword(model);
+                if (response.IsDone)
+                {
+                    return RedirectToAction("ForgetPasswordConfirmation");
+                }
+                return View("ForgetPassword");
+            }
+            return View("ForgetPassword");
+        }
+
+        public IActionResult ForgetPasswordConfirmation()
+        {
+            return View();
+        }
+
+
+        [HttpGet]
+        public IActionResult ResetPassword(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return View("Error");
+            }
+
+            var model = new ResetPasswordViewModel { UserId = userId, Token = token };
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var response = await _accountService.ResetPassword(model);
+            if (response.IsDone)
+            {
+                return RedirectToAction("ResetPasswordConfirmation");
+            }
+
+            ModelState.AddModelError("", response.Message);
+            return View(model);
+        }
+
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
 
     }
 }

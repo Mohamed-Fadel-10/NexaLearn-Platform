@@ -20,5 +20,7 @@ namespace Services.Interfaces
         public Task<bool> CheckCurrentPassword(string currentPassword, string userId);
         public Task<bool> IsFoundUserName(string currentUserId, string newUserName);
         public Task<bool> IsFoundEmail(string currentUserId, string newEmail);
+        public Task<Response> ForgetPassword(ForgetPasswordViewModel model);
+        public Task<Response> ResetPassword(ResetPasswordViewModel model);
     }
 }

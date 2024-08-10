@@ -40,6 +40,9 @@ builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<IMaterialsService, MaterialsService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 
+builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailConfiguration"));
+
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
