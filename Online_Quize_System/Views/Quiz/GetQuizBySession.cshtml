@@ -1,6 +1,4 @@
-﻿@using Entities.Models
-@model Quiz
-
+﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,10 +14,11 @@
     <div class="form-container">
         <div class="form-box">
             <h2>Start Quiz</h2>
+            <div asp-validation-summary="ModelOnly" class="error-msg"></div>
             <form asp-action="StartQuiz" asp-controller="Quiz">
                 <div>
-                    <label asp-for="SessionID" class="control-label">Session ID</label>
-                    <input type="text" name="SessionID" asp-for="SessionID" class="form-control" />
+                    <label for="SessionID" class="control-label">SessionID</label>
+                    <input type="text" id="SessionID" name="SessionID" class="form-control" />
                 </div>
                 <button type="submit" value="Start">Start</button>
             </form>

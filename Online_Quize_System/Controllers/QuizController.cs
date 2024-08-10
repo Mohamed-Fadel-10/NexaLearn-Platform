@@ -94,6 +94,11 @@ namespace Online_Quize_System.Controllers
       [Authorize]
         public async Task<IActionResult>StartQuiz(string SessionID)
         {
+            if (string.IsNullOrEmpty(SessionID))
+            {
+                ModelState.AddModelError("", "SessionId is Required To Open The Quiz");
+                return View("GetQuizBySession");
+            }
             var userId = HttpContext.User
                     .FindFirstValue(ClaimTypes.NameIdentifier);
             var Response = await _quizService.GetQuiz(SessionID.Trim());
@@ -108,8 +113,15 @@ namespace Online_Quize_System.Controllers
                 }
                 return View("QuizAccessDenied");       
             } 
+            return RedirectToAction("NotFoundQuiz");
+        }
+
+        public IActionResult NotFoundQuiz()
+        {
             return View("NotFoundQuiz");
         }
+
+
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllQuizzes()
         {

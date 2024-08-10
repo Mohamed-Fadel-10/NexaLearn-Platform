@@ -33,12 +33,16 @@ body {
     width: 100%;
     z-index: 1; 
 }
+.error-msg{
 
-    .form-box h2 {
-        margin-bottom: 20px;
-        font-size: 28px;
-        color: #333;
-    }
+    color:red;  
+
+}
+.form-box h2 {
+    margin-bottom: 20px;
+    font-size: 28px;
+    color: #333;
+}
 
     .form-box label {
         display: block;
