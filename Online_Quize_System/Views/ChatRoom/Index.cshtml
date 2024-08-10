@@ -15,10 +15,12 @@
 </head>
 <body>
     <partial name="_Nav" />
+
+    <div class="sidenav-drag-area"></div>
+
     <div class="container-fluid">
         <div class="toggle-sidebar" onclick="toggleSidebar()">Sections</div>
 
-     
         <div class="sidebar">
             <ul class="list-group section-list">
                 @foreach (var item in Model)
@@ -41,12 +43,15 @@
             </div>
             <div class="chat-input" id="chatInput" style="display:none;">
                 <div class="input-group">
-                    <input type="text" class="form-control" id="messageInput" placeholder="Enter your message...">
+                    <textarea class="form-control" id="messageInput" placeholder="Enter your message..." rows="1"></textarea>
                     <button class="btn btn-primary" type="button" onclick="sendMessage()">Send</button>
                 </div>
             </div>
+
+
         </div>
     </div>
+
 
     <script>
         let selectedSectionId = null;
@@ -138,6 +143,13 @@
             const sidebar = document.querySelector('.sidebar');
             sidebar.classList.toggle('show'); 
         }
+
+        const textarea = document.getElementById('messageInput');
+
+        textarea.addEventListener('input', function () {
+            textarea.style.height = 'auto'; 
+            textarea.style.height = textarea.scrollHeight + 'px'; 
+        });
 
 
     </script>
