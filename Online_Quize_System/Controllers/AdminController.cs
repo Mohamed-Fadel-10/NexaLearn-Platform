@@ -46,7 +46,7 @@ namespace Online_Quize_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                var Response = await _adminService.AddSubject(model);
+                var Response = await _subjectService.AddSubject(model);
                 if (Response.IsDone)
                 {
                     return RedirectToAction("Index");
@@ -113,25 +113,16 @@ namespace Online_Quize_System.Controllers
             return View(model);
         }
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteUser()
-        {
-            var users = await _adminService.GetAllUsers();
-            return View(users);
-        }
-        [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            if(id != null)
-            {
+            
                 var Response = await _adminService.DeleteUser(id);
-                if (Response.IsDone)
+                if (Response)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index","Users");
                 }
-                return View(Response.Message);
-            }
-            ModelState.AddModelError("", "Please Select User To Delete It");
-            return View();
+                return Content("Error");
+         
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UsersEvaluations()

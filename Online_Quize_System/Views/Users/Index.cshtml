@@ -7,13 +7,6 @@
 
 <h2>@ViewData["Title"]</h2>
 
-@* <form id="filterForm" class="form-inline mb-3">
-    <select asp-items="ViewBag.sections" class="form-control mr-2" id="sectionSelect">
-        <option value="">Select Section</option>
-    </select>
-    <button class="btn btn-outline-success" type="button" id="searchButton">Search</button>
-</form> *@
-
 <div class="table-responsive">
     <table id="sectionsTable" class="table table-bordered">
         <thead class="thead-dark">
@@ -23,7 +16,7 @@
                 <th>Major</th>
                 <th>Email</th>
                 <th>UserName</th>
-
+                <th>Actions</th> <!-- العمود الجديد للأفعال -->
             </tr>
         </thead>
         <tbody id="sectionsBody">
@@ -35,7 +28,11 @@
                     <td>@item.Major</td>
                     <td>@item.Email</td>
                     <td>@item.UserName</td>
-
+                    <td>
+                        <!-- Updated correctly matching the controller -->
+                        <a href="@Url.Action("Details", "Users", new { id = item.Id })" class="btn btn-info btn-sm">View</a>
+                        <a href="@Url.Action("DeleteUser", "Admin", new { id = item.Id })" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -63,7 +60,12 @@
                         const EmailCell = $('<td></td>').text(item.email);
                         const UserNameCell = $('<td></td>').text(item.username);
 
-                        row.append(NameCell, PhoneCell, MajorCell, EmailCell, UserNameCell);
+                        const actionCell = $('<td></td>');
+                        const viewButton = $('<a></a>').attr('href', `/Users/Details/${item.id}`).addClass('btn btn-info btn-sm').text('View');
+                        const deleteButton = $('<a></a>').attr('href', `/Users/Delete/${item.id}`).addClass('btn btn-danger btn-sm').text('Delete');
+
+                        actionCell.append(viewButton, ' ', editButton, ' ', deleteButton);
+                        row.append(NameCell, PhoneCell, MajorCell, EmailCell, UserNameCell, actionCell);
                         tableBody.append(row);
                     });
                 },
@@ -88,5 +90,10 @@
     .table th, .table td {
         vertical-align: middle;
         text-align: center;
+    }
+
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 12px;
     }
 </style>

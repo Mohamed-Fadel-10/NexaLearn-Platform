@@ -27,30 +27,7 @@ namespace Services.Services
             this._userManager = _userManager;
             this._roleManager = _roleManager;
         }
-        public async Task<Response> AddSubject(SubjectViewModel model)
-        {
-            if (model != null)
-            {
-                var subject = new Subject();
-                subject.Name = model.Name;
-                subject.MaxDegree = model.MaxDegree;
-                subject.MinDegree = model.MinDegree;
-                await _context.Subjects.AddAsync(subject);
-                await _context.SaveChangesAsync();
-                return new Response
-                {
-                    IsDone = true,
-                    Model = model
-                };
-            }
-            return new Response
-            {
-                IsDone = false,
-                Model = null
-            };
-
-        }
-       
+      
         public async Task<List<ApplicationUser>> GetAllUsers()
         {
             var students = await _context.Users.ToListAsync();
@@ -71,7 +48,6 @@ namespace Services.Services
             return new List<IdentityRole>();
 
         }
-
         public async Task<Response> AddRole(AddRoleViewModel role)
         {
             if (await _roleManager.RoleExistsAsync(role.Name))
@@ -130,15 +106,15 @@ namespace Services.Services
             return new Response { IsDone = false, Message = "Can not Add User Try Again", Model = null };
         }
 
-        public async Task<Response> DeleteUser(string id)
+        public async Task<bool> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
                 await _userManager.DeleteAsync(user);
-                return new Response { IsDone = true, Message = "User Deleted Successfully" };
+                return true;
             }
-            return new Response { IsDone = false, Message = "User Not Found" };
+            return false;
 
         }
         public async Task<List<UsersEvaluationViewModel>> Filtrations(FilterUsersEvaluationViewModel model)
@@ -150,51 +126,53 @@ namespace Services.Services
                                   uqq => uqq.QuizID,
                                   q => q.Id,
                                   (uqq, q) => new { uqq, q })
+                            .Join(_context.Users,
+                                  uq => uq.uqq.UserId,
+                                  u => u.Id,
+                                  (uq, u) => new { uq.uqq, uq.q, u })
                             .Join(_context.Subjects,
                                   uq => uq.q.SubjectId,
                                   su => su.Id,
                                   (uq, su) => new { uq.uqq, uq.q, su })
                             .Join(_context.Sections,
-                                  suq => suq.su.Id,
-                                  se => se.SubjectId,
-                                  (suq, se) => new { suq.uqq, suq.q, suq.su, se })
+                            su => su.su.Id,
+                            se => se.SubjectId,
+                            (su, se) => new { su.su, su.q, su.uqq, se })
                             .Join(_context.StudentsSections,
-                                  se => se.se.Id,
-                                  ss => ss.SectionId,
-                                  (se, ss) => new { se.uqq, se.q, se.su, se.se, ss.SectionId, ss.UserId })
-                            .Where(s => s.uqq.UserId == s.UserId);
-
+                            se => se.se.Id,
+                            ss => ss.SectionId,
+                            (se, ss) => new { se.uqq, se.su,se.se, se.q, ss })
+                            .Where(s => s.ss.UserId == s.uqq.UserId);
 
                 if (model.QuizId.HasValue)
                 {
                     students = students.Where(c => c.q.Id == model.QuizId);
                 }
-
-                if (model.SubjectId.HasValue)
-                {
-                    students = students.Where(c => c.su.Id == model.SubjectId);
-                }
-
                 if (model.SectionId.HasValue)
                 {
                     students = students.Where(c => c.se.Id == model.SectionId);
                 }
+                if (model.SubjectId.HasValue)
+                {
+                    students = students.Where(c => c.su.Id == model.SubjectId);
+                }
+               
                 var result= await students.ToListAsync();
 
                 return result
-                              .GroupBy(g => new { g.q.Id, g.q.SessionID, g.uqq.UserId, g.su.Name,g.se })
+                              .GroupBy(g => new { g.q.Id, g.q.SessionID, g.uqq.UserId, g.su.Name ,g.se})
                               .Select(s => new UsersEvaluationViewModel
                               {
                                   QuizID = s.Key.Id,
+                                  QuizName=s.Key.Name,
                                   QuizSession = s.Key.SessionID,
-                                  UserId = s.Key.UserId,
+                                  UserName = _context.Users.FirstOrDefault(u => u.Id == s.Key.UserId).UserName,
                                   Score = s.Sum(uqq => uqq.uqq.Score),
                                   SubmissionDate = s.Max(uqq => uqq.uqq.SubmissionDate),
-                                  UserName = _context.Users.FirstOrDefault(u=>u.Id==s.Key.UserId).UserName,
                                   Subject = s.Key.Name,
                                   Section=s.Key.se.Name
                               })
-                              .OrderByDescending(s=>s.SubmissionDate)
+                              .OrderBy(s=>s.SubmissionDate)
                               .ThenBy(s=>s.Score)
                               .ToList();
             }

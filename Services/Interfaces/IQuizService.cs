@@ -22,5 +22,6 @@ namespace Services.Interfaces
         public Task<Response> MakePrivate(int id, bool isPrivate);
         public Task<Response> MakeEnabled(int id, bool IsEnabled);
         public Task<bool> IsOpened(string UserId, int QuizID);
+        public Task<bool> IsQuizForStudentSections(string userId, string sessionID);
     }
 }

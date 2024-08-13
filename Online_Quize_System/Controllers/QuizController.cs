@@ -72,6 +72,8 @@ namespace Online_Quize_System.Controllers
                     return View("QuizCreatedSuccessfully",
                         new QuizViewModel { 
                         SessionID = quiz.SessionID,
+                        CreatedOn=quiz.CreatedOn,
+                        Duration=quiz.Duration,
                         Description=quiz.Description,
                         TotalDegree=quiz.TotalDegree,
                         PassingDegree= (double)quiz.PassingScore,
@@ -92,29 +94,44 @@ namespace Online_Quize_System.Controllers
         }
       [HttpPost]
       [Authorize]
-        public async Task<IActionResult>StartQuiz(string SessionID)
+        public async Task<IActionResult> StartQuiz(string sessionId)
         {
-            if (string.IsNullOrEmpty(SessionID))
+            if (string.IsNullOrEmpty(sessionId))
             {
-                ModelState.AddModelError("", "SessionId is Required To Open The Quiz");
+                ModelState.AddModelError("", "Session ID is required to open the quiz.");
                 return View("GetQuizBySession");
             }
-            var userId = HttpContext.User
-                    .FindFirstValue(ClaimTypes.NameIdentifier);
-            var Response = await _quizService.GetQuiz(SessionID.Trim());
-            if (Response!=null && Response.CreatedOn!=null) {
-                var isOpened = await _quizService.IsOpened(userId, Response.QuizID);
-                if (!isOpened)
-                {
-                    ViewBag.userId = userId;
-                    var UserName = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                    ViewBag.UserName = UserName;
-                    return View("StartQuiz", Response);
-                }
-                return View("QuizAccessDenied");       
-            } 
-            return RedirectToAction("NotFoundQuiz");
+
+            sessionId = sessionId.Trim();
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var quiz = await _quizService.GetQuiz(sessionId);
+            if (quiz == null || quiz.CreatedOn == null)
+            {
+                return RedirectToAction("NotFoundQuiz");
+            }
+
+            var isQuizInEnrolledSections = await _quizService.IsQuizForStudentSections(userId, sessionId);
+            if (!isQuizInEnrolledSections)
+            {
+                ViewBag.Msg = "You are not enrolled in a section for this quiz.";
+                return View("QuizAccessDenied");
+            }
+
+            var hasAlreadyOpened = await _quizService.IsOpened(userId, quiz.QuizID);
+            if (hasAlreadyOpened)
+            {
+                ViewBag.Msg = "You have already completed this quiz. You cannot enter it again.";
+                return View("QuizAccessDenied");
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            ViewBag.UserName = user?.UserName;
+            ViewBag.UserId = userId;
+
+            return View("StartQuiz", quiz);
         }
+
 
         public IActionResult NotFoundQuiz()
         {

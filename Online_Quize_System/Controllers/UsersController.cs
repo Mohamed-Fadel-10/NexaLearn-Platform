@@ -57,8 +57,8 @@ namespace Online_Quize_System.Controllers
             if (response != null)
             {
               await _hubContext.Clients.All
-                    .SendAsync("ReceiveNotification", response.QuizID,response.QuizSession,
-                    response.UserId, response.UserName,response.Score,
+                    .SendAsync("ReceiveNotification", response.QuizID,response.QuizName,response.QuizSession,
+                    response.UserName,response.Score,
                     DateTime.UtcNow.ToString("o"),response.Subject,response.Section);
 
                 return View("QuizResult", response);
@@ -93,8 +93,12 @@ namespace Online_Quize_System.Controllers
             }
 
         }
-         
-
+        [HttpGet]
+        public async Task<IActionResult> Details(string id)
+        {
+           var response= await _usersService.GetUser(id);          
+            return View(response);
+        }
 
     }
 }

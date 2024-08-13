@@ -153,13 +153,13 @@ namespace Services.Services
             var user = await GetUser(userId);
             if (user != null)
             {
-                var isCorrect = await _userManager.CheckPasswordAsync(user, currentPassword);
+                var isCorrect = await _userManager.CheckPasswordAsync(user , currentPassword);
                 return isCorrect ? true : false;
             }
             return false;
         }
 
-        public async Task<bool> IsFoundUserName(string currentUserId, string newUserName)
+        public async Task<bool> IsFoundUserName(string currentUserId , string newUserName)
         {
             var user = await _userManager.FindByNameAsync(newUserName);
             if (user != null && user.Id != currentUserId)

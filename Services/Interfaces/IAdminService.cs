@@ -12,14 +12,12 @@ namespace Services.Interfaces
 {
     public interface IAdminService
     {
-        public Task<Response> AddSubject(SubjectViewModel model);
         public Task<List<ApplicationUser>> GetAllUsers();
-
         public Task<List<IdentityRole>> GetAllRoles();
         public Task<Response> AddRole(AddRoleViewModel role);
         public Task<Response> AddRoleRoUser(AddUserToRoleViewModel model);
         public Task<Response> AddUser(AddUserViewModel model);
-        public Task<Response> DeleteUser(string id);
+        public Task<bool> DeleteUser(string id);
         public Task<List<UsersEvaluationViewModel>> Filtrations(FilterUsersEvaluationViewModel model);
     }
 }

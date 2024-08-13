@@ -146,6 +146,7 @@ namespace Services.Services
                 Section= currentSection.Section.Name,
             };
         }
+
         public async Task<Response> Enroll(string code,string UserID)
         {
             var section = await _context.Sections.FirstOrDefaultAsync(s => s.Code == code);
@@ -162,11 +163,14 @@ namespace Services.Services
             }
             return new Response { IsDone = false, Message = "Section Not Found" };
         }
+
+
         public async Task<List<UserProfileDataViewModel>> GetAll()
         {
             var users= await _context.Users
                 .Select(s => new UserProfileDataViewModel
                 {
+                    Id=s.Id,
                     Name = s.Name,
                     Email=s.Email,
                     UserName=s.UserName,
@@ -179,5 +183,22 @@ namespace Services.Services
 
         }
 
+        public async Task<UserProfileDataViewModel> GetUser(string id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            return user != null ?
+                new UserProfileDataViewModel
+                {
+                    Id=user.Id,
+                    Name = user.Name,
+                    UserName= user.UserName,
+                    Phone=user.PhoneNumber,
+                    Major= user.Major,
+                    Email=user.Email
+                } 
+                : new UserProfileDataViewModel { };
+        }
+
+    
     }
 }

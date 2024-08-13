@@ -247,5 +247,33 @@ namespace Services.Services
             }
             return false;
         }
+        public async Task<bool> IsQuizForStudentSections(string userId, string sessionID)
+        {
+            var sections =
+                _context.Sections
+                .Join(_context.StudentsSections,
+                se => se.Id,
+                ss => ss.SectionId,
+                (se, ss) => new { se, ss })
+                .Join(_context.Subjects,
+                se => se.se.SubjectId,
+                su => su.Id,
+                (se, su) => new { se.se, se.ss, su })
+                .Join(_context.Quiz,
+                su => su.su.Id,
+                q => q.SubjectId,
+                (su, q) => new { su.se, su.su, q, su.ss })
+                .Join(_context.Users,
+                ss => ss.ss.UserId,
+                u => u.Id,
+                (ss, u) => new { ss.su, ss.q, ss.ss, u })
+                .Where(q => q.q.SessionID == sessionID && q.u.Id == userId)
+                .ToList();
+            if (sections.Any())
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

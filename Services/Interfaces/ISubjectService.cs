@@ -1,4 +1,6 @@
 ﻿using Entities.Models;
+using Infrastructure.Response;
+using Infrastructure.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ namespace Services.Interfaces
 {
     public interface ISubjectService
     {
+        public Task<Response> AddSubject(SubjectViewModel model);
         public Task<List<Subject>> GetAllSubjects();
     }
 }
