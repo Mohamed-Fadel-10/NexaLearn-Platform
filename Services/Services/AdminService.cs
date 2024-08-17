@@ -94,7 +94,7 @@ namespace Services.Services
                 return new Response { IsDone = false, Message = "This Email Is Used Before" };
             }
             var isUserNameExist = await _userManager.FindByNameAsync(user.UserName);
-            if (isEmailExist != null)
+            if (isUserNameExist != null)
             {
                 return new Response { IsDone = false, Message = "This UserName Is Used Before" };
             }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Infrastructure.Hubs;
+using Services.Unit_Of_Work;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +40,8 @@ builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<IMaterialsService, MaterialsService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
 
 builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailConfiguration"));
 

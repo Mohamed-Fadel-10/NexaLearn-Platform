@@ -1,9 +1,11 @@
 ﻿using Entities.Models;
 using Infrastructure.Data;
+using Infrastructure.Repsitories;
 using Infrastructure.Response;
 using Infrastructure.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
+using Services.Unit_Of_Work;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,44 +14,28 @@ using System.Threading.Tasks;
 
 namespace Services.Services
 {
-    public class SubjectService: ISubjectService
+    public class SubjectService: GenericRepository<Subject>, ISubjectService
     {
-        private readonly QuizContext _context;
-        public SubjectService(QuizContext context) {  _context = context; }
+        private readonly IUnitOfWork _unitOfWork;
+        public SubjectService(QuizContext _context, IUnitOfWork _unitOfWork) : base(_context)
+        {
+           this._unitOfWork = _unitOfWork;
+        }
 
-        public async Task<Response> AddSubject(SubjectViewModel model)
+        public async Task<Response> AddSubject(Subject model)
         {
             if (model != null)
             {
-                var subject = new Subject();
-                subject.Name = model.Name;
-                subject.MaxDegree = model.MaxDegree;
-                subject.MinDegree = model.MinDegree;
-                await _context.Subjects.AddAsync(subject);
-                await _context.SaveChangesAsync();
-                return new Response
-                {
-                    IsDone = true,
-                    Model = model
-                };
+                await _unitOfWork.Subject.AddAsync(model);
+                var row = await _unitOfWork.SaveAsync();
+                return new Response { IsDone = true , Model=model };
             }
-            return new Response
-            {
-                IsDone = false,
-                Model = null
-            };
-
+            return new Response { IsDone = false };
         }
-
-        public async Task<List<Subject>> GetAllSubjects()
+        public async Task<IEnumerable<Subject>> GetAllSubjects()
         {
-            var subjects = await _context.Subjects.Include(s => s.Sections).ToListAsync();
-            if (subjects.Any())
-            {
-                return subjects;
-            }
-            return new List<Subject>();
-
+            var subjects = await _unitOfWork.Subject.GetAllAsync();
+            return subjects.Any() ? subjects :new List<Subject>();
         }
 
     }

@@ -11,7 +11,7 @@ namespace Services.Interfaces
 {
     public interface ISubjectService
     {
-        public Task<Response> AddSubject(SubjectViewModel model);
-        public Task<List<Subject>> GetAllSubjects();
+        public Task<Response> AddSubject(Subject model);
+        public Task<IEnumerable<Subject>> GetAllSubjects();
     }
 }

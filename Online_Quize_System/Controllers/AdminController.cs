@@ -42,7 +42,7 @@ namespace Online_Quize_System.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddSubject(SubjectViewModel model)
+        public async Task<IActionResult> AddSubject(Subject model)
         {
             if (ModelState.IsValid)
             {

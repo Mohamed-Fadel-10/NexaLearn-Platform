@@ -1,22 +1,25 @@
 ﻿using Entities.Models;
 using Infrastructure.Data;
 using Infrastructure.Enum;
+using Infrastructure.Repsitories;
 using Infrastructure.Response;
 using Infrastructure.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
+using Services.Unit_Of_Work;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Services.Services
 {
-    public class StudentService : IStudentService
+    public class StudentService : GenericRepository<ApplicationUser>, IStudentService
     {
-        private readonly QuizContext _context;
-        public StudentService(QuizContext context)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public StudentService(QuizContext context, IUnitOfWork _unitOfWork) :base(context)
         {
-            _context = context;
+           this._unitOfWork = _unitOfWork;
         }
 
         public async Task<UsersEvaluationViewModel> Evaluate(List<UsersEvaluationViewModel> model)
@@ -113,19 +116,30 @@ namespace Services.Services
                 userdata.QuizID = item.QuizID;
                 userdata.UserId = item.UserId;
             }
+
             // For Check in another Time if User Opened This Quiz Before we set Here Flag as True
-            if (await _context.OpenedQuizzes.FirstOrDefaultAsync(s => s.UserId == userdata.UserId && s.QuizId == userdata.QuizID) == null) { 
-            await _context.OpenedQuizzes.AddAsync(new OpenedQuizzes { IsOpened = true ,QuizId=userdata.QuizID,UserId=userdata.UserId});
+
+            if (await _unitOfWork.OpenedQuizzes.FindFirst(s => s.UserId == userdata.UserId && s.QuizId == userdata.QuizID) == null) { 
+            await _unitOfWork.OpenedQuizzes
+                    .AddAsync(
+                new OpenedQuizzes 
+                { IsOpened = true, 
+                  QuizId=userdata.QuizID,
+                  UserId=userdata.UserId
+                });
             }
 
-            await _context.UsersQuestionsQuizzes.AddRangeAsync(usersQuestionsQuizzes);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.UsersQuestionsQuiz.AddRangeAsync(usersQuestionsQuizzes);
+            await _unitOfWork.SaveAsync();
+
             userdata.Score = usersQuestionsQuizzes
                 .Where(u=>u.UserId==userdata.UserId&&u.QuizID==userdata.QuizID)
                 .Select(u => u.Score)
                 .Sum();
-            var currentQuiz = await _context.Quiz.FirstOrDefaultAsync(q => q.Id == userdata.QuizID);
-            var currentSubject= await _context.Subjects.FirstOrDefaultAsync(s=>s.Id==currentQuiz.SubjectId);
+
+            var currentQuiz = await _unitOfWork.Quiz.FindFirst(q => q.Id == userdata.QuizID);
+
+            var currentSubject= await _unitOfWork.Subject.FindFirst(s=>s.Id==currentQuiz.SubjectId);
             var currentSection = _context.Sections
                 .Join(_context.StudentsSections, se => se.Id, ss => ss.SectionId, (se, ss) => new { Section = se, User = ss })
                 .FirstOrDefault();
@@ -149,43 +163,50 @@ namespace Services.Services
 
         public async Task<Response> Enroll(string code,string UserID)
         {
-            var section = await _context.Sections.FirstOrDefaultAsync(s => s.Code == code);
+            var section = await _unitOfWork.Section.FindFirst(c=>c.Code==code);
             if (section != null)
             {
-                var isEnrolled = await _context.StudentsSections.FirstOrDefaultAsync(s => s.SectionId == section.Id && s.UserId == UserID);
+                var isEnrolled = await _unitOfWork.StudentSections
+                    .FindFirst(s => s.SectionId == section.Id && s.UserId == UserID);
+
                 if (isEnrolled == null)
                 {
-                    await _context.StudentsSections.AddAsync(new StudentsSections { SectionId = section.Id, UserId = UserID });
-                    await _context.SaveChangesAsync();
+                    await _unitOfWork.StudentSections
+                        .AddAsync(
+                        new StudentsSections 
+                        {
+                            SectionId = section.Id,
+                            UserId = UserID
+                        });
+
+                    await _unitOfWork.SaveAsync();
+
                     return new Response { IsDone=true,Message="Enrolled Succeeded"};
                 }
                 return new Response { IsDone = false, Message = "You Already Enrolled In This Section Before" };
             }
             return new Response { IsDone = false, Message = "Section Not Found" };
         }
-
-
         public async Task<List<UserProfileDataViewModel>> GetAll()
         {
-            var users= await _context.Users
-                .Select(s => new UserProfileDataViewModel
-                {
-                    Id=s.Id,
-                    Name = s.Name,
-                    Email=s.Email,
-                    UserName=s.UserName,
-                    Phone=s.PhoneNumber,
-                    Major=s.Major
-                })
-                .ToListAsync();
-
-            return users.Any() ? users : new List<UserProfileDataViewModel>();
+            var users = await _unitOfWork.Students.GetAllAsync();
+            return users.Any() ? users.Select(s => new UserProfileDataViewModel
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Email = s.Email,
+                UserName = s.UserName,
+                Phone = s.PhoneNumber,
+                Major = s.Major
+            })
+                .ToList() :
+                new List<UserProfileDataViewModel>();
 
         }
 
         public async Task<UserProfileDataViewModel> GetUser(string id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _unitOfWork.Students.GetByIDAsync(id);
             return user != null ?
                 new UserProfileDataViewModel
                 {
