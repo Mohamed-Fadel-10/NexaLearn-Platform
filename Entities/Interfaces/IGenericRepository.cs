@@ -17,6 +17,7 @@ namespace Entities.Interfaces
         public Task<T>? GetByIDAsync(string id);
         public Task<T?> FindFirst(Expression<Func<T, bool>> predicate);
         public Task<T>? GetByNameAsync(Expression<Func<T, bool>> expression);
+        public Task<IEnumerable<T>>? Filter(Expression<Func<T, bool>> expression);
         public Task<T> UpdateAsync(T Model, int id);
         public void Delete(int id);
         public Task<T> IsExistAsync(Expression<Func<T, bool>> expression);

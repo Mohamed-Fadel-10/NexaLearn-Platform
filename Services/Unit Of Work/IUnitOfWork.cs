@@ -18,6 +18,7 @@ namespace Services.Unit_Of_Work
         public IGenericRepository<OpenedQuizzes> OpenedQuizzes { get; }
         public IGenericRepository<UsersQuestionsQuiz> UsersQuestionsQuiz { get; }
         public IGenericRepository<Quiz> Quiz { get; }
+        public IGenericRepository<Materials> Materials { get; }
 
 
 

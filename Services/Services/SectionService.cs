@@ -1,9 +1,11 @@
 ﻿using Entities.Models;
 using Infrastructure.Data;
+using Infrastructure.Repsitories;
 using Infrastructure.Response;
 using Infrastructure.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
+using Services.Unit_Of_Work;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +14,12 @@ using System.Threading.Tasks;
 
 namespace Services.Services
 {
-    public class SectionService : ISectionService
+    public class SectionService :GenericRepository<Section> ,ISectionService
     {
-        private readonly QuizContext _context;
-        public SectionService(QuizContext context) { _context = context; }
+        private readonly IUnitOfWork _unitOfWork;
+        public SectionService(QuizContext context, IUnitOfWork _unitOfWork) :base(context) {
+            this._unitOfWork = _unitOfWork;
+        }
 
 
         public async Task<Response> AddSection(SectionViewModel model)
@@ -28,8 +32,8 @@ namespace Services.Services
                 section.Code = Guid.NewGuid().ToString().Substring(1, 8);
                 section.SubjectId = model.SubjectId;
                 section.Capacity = model.Capacity;
-                await _context.Sections.AddAsync(section);
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Section.AddAsync(section);
+                await _unitOfWork.SaveAsync();
                 return new Response
                 {
                     IsDone = true,
@@ -45,28 +49,21 @@ namespace Services.Services
         }
 
 
-        public async Task<List<Section>> GetAllSections()
+        public async Task<IEnumerable<Section>> GetAllSections()
         {
-            var sections = await _context.Sections.ToListAsync();
-            if (sections.Any())
-            {
-                return sections;
-            }
-            return new List<Section>();
+            var sections = await _unitOfWork.Section.GetAllAsync();
+           return sections.Any() ? sections : new List<Section>();
 
         }
-        public async Task<List<Section>> SectionsBySubjectID(int id)
+
+        public async Task<IEnumerable<Section>> SectionsBySubjectID(int id)
         {
-            var sections = await _context.Sections
-                .Where(s => s.SubjectId == id)
-                .ToListAsync();
-            if (sections.Any())
-            {
-                return sections;
-            }
-            return new List<Section>();
+            var sections = await _unitOfWork.Section
+                .Filter(s => s.SubjectId == id);
+          return sections.Any()?sections : new List<Section>();
 
         }
+
         public async Task<List<Section>> StudentSections(string userId)
         {
             var sections = _context.Sections
@@ -77,12 +74,8 @@ namespace Services.Services
                 .Where(s => s.StudentSections.UserId == userId)
                 .Select(s => s.Section)
                 .ToList();
-            if (sections.Any())
-            {
-                return sections;
-            }
-            return new List<Section>();
 
+                return sections.Any()? sections : new List<Section>();
         }
         public async Task<List<SectionMaterialsViewModel>> GetSectionDetails(int sectionId)
         {
@@ -110,7 +103,7 @@ namespace Services.Services
         }
         public async Task<List<SectionStudentsDataViewModel>> SectionsWithStudentsNumbers(int? sectionId = null)
         {
-            var result = _context.Sections.ToList();
+            var result =await _unitOfWork.Section.GetAllAsync();
             if (sectionId.HasValue)
             {
                 result = result.Where(s=>s.Id==sectionId).ToList();
@@ -145,6 +138,7 @@ namespace Services.Services
             {
                 result = result.Where(s => s.Section.Id == sectionId).ToList();
             }
+
             if(result.Any())
             {
                 return result.Select(s => new SectionStudentsDataViewModel

@@ -68,6 +68,12 @@ namespace Infrastructure.Repsitories
             var Entity = await _context.Set<T>().Where(expression).FirstOrDefaultAsync();
             return Entity;
         }
+
+        public async Task<IEnumerable<T>>? Filter(Expression<Func<T, bool>> expression)
+        {
+            var Entity = await _context.Set<T>().Where(expression).ToListAsync();
+            return Entity;
+        }
         public async Task<T> UpdateAsync(T model, int id)
         {
             T entity = await _context.Set<T>().FindAsync(id);

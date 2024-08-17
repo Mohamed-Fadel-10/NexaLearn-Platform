@@ -1,9 +1,11 @@
 ﻿using Entities.Models;
 using Infrastructure.Data;
+using Infrastructure.Repsitories;
 using Infrastructure.Response;
 using Infrastructure.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
+using Services.Unit_Of_Work;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace Services.Services
 {
-    public class MaterialsService:IMaterialsService
+    public class MaterialsService:GenericRepository<Materials> ,IMaterialsService
     {
-        private readonly QuizContext _context;
-        public MaterialsService(QuizContext _context) {
-           this._context= _context;
+        private readonly IUnitOfWork _unitOfWork;
+        public MaterialsService(QuizContext _context, IUnitOfWork _unitOfWork) :base(_context) {
+            this._unitOfWork = _unitOfWork;
         }
         public async Task<Response> AddMaterials(AddMaterialsViewModel model)
         {
@@ -44,10 +46,10 @@ namespace Services.Services
                             FilePath = filePath,  
                             SectionId = model.SectionId
                         };
-                        await _context.Materials.AddAsync(material);
+                        await _unitOfWork.Materials.AddAsync(material);
                     }
                 }
-                await _context.SaveChangesAsync();
+                await _unitOfWork.SaveAsync();
                 return new Response { IsDone = true };
             }
             return new Response { IsDone = false };
