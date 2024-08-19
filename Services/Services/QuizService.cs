@@ -42,7 +42,6 @@ namespace Services.Services
                 return new Response { IsDone = true, Model = quiz.Id };
             }
             return new Response { IsDone = false, Model = null };
-
         }
         public async Task<Response> AddQuestions(List<QuestionViewModel> model, int QuizId)
         {
