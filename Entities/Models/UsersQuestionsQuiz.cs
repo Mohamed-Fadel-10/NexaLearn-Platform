@@ -17,7 +17,11 @@ namespace Entities.Models
         public int QuizID  { get; set; }
         [ForeignKey("Question")]
         public int QuestionID { get; set; }
+        [ForeignKey("Section")]
+        public int SectionID { get; set; }
         public virtual Question Question { get; set; }
+        public virtual Section Section { get; set; }
+
         public virtual ApplicationUser User { get; set; }
         public virtual Quiz Quiz { get; set; }
         public string? Answer { get; set; }

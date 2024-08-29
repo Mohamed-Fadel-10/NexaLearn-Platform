@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Services.Services
 {
-    public class SectionService :GenericRepository<Section> ,ISectionService
+    public class SectionService : GenericRepository<Section> ,ISectionService
     {
         private readonly IUnitOfWork _unitOfWork;
         public SectionService(QuizContext context, IUnitOfWork _unitOfWork) :base(context) {

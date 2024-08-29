@@ -16,6 +16,8 @@ namespace Services.Interfaces
         public Task<QuizViewModel> GetQuiz(string SessionID);
         public Task<List<Quiz>> GetAllQuizzes();
         public Task<Response> GetById(int id);
+        public Task<QuizViewModel> GetQuizById(int id);
+        public List<OptionsViewModel> GetOptionsByQuestionId(int questionId);
         public Task<Response> UpdateQuiz(QuizViewModel model, int id);
         public Task<Response> DeleteQuiz(int id);
         public Task<QuizViewModel> Details(int id);

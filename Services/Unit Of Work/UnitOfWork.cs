@@ -21,6 +21,8 @@ namespace Services.Unit_Of_Work
         public IGenericRepository<UsersQuestionsQuiz> UsersQuestionsQuiz { get; private set; }
         public IGenericRepository<Quiz> Quiz { get; private set; }
         public IGenericRepository<Materials>Materials { get; private set; }
+        public IGenericRepository<Question> Questions { get; private set; }
+
 
 
 
@@ -35,6 +37,7 @@ namespace Services.Unit_Of_Work
             UsersQuestionsQuiz = new GenericRepository<UsersQuestionsQuiz>(context);
             Quiz= new GenericRepository<Quiz>(context);
             Materials= new GenericRepository<Materials>(context);
+            Questions= new GenericRepository<Question>(context);
         }
 
         public async Task<int> SaveAsync()

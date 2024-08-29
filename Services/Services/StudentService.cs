@@ -22,15 +22,15 @@ namespace Services.Services
            this._unitOfWork = _unitOfWork;
         }
 
-        public async Task<UsersEvaluationViewModel> Evaluate(List<UsersEvaluationViewModel> model)
+        public async Task<UsersEvaluationViewModel> Evaluate(List<UsersEvaluationViewModel> model, int SectionID)
         {
             if (model == null)
             {
                 return new UsersEvaluationViewModel();
             }
+
             UsersEvaluationViewModel userdata = new UsersEvaluationViewModel();
             var questionIds = model.Select(x => x.QuestionID).ToList();
-
             userdata.QuestionsNumber = questionIds.Count;
 
             var questions = await _context.Question
@@ -49,7 +49,7 @@ namespace Services.Services
                 .Select(g => g.First())
                 .ToDictionaryAsync(tf => tf.QuestionId, tf => tf.CorrectAnswer);
 
-            var ShortTextAnswers = await _context.ShortText
+            var shortTextAnswers = await _context.ShortText
                 .Where(tf => questionIds.Contains(tf.QuestionId))
                 .GroupBy(tf => tf.QuestionId)
                 .Select(g => g.First())
@@ -66,13 +66,15 @@ namespace Services.Services
                     {
                         if (multipleChoiceAnswers.TryGetValue(item.QuestionID, out var correctAnswer))
                         {
-                            if(item.Answer == correctAnswer)
+                            if (item.Answer == correctAnswer)
                             {
                                 item.Score = question.Points;
-                                userdata.CorrectAnswerCount+=1;
+                                userdata.CorrectAnswerCount += 1;
                             }
                             else
-                            item.Score = 0;
+                            {
+                                item.Score = 0;
+                            }
                         }
                     }
                     else if (question.QuestionType == QuestionType.TrueFalse)
@@ -82,50 +84,55 @@ namespace Services.Services
                             if (item.Answer == correctAnswer)
                             {
                                 item.Score = question.Points;
-                                userdata.CorrectAnswerCount+=1;
+                                userdata.CorrectAnswerCount += 1;
                             }
                             else
+                            {
                                 item.Score = 0;
+                            }
                         }
                     }
                     else
                     {
-                        if(ShortTextAnswers.TryGetValue(item.QuestionID,out var correctAnswer))
+                        if (shortTextAnswers.TryGetValue(item.QuestionID, out var correctAnswer))
                         {
                             if (item.Answer == correctAnswer)
                             {
                                 item.Score = question.Points;
-                                userdata.CorrectAnswerCount+=1;
+                                userdata.CorrectAnswerCount += 1;
                             }
                             else
+                            {
                                 item.Score = 0;
+                            }
                         }
                     }
 
-                    usersQuestionsQuizzes.Add(
-                        new UsersQuestionsQuiz
+                    usersQuestionsQuizzes.Add(new UsersQuestionsQuiz
                     {
                         Answer = item.Answer,
                         UserId = item.UserId,
                         QuizID = item.QuizID,
                         QuestionID = item.QuestionID,
+                        SectionID = SectionID, 
                         Score = item.Score,
-                        SubmissionDate=DateTime.Now,                  
+                        SubmissionDate = DateTime.Now,
                     });
                 }
+
                 userdata.QuizID = item.QuizID;
                 userdata.UserId = item.UserId;
             }
 
-            // For Check in another Time if User Opened This Quiz Before we set Here Flag as True
+            // Additional logic for handling quiz opening status
 
-            if (await _unitOfWork.OpenedQuizzes.FindFirst(s => s.UserId == userdata.UserId && s.QuizId == userdata.QuizID) == null) { 
-            await _unitOfWork.OpenedQuizzes
-                    .AddAsync(
-                new OpenedQuizzes 
-                { IsOpened = true, 
-                  QuizId=userdata.QuizID,
-                  UserId=userdata.UserId
+            if (await _unitOfWork.OpenedQuizzes.FindFirst(s => s.UserId == userdata.UserId && s.QuizId == userdata.QuizID) == null)
+            {
+                await _unitOfWork.OpenedQuizzes.AddAsync(new OpenedQuizzes
+                {
+                    IsOpened = true,
+                    QuizId = userdata.QuizID,
+                    UserId = userdata.UserId
                 });
             }
 
@@ -133,31 +140,29 @@ namespace Services.Services
             await _unitOfWork.SaveAsync();
 
             userdata.Score = usersQuestionsQuizzes
-                .Where(u=>u.UserId==userdata.UserId&&u.QuizID==userdata.QuizID)
+                .Where(u => u.UserId == userdata.UserId && u.QuizID == userdata.QuizID)
                 .Select(u => u.Score)
                 .Sum();
 
             var currentQuiz = await _unitOfWork.Quiz.FindFirst(q => q.Id == userdata.QuizID);
-
-            var currentSubject= await _unitOfWork.Subject.FindFirst(s=>s.Id==currentQuiz.SubjectId);
+            var currentSubject = await _unitOfWork.Subject.FindFirst(s => s.Id == currentQuiz.SubjectId);
             var currentSection = _context.Sections
                 .Join(_context.StudentsSections, se => se.Id, ss => ss.SectionId, (se, ss) => new { Section = se, User = ss })
                 .FirstOrDefault();
 
-
-            return new UsersEvaluationViewModel()
+            return new UsersEvaluationViewModel
             {
                 UserId = userdata.UserId,
                 UserName = await _context.Users.Where(u => u.Id == userdata.UserId).Select(u => u.UserName).FirstOrDefaultAsync(),
                 QuizSession = currentQuiz.SessionID,
-                QuizID=userdata.QuizID,
+                QuizID = userdata.QuizID,
                 Score = userdata.Score,
-                QuizName= currentQuiz.Name,
+                QuizName = currentQuiz.Name,
                 TotalDegree = currentQuiz.TotalDegree,
-                QuestionsNumber=userdata.QuestionsNumber,
-                CorrectAnswerCount=userdata.CorrectAnswerCount,
-                Subject=currentSubject.Name,
-                Section= currentSection.Section.Name,
+                QuestionsNumber = userdata.QuestionsNumber,
+                CorrectAnswerCount = userdata.CorrectAnswerCount,
+                Subject = currentSubject.Name,
+                Section = currentSection.Section.Name,
             };
         }
 

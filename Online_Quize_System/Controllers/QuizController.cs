@@ -18,13 +18,17 @@ namespace Online_Quize_System.Controllers
         private readonly IAdminService _adminService;
         private readonly QuizContext _context;
         private readonly ISubjectService _subjectService;
+        private readonly ISectionService _sectionService;
 
-        public QuizController(IQuizService _quizService, QuizContext _context, IAdminService adminService, ISubjectService subjectService)
+
+        public QuizController(IQuizService _quizService, QuizContext _context, 
+            IAdminService adminService, ISubjectService subjectService, ISectionService sectionService)
         {
             this._quizService = _quizService;
             this._context = _context;
             _adminService = adminService;
             _subjectService = subjectService;
+            _sectionService = sectionService;
         }
 
         [Authorize(Roles = "Admin")]
@@ -90,11 +94,22 @@ namespace Online_Quize_System.Controllers
         [Authorize]
         public async Task<IActionResult> GetQuizBySession()
         {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var sections = await _sectionService.StudentSections(userId);
+            var sectionSelectList = sections.Select(s => new SelectListItem
+            {
+                Value = s.Id.ToString(),
+                Text = s.Name
+            }).ToList();
+
+            ViewBag.SectionSelectList = sectionSelectList;
             return View();
         }
-      [HttpPost]
-      [Authorize]
-        public async Task<IActionResult> StartQuiz(string sessionId)
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> StartQuiz(string sessionId,string SectionID)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -128,6 +143,7 @@ namespace Online_Quize_System.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             ViewBag.UserName = user?.UserName;
             ViewBag.UserId = userId;
+            ViewBag.SectionId = SectionID;
 
             return View("StartQuiz", quiz);
         }
@@ -151,25 +167,36 @@ namespace Online_Quize_System.Controllers
 
         }
         [Authorize(Roles = "Admin")]
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var Response = await _quizService.GetById(id);
-            if (Response.IsDone)
+            var quizViewModel = await _quizService.GetQuizById(id);
+            if (quizViewModel != null)
             {
-                return View("Edit", Response.Model);
+                foreach (var question in quizViewModel.Questions)
+                {
+                    question.Options = _quizService.GetOptionsByQuestionId(question.Id);
+                }
+                return View("Edit", quizViewModel);
             }
             return NotFound();
         }
+
         [HttpPost]
-        public async Task<IActionResult> SaveEdit([FromRoute]int id, QuizViewModel model)
+        public async Task<IActionResult> SaveEdit([FromRoute] int id, QuizViewModel model)
         {
-            var Response = await _quizService.UpdateQuiz(model,id);
-            if (Response.IsDone)
+            if (!ModelState.IsValid)
+            {
+                return View("Edit", model);
+            }
+
+            var response = await _quizService.UpdateQuiz(model, id);
+            if (response.IsDone)
             {
                 return RedirectToAction("GetAllQuizzes");
             }
-            return View("Edit",model);
 
+            return View("Edit", model);
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id)

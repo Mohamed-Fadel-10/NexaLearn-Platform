@@ -1,10 +1,12 @@
 ﻿using Entities.Models;
 using Infrastructure.Data;
 using Infrastructure.Enum;
+using Infrastructure.Repsitories;
 using Infrastructure.Response;
 using Infrastructure.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
+using Services.Unit_Of_Work;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +15,12 @@ using System.Threading.Tasks;
 
 namespace Services.Services
 {
-    public class QuizService : IQuizService
+    public class QuizService :GenericRepository<Quiz>, IQuizService
     {
-        private QuizContext _context;
-        public QuizService(QuizContext context)
+        private IUnitOfWork _unitOfWork ;
+        public QuizService(QuizContext context, IUnitOfWork unitOfWork):base(context)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Response> AddQuiz(QuizViewModel model,string CreatorId)
         {
@@ -37,8 +39,8 @@ namespace Services.Services
                 quiz.CreatorId = CreatorId;
                 quiz.SessionID= Guid.NewGuid().ToString();
                 quiz.Duration = model.Duration;
-                await _context.Quiz.AddAsync(quiz);
-                await _context.SaveChangesAsync();              
+                await _unitOfWork.Quiz.AddAsync(quiz);
+                await _unitOfWork.SaveAsync();              
                 return new Response { IsDone = true, Model = quiz.Id };
             }
             return new Response { IsDone = false, Model = null };
@@ -155,11 +157,101 @@ namespace Services.Services
 
             return new Response { IsDone = false, Model = null, Message="Quiz Not Found" };
         }
-        public async Task<Response> UpdateQuiz(QuizViewModel model,int id)
+
+        public async Task<QuizViewModel> GetQuizById(int id)
         {
-           var quiz= await _context.Quiz.FirstOrDefaultAsync(q => q.Id == id);
+            var quiz = await _context.Quiz
+                .Include(q => q.Questions)
+                .FirstOrDefaultAsync(q => q.Id == id);
+
             if (quiz != null)
             {
+                return new QuizViewModel
+                {
+                    QuizID = quiz.Id,
+                    Name = quiz.Name,
+                    Description = quiz.Description,
+                    SessionID = quiz.SessionID,
+                    TotalDegree = quiz.TotalDegree,
+                    PassingDegree = (double)quiz.PassingScore,
+                    Duration = quiz.Duration,
+                    CreatedOn = quiz.CreatedOn,
+                    Questions = quiz.Questions .Select( s=>new QuestionViewModel
+                    {
+                        Id=s.Id,
+                        QuestionText= s.Title,
+                        Hint= s.Hint,
+                        Points=s.Points,
+                        Type=(int)s.QuestionType,
+                        Options = s.Options.Select(s=>new 
+                        OptionsViewModel { 
+                            Text=s.Option
+                        }).ToList()
+
+                    }).ToList()
+                };
+            }
+
+            return new QuizViewModel();
+        }
+
+        public List<OptionsViewModel> GetOptionsByQuestionId(int questionId)
+        {
+            var options = new List<OptionsViewModel>();
+
+            // Fetch MultipleChoice options
+            var multipleChoiceOptions = _context.MultipleChoices
+                .Where(mc => mc.QuestionId == questionId)
+                .Select(mc => new OptionsViewModel
+                {
+                    Id = mc.Id,
+                    Text = mc.Option,
+                    IsCorrect = mc.IsCorrect ?? false
+                })
+                .ToList();
+
+            options.AddRange(multipleChoiceOptions);
+
+            // Fetch TrueFalse options
+            var trueFalseOptions = _context.TrueFalse
+                .Where(tf => tf.QuestionId == questionId)
+                .Select(tf => new OptionsViewModel
+                {
+                    Id = tf.Id,
+                    Text = tf.CorrectAnswer,
+                    IsCorrect = true
+                })
+                .ToList();
+
+            options.AddRange(trueFalseOptions);
+
+            // Fetch ShortText options (typically, short text questions will only have one correct answer)
+            var shortTextOptions = _context.ShortText
+                .Where(st => st.QuestionId == questionId)
+                .Select(st => new OptionsViewModel
+                {
+                    Id = st.Id,
+                    Text = st.CorrectAnswer,
+                    IsCorrect = true
+                })
+                .ToList();
+
+            options.AddRange(shortTextOptions);
+
+            return options;
+        }
+
+
+        public async Task<Response> UpdateQuiz(QuizViewModel model, int id)
+        {
+            var quiz = await _context.Quiz
+                .Include(q => q.Questions)
+                .ThenInclude(q => q.Options)
+                .FirstOrDefaultAsync(q => q.Id == id);
+
+            if (quiz != null)
+            {
+                // Update quiz details
                 quiz.Name = model.Name;
                 quiz.Description = model.Description;
                 quiz.TotalDegree = model.TotalDegree;
@@ -167,12 +259,62 @@ namespace Services.Services
                 quiz.IsPrivate = model.IsPrivate;
                 quiz.Duration = model.Duration;
                 quiz.CreatedOn = model.CreatedOn;
-                quiz.SessionID = Guid.NewGuid().ToString();            
+                quiz.SessionID = model.SessionID;
+
+                foreach (var question in quiz.Questions)
+                {
+                    var questionModel = model.Questions.FirstOrDefault(q => q.Id == question.Id);
+                    if (questionModel != null)
+                    {
+                        question.Title = questionModel.QuestionText;
+                        question.Hint = questionModel.Hint;
+                        question.Points = (double)questionModel.Points;
+
+                        if (question.QuestionType == QuestionType.MultipleChoice)
+                        {
+                            foreach (var option in question.Options)
+                            {
+                                var optionModel = questionModel.Options.FirstOrDefault(o => o.Id == option.Id);
+                                if (optionModel != null)
+                                {
+                                    option.Option = optionModel.Text;
+                                    option.IsCorrect = optionModel.IsCorrect ?? false;
+
+                                    // Ensure only one option is marked as correct
+                                    if (optionModel.Text == questionModel.CorrectAnswer)
+                                    {
+                                        option.IsCorrect = true;
+                                    }
+                                    else
+                                    {
+                                        option.IsCorrect = false;
+                                    }
+                                }
+                            }
+                        }
+                        else if (question.QuestionType == QuestionType.TrueFalse || question.QuestionType == QuestionType.ShortText)
+                        {
+                            var correctAnswer = questionModel.CorrectAnswer;
+                            if (!string.IsNullOrEmpty(correctAnswer))
+                            {
+                                var option = question.Options.FirstOrDefault();
+                                if (option != null)
+                                {
+                                    option.Option = correctAnswer;
+                                    option.IsCorrect = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 await _context.SaveChangesAsync();
-                return new Response { IsDone=true, Model = quiz };
+                return new Response { IsDone = true, Model = quiz };
             }
+
             return new Response { IsDone = false, Model = null };
         }
+
         public async Task<Response> DeleteQuiz( int id)
         {
             var quiz = await _context.Quiz.FirstOrDefaultAsync(q => q.Id == id);

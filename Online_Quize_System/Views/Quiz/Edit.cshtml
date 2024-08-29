@@ -1,77 +1,143 @@
-﻿@using Entities.Models
-@model Quiz
+﻿@using Infrastructure.ViewModels
+@model QuizViewModel
+
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Quiz";
     Layout = "_Dashboard";
 }
 
+<head>
+    <link rel="stylesheet" href="~/css/quiz-edit.css" />
+    <script>
+        function setCorrectAnswer(questionIndex, optionIndex) {
+            // Uncheck all checkboxes except the selected one and set IsCorrect to false for all other options
+            document.querySelectorAll(`[name='Questions[${questionIndex}].Options']`).forEach((checkbox, idx) => {
+                if (idx !== optionIndex) {
+                    checkbox.checked = false;
+                }
+            });
+
+            // Set the correct answer value in the hidden input
+            const correctAnswerInput = document.getElementById(`CorrectAnswer_${questionIndex}`);
+            const correctOptionCheckbox = document.querySelector(`[name='Questions[${questionIndex}].Options[${optionIndex}].IsCorrect']`);
+            const correctOptionText = document.querySelector(`[name='Questions[${questionIndex}].Options[${optionIndex}].Text']`).value;
+
+            if (correctOptionCheckbox.checked) {
+                correctAnswerInput.value = correctOptionText; // Store the correct answer text
+            } else {
+                correctAnswerInput.value = ''; // Clear the correct answer if unchecked
+            }
+        }
+    </script>
+
+
+</head>
+
 <h2>Edit Quiz</h2>
 
-<form asp-action="SaveEdit" asp-controller="Quiz" asp-route-id="@Model.Id">
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+<form asp-action="SaveEdit" asp-controller="Quiz" asp-route-id="@Model.QuizID" class="quiz-edit-form">
+    <div class="quiz-details">
+        <h3>Quiz Details</h3>
+        <div class="form-group">
+            <input type="hidden" name="QuizID" value="@Model.QuizID" /> <!-- Hidden QuizID -->
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="control-label"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="TotalDegree" class="control-label"></label>
+            <input asp-for="TotalDegree" class="form-control" />
+            <span asp-validation-for="TotalDegree" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PassingDegree" class="control-label"></label>
+            <input asp-for="PassingDegree" class="form-control" />
+            <span asp-validation-for="PassingDegree" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CreatedOn" class="control-label"></label>
+            <input asp-for="CreatedOn" class="form-control" readonly />
+            <span asp-validation-for="CreatedOn" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Duration" class="control-label">Duration</label>
+            <input asp-for="Duration" type="text" class="form-control" id="Duration" name="Duration">
+        </div>
+        <div class="form-group">
+            <label asp-for="SessionID" class="control-label"></label>
+            <input asp-for="SessionID" class="form-control" />
+            <span asp-validation-for="SessionID" class="text-danger"></span>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Description" class="control-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
+    <h3>Questions</h3>
+    @for (int i = 0; i < Model.Questions.Count; i++)
+    {
+        <div class="question-item">
+            <h4>Question @(i + 1)</h4>
+            <input type="hidden" name="Questions[@i].Id" value="@Model.Questions[i].Id" /> <!-- Hidden Question ID -->
+            <div class="form-group">
+                <label asp-for="@Model.Questions[i].QuestionText">Question Text</label>
+                <input asp-for="@Model.Questions[i].QuestionText" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Questions[i].Hint">Hint</label>
+                <input asp-for="@Model.Questions[i].Hint" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Questions[i].Points">Points</label>
+                <input asp-for="@Model.Questions[i].Points" class="form-control" />
+            </div>
 
-    <div class="form-group">
-        <label asp-for="TotalDegree" class="control-label"></label>
-        <input asp-for="TotalDegree" class="form-control" />
-        <span asp-validation-for="TotalDegree" class="text-danger"></span>
-    </div>
+            @if (Model.Questions[i].Type == 1 /* ShortText */)
+            {
+                <div class="form-group">
+                    <label>Answer</label>
+                    <input type="text" class="form-control" name="Questions[@i].Options[0].Text" value="@Model.Questions[i].Options?.FirstOrDefault()?.Text" placeholder="Enter the answer" />
+                </div>
+            }
+            else if (Model.Questions[i].Type == 2 /* TrueFalse */)
+            {
+                <div class="form-group">
+                    <label>Answer</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Questions[@i].Options[0].Text" value="true" @(Model.Questions[i].Options?.FirstOrDefault()?.Text == "true" ? "checked" : "")>
+                        <label class="form-check-label">True</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Questions[@i].Options[0].Text" value="false" @(Model.Questions[i].Options?.FirstOrDefault()?.Text == "false" ? "checked" : "")>
+                        <label class="form-check-label">False</label>
+                    </div>
+                </div>
+            }
+            else if (Model.Questions[i].Type == 3 /* MultipleChoice */)
+            {
+                <h5>Options</h5>
+                @for (int j = 0; j < Model.Questions[i].Options.Count; j++)
+                {
+                    <div class="form-group">
+                        <label>Option @(j + 1)</label>
+                        <div class="option-container">
+                            <input type="checkbox" name="Questions[@i].Options[@j].IsCorrect" value="true"
+                            @(Model.Questions[i].Options[j].IsCorrect ?? false ? "checked" : "")
+                                   onclick="setCorrectAnswer(@i, @j)" />
+                            <input asp-for="@Model.Questions[i].Options[j].Text" class="form-control option-input" />
+                        </div>
+                    </div>
+                }
 
-    <div class="form-group">
-        <label asp-for="PassingScore" class="control-label"></label>
-        <input asp-for="PassingScore" class="form-control" />
-        <span asp-validation-for="PassingScore" class="text-danger"></span>
-    </div>
+                <!-- Hidden input to store the correct answer -->
+                <input type="hidden" id="CorrectAnswer_@i" name="Questions[@i].CorrectAnswer" value="@Model.Questions[i].CorrectAnswer" />
 
-    <div class="form-group">
-        <label asp-for="IsPrivate" class="control-label"></label>
-        <input asp-for="IsPrivate" class="form-control" />
-        <span asp-validation-for="IsPrivate" class="text-danger"></span>
-    </div>
 
-    <div class="form-group">
-        <label asp-for="Duration">Duration</label>
-        <input asp-for="Duration" type="text" class="form-control" id="Duration" name="Duration">
-    </div>
-
-    <div class="form-group">
-        <label asp-for="CreatedOn" class="control-label"></label>
-        <input asp-for="CreatedOn" class="form-control" />
-        <span asp-validation-for="CreatedOn" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="SessionID" class="control-label"></label>
-        <input asp-for="SessionID" class="form-control" readonly />
-        <span asp-validation-for="SessionID" class="text-danger"></span>
-    </div>
+            }
+        </div>
+    }
 
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet" />
-
-}
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-<script>
-    flatpickr("#Duration", {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i:S",
-        time_24hr: true
-    });
-</script>

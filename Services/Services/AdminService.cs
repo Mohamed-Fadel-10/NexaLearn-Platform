@@ -133,16 +133,7 @@ namespace Services.Services
                             .Join(_context.Subjects,
                                   uq => uq.q.SubjectId,
                                   su => su.Id,
-                                  (uq, su) => new { uq.uqq, uq.q, su })
-                            .Join(_context.Sections,
-                            su => su.su.Id,
-                            se => se.SubjectId,
-                            (su, se) => new { su.su, su.q, su.uqq, se })
-                            .Join(_context.StudentsSections,
-                            se => se.se.Id,
-                            ss => ss.SectionId,
-                            (se, ss) => new { se.uqq, se.su,se.se, se.q, ss })
-                            .Where(s => s.ss.UserId == s.uqq.UserId);
+                                  (uq, su) => new { uq.uqq, uq.q, su });
 
                 if (model.QuizId.HasValue)
                 {
@@ -150,7 +141,7 @@ namespace Services.Services
                 }
                 if (model.SectionId.HasValue)
                 {
-                    students = students.Where(c => c.se.Id == model.SectionId);
+                    students = students.Where(c => c.uqq.SectionID == model.SectionId);
                 }
                 if (model.SubjectId.HasValue)
                 {
@@ -158,9 +149,8 @@ namespace Services.Services
                 }
                
                 var result= await students.ToListAsync();
-
                 return result
-                              .GroupBy(g => new { g.q.Id, g.q.SessionID, g.uqq.UserId, g.su.Name ,g.se})
+                              .GroupBy(g => new { g.q.Id, g.q.SessionID, g.uqq.UserId, g.su.Name ,g.uqq.SectionID})
                               .Select(s => new UsersEvaluationViewModel
                               {
                                   QuizID = s.Key.Id,
@@ -170,7 +160,7 @@ namespace Services.Services
                                   Score = s.Sum(uqq => uqq.uqq.Score),
                                   SubmissionDate = s.Max(uqq => uqq.uqq.SubmissionDate),
                                   Subject = s.Key.Name,
-                                  Section=s.Key.se.Name
+                                  Section=_context.Sections.FirstOrDefault(se=>se.Id==s.Key.SectionID).Name
                               })
                               .OrderBy(s=>s.SubmissionDate)
                               .ThenBy(s=>s.Score)

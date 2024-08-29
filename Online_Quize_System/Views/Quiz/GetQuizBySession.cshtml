@@ -15,13 +15,24 @@
         <div class="form-box">
             <h2>Start Quiz</h2>
             <div asp-validation-summary="ModelOnly" class="error-msg"></div>
-            <form asp-action="StartQuiz" asp-controller="Quiz">
-                <div>
-                    <label for="SessionID" class="control-label">SessionID</label>
-                    <input type="text" id="SessionID" name="SessionID" class="form-control" />
-                </div>
-                <button type="submit" value="Start">Start</button>
-            </form>
+           <form asp-action="StartQuiz" asp-controller="Quiz">
+    <div>
+        <label for="SessionID" class="control-label">Session ID</label>
+        <input type="text" id="SessionID" name="SessionID" class="form-control" />
+    </div>
+    <div>
+        <label for="SectionID" class="control-label">Section</label>
+        <select id="SectionID" name="SectionID" class="form-control">
+            <option value="">-- Select Section --</option>
+            @foreach (var item in ViewBag.SectionSelectList)
+            {
+                            <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+    <button type="submit" value="Start">Start</button>
+</form>
+
         </div>
     </div>
     <script src="~/js/particles.js"></script>

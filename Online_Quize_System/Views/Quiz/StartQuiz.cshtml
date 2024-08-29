@@ -34,6 +34,7 @@
     <form id="quiz-form" method="post" action="@Url.Action("Evaluate", "Users")">
         @Html.AntiForgeryToken()
         <input type="hidden" name="answers" id="answers">
+        <input type="hidden" name="SectionID" value="@ViewBag.SectionId">
     </form>
 </div>
 
@@ -97,7 +98,16 @@
             document.getElementById('question-counter').innerText = `${index + 1} of ${questions.length} Questions`;
 
             document.getElementById('previous-button').style.display = index === 0 ? 'none' : 'block';
+
+            if (questions.length === 1) {
+                document.getElementById('next-button').style.display = 'none';
+                document.getElementById('finish-button').style.display = 'block';
+            } else if (currentQuestionIndex === questions.length - 1) {
+                document.getElementById('next-button').style.display = 'none';
+                document.getElementById('finish-button').style.display = 'block';
+            }
         }
+
 
         function getSelectedAnswer() {
             const question = questions[currentQuestionIndex];
