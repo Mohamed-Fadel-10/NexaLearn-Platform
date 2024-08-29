@@ -8,7 +8,7 @@ using Services.Interfaces;
 using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 
-namespace YourNamespace.Controllers
+namespace online_Quiz_System.Controllers
 {
     public class ChatRoomController : Controller
     {
