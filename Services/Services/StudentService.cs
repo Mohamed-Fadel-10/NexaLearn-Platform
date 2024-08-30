@@ -84,10 +84,8 @@ namespace Services.Services
                     {
                         if (essayAnswers.TryGetValue(item.QuestionID, out var correctAnswer))
                         {
-                            // Use the new service to calculate similarity
                             var similarity = textSimilarityService.CalculateCosineSimilarity(correctAnswer, item.Answer);
 
-                            // Assuming a threshold of 0.7 for similarity
                             if (similarity >= 0.7)
                             {
                                 item.Score = question.Points;
@@ -116,7 +114,6 @@ namespace Services.Services
                 userdata.UserId = item.UserId;
             }
 
-            // Additional logic for handling quiz opening status
 
             if (await _unitOfWork.OpenedQuizzes.FindFirst(s => s.UserId == userdata.UserId && s.QuizId == userdata.QuizID) == null)
             {
