@@ -39,6 +39,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<IMaterialsService, MaterialsService>();
+builder.Services.AddScoped<ITextSimilarityService, TextSimilarityService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 

@@ -16,10 +16,12 @@ namespace Services.Services
     public class StudentService : GenericRepository<ApplicationUser>, IStudentService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITextSimilarityService textSimilarityService;
 
-        public StudentService(QuizContext context, IUnitOfWork _unitOfWork) :base(context)
+        public StudentService(QuizContext context, IUnitOfWork _unitOfWork, ITextSimilarityService textSimilarityService) : base(context)
         {
-           this._unitOfWork = _unitOfWork;
+            this._unitOfWork = _unitOfWork;
+            this.textSimilarityService = textSimilarityService;
         }
 
         public async Task<UsersEvaluationViewModel> Evaluate(List<UsersEvaluationViewModel> model, int SectionID)
@@ -49,11 +51,11 @@ namespace Services.Services
                 .Select(g => g.First())
                 .ToDictionaryAsync(tf => tf.QuestionId, tf => tf.CorrectAnswer);
 
-            var shortTextAnswers = await _context.ShortText
-                .Where(tf => questionIds.Contains(tf.QuestionId))
-                .GroupBy(tf => tf.QuestionId)
+            var essayAnswers = await _context.ShortText
+                .Where(st => questionIds.Contains(st.QuestionId))
+                .GroupBy(st => st.QuestionId)
                 .Select(g => g.First())
-                .ToDictionaryAsync(tf => tf.QuestionId, tf => tf.CorrectAnswer);
+                .ToDictionaryAsync(st => st.QuestionId, st => st.CorrectAnswer);
 
             var usersQuestionsQuizzes = new List<UsersQuestionsQuiz>();
 
@@ -66,37 +68,27 @@ namespace Services.Services
                     {
                         if (multipleChoiceAnswers.TryGetValue(item.QuestionID, out var correctAnswer))
                         {
-                            if (item.Answer == correctAnswer)
-                            {
-                                item.Score = question.Points;
-                                userdata.CorrectAnswerCount += 1;
-                            }
-                            else
-                            {
-                                item.Score = 0;
-                            }
+                            item.Score = item.Answer == correctAnswer ? question.Points : 0;
+                            if (item.Score > 0) userdata.CorrectAnswerCount += 1;
                         }
                     }
                     else if (question.QuestionType == QuestionType.TrueFalse)
                     {
                         if (trueFalseAnswers.TryGetValue(item.QuestionID, out var correctAnswer))
                         {
-                            if (item.Answer == correctAnswer)
-                            {
-                                item.Score = question.Points;
-                                userdata.CorrectAnswerCount += 1;
-                            }
-                            else
-                            {
-                                item.Score = 0;
-                            }
+                            item.Score = item.Answer == correctAnswer ? question.Points : 0;
+                            if (item.Score > 0) userdata.CorrectAnswerCount += 1;
                         }
                     }
-                    else
+                    else if (question.QuestionType == QuestionType.ShortText)
                     {
-                        if (shortTextAnswers.TryGetValue(item.QuestionID, out var correctAnswer))
+                        if (essayAnswers.TryGetValue(item.QuestionID, out var correctAnswer))
                         {
-                            if (item.Answer == correctAnswer)
+                            // Use the new service to calculate similarity
+                            var similarity = textSimilarityService.CalculateCosineSimilarity(correctAnswer, item.Answer);
+
+                            // Assuming a threshold of 0.7 for similarity
+                            if (similarity >= 0.7)
                             {
                                 item.Score = question.Points;
                                 userdata.CorrectAnswerCount += 1;
@@ -114,7 +106,7 @@ namespace Services.Services
                         UserId = item.UserId,
                         QuizID = item.QuizID,
                         QuestionID = item.QuestionID,
-                        SectionID = SectionID, 
+                        SectionID = SectionID,
                         Score = item.Score,
                         SubmissionDate = DateTime.Now,
                     });
