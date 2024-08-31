@@ -1,0 +1,70 @@
+﻿@using Infrastructure.ViewModels
+@model IEnumerable<StudentsAnswersViewModel>
+
+@{
+    ViewBag.Title = "View Answers";
+    Layout = "_Dashboard";
+}
+
+<h2>Review Answers</h2>
+
+<head>
+    <link href="~/css/viewanswers.css" rel="stylesheet" />
+</head>
+
+@foreach (var answer in Model)
+{
+    <div class="question-block">
+        <h4>@answer.QuestionText</h4>
+        <p><strong>Points:</strong> @answer.Points</p>
+        <p><strong>Score:</strong> @answer.Score</p>
+
+        @if (answer.Options != null && answer.Options.Any())
+        {
+            <h5>Options:</h5>
+            <ul class="options-list">
+                @foreach (var option in answer.Options)
+                {
+                    var isStudentAnswer = option.Text == answer.StudentAnswer;
+                    var isCorrectAnswer = option.IsCorrect == true;
+
+                    <li class="@(isStudentAnswer ? (isCorrectAnswer ? "correct-answer" : "wrong-answer") : "neutral-answer")">
+                        @option.Text
+                    </li>
+                }
+            </ul>
+
+            <p>
+                <strong>Student Answer:</strong>
+                <span class="@(answer.Options.Any(o => o.Text == answer.StudentAnswer && o.IsCorrect==true) ? "correct-answer" : "wrong-answer")">
+                    @answer.StudentAnswer
+                </span>
+            </p>
+
+            <p><strong>Correct Answer(s):</strong></p>
+            <ul class="options-list">
+                @foreach (var option in answer.Options.Where(o => o.IsCorrect == true))
+                {
+                    <li class="correct-answer">
+                        @option.Text
+                    </li>
+                }
+            </ul>
+        }
+        else if (answer.CorrectAnswer != null)
+        {
+            <!-- True/False or Short Text Question -->
+            <p>
+                <strong>Your Answer:</strong>
+                <span class="@(answer.StudentAnswer == answer.CorrectAnswer ? "correct-answer" : "wrong-answer")">
+                    @answer.StudentAnswer
+                </span>
+            </p>
+            <p>
+                <strong>Correct Answer:</strong>
+                <span style="font-weight:bold;">@answer.CorrectAnswer</span>
+            </p>
+        }
+    </div>
+    <hr />
+}

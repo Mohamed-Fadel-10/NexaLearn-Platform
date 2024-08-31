@@ -154,6 +154,7 @@ namespace Services.Services
                               .Select(s => new UsersEvaluationViewModel
                               {
                                   QuizID = s.Key.Id,
+                                  UserId = s.Key.UserId,
                                   QuizName=s.Key.Name,
                                   QuizSession = s.Key.SessionID,
                                   UserName = _context.Users.FirstOrDefault(u => u.Id == s.Key.UserId).UserName,

@@ -19,16 +19,18 @@ namespace Online_Quize_System.Controllers
         private readonly QuizContext _context;
         private readonly ISubjectService _subjectService;
         private readonly ISectionService _sectionService;
+        private readonly IQuestionsService _questionsService;
 
 
         public QuizController(IQuizService _quizService, QuizContext _context, 
-            IAdminService adminService, ISubjectService subjectService, ISectionService sectionService)
+            IAdminService adminService, ISubjectService subjectService, ISectionService sectionService, IQuestionsService questionsService)
         {
             this._quizService = _quizService;
             this._context = _context;
             _adminService = adminService;
             _subjectService = subjectService;
             _sectionService = sectionService;
+            _questionsService = questionsService;
         }
 
         [Authorize(Roles = "Admin")]
@@ -69,8 +71,8 @@ namespace Online_Quize_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                var quiz = await _context.Quiz.FirstOrDefaultAsync(s => s.Id == QuizId);
-                var Response = await _quizService.AddQuestions(model, QuizId);
+                var quiz = await _quizService.GetQuizQuestionsById(QuizId);
+                var Response = await _questionsService.AddQuestions(model, QuizId);
                 if (Response.IsDone)
                 {
                     return View("QuizCreatedSuccessfully",
@@ -80,7 +82,7 @@ namespace Online_Quize_System.Controllers
                         Duration=quiz.Duration,
                         Description=quiz.Description,
                         TotalDegree=quiz.TotalDegree,
-                        PassingDegree= (double)quiz.PassingScore,
+                        PassingDegree= (double)quiz.PassingDegree,
                         IsPrivate=quiz.IsPrivate,
                         Name=quiz.Name
                     });
@@ -170,7 +172,7 @@ namespace Online_Quize_System.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var quizViewModel = await _quizService.GetQuizById(id);
+            var quizViewModel = await _quizService.GetQuizQuestionsById(id);
             if (quizViewModel != null)
             {
                 foreach (var question in quizViewModel.Questions)

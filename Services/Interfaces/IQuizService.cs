@@ -12,11 +12,10 @@ namespace Services.Interfaces
     public interface IQuizService
     {
         public Task<Response> AddQuiz(QuizViewModel model, string CreatorId);
-        public Task<Response> AddQuestions(List<QuestionViewModel> model, int QuizId);
         public Task<QuizViewModel> GetQuiz(string SessionID);
-        public Task<List<Quiz>> GetAllQuizzes();
+        public Task<IEnumerable<Quiz>> GetAllQuizzes();
         public Task<Response> GetById(int id);
-        public Task<QuizViewModel> GetQuizById(int id);
+        public Task<QuizViewModel> GetQuizQuestionsById(int id);
         public List<OptionsViewModel> GetOptionsByQuestionId(int questionId);
         public Task<Response> UpdateQuiz(QuizViewModel model, int id);
         public Task<Response> DeleteQuiz(int id);

@@ -45,62 +45,7 @@ namespace Services.Services
             }
             return new Response { IsDone = false, Model = null };
         }
-        public async Task<Response> AddQuestions(List<QuestionViewModel> model, int QuizId)
-        {
-            if (model != null)
-            {
-                foreach(var question in model)
-                {
-                    var Question = new Question
-                    {
-                        Title= question.QuestionText,
-                        Points=(double)question.Points,
-                        Hint=question.Hint,
-                        QuizId=QuizId,
-                        QuestionType= (QuestionType)question.Type
-                    };
-                    await _context.Question.AddAsync(Question);
-                    await _context.SaveChangesAsync();
-
-                    if (question.Type ==(int) QuestionType.MultipleChoice)
-                    {
-                        foreach (var option in question.Options)
-                        {
-                            var multipleChoice = new MultipleChoice
-                            {
-                                CorrectAnswer = question.CorrectAnswer,
-                                IsCorrect = option.IsCorrect,
-                                QuestionId = Question.Id,
-                                Option=option.Text                             
-                            };
-                            await _context.MultipleChoices.AddAsync(multipleChoice);
-                        }
-                    }
-                    else if(question.Type == (int)QuestionType.TrueFalse)
-                    {
-                        var trueFalse = new TrueFalse
-                        {
-                            CorrectAnswer = question.CorrectAnswer,
-                            QuestionId = Question.Id
-                        };
-                        await _context.TrueFalse.AddAsync(trueFalse);
-
-                    }
-                    else
-                    {
-                        var shortText = new ShortText
-                        {
-                            CorrectAnswer = question.CorrectAnswer,
-                            QuestionId = Question.Id
-                        };
-                        await _context.ShortText.AddAsync(shortText);
-                    }
-                }
-                await _context.SaveChangesAsync();
-                return new Response() { IsDone = true};
-            }
-            return new Response() { IsDone = false };
-            }
+      
         public async Task<QuizViewModel> GetQuiz(string SessionID)
         {
             var quiz = await _context.Quiz
@@ -137,9 +82,9 @@ namespace Services.Services
             }
             return new QuizViewModel() { CreatedOn = null };
         }
-        public async Task<List<Quiz>> GetAllQuizzes()
+        public async Task<IEnumerable<Quiz>> GetAllQuizzes()
         {
-            var quizzes = await _context.Quiz.Include(q => q.Questions).AsNoTracking().ToListAsync();
+            var quizzes = await _unitOfWork.Quiz.GetAllAsync();
             if (quizzes.Any())
             {
                 return quizzes;
@@ -149,7 +94,7 @@ namespace Services.Services
         }
         public async Task<Response> GetById(int id)
         {
-            var quiz = await _context.Quiz.FirstOrDefaultAsync(q=>q.Id==id);
+            var quiz = await _unitOfWork.Quiz.FindFirst(q=>q.Id==id);
             if (quiz !=null)
             {
                 return new Response { IsDone = true, Model = quiz };
@@ -158,7 +103,7 @@ namespace Services.Services
             return new Response { IsDone = false, Model = null, Message="Quiz Not Found" };
         }
 
-        public async Task<QuizViewModel> GetQuizById(int id)
+        public async Task<QuizViewModel> GetQuizQuestionsById(int id)
         {
             var quiz = await _context.Quiz
                 .Include(q => q.Questions)
@@ -251,7 +196,6 @@ namespace Services.Services
 
             if (quiz != null)
             {
-                // Update quiz details
                 quiz.Name = model.Name;
                 quiz.Description = model.Description;
                 quiz.TotalDegree = model.TotalDegree;
@@ -280,7 +224,6 @@ namespace Services.Services
                                     option.Option = optionModel.Text;
                                     option.IsCorrect = optionModel.IsCorrect ?? false;
 
-                                    // Ensure only one option is marked as correct
                                     if (optionModel.Text == questionModel.CorrectAnswer)
                                     {
                                         option.IsCorrect = true;

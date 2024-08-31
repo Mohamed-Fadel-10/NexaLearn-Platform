@@ -19,24 +19,26 @@
     </select>
     <button class="btn btn-outline-success" type="button" id="searchButton">Search</button>
 </form>
-<div class="table-responsive">
-<table id="notificationsTable" class="table table-bordered">
-    <thead class="thead-dark">
-        <tr>
-            <th>Quiz ID</th>
-            <th>Quiz Name</th>
-            <th>Quiz SessionId</th>
-            <th>UserName</th>
-            <th>Score</th>
-            <th>Submission Date</th>
-            <th>Subject</th>
-            <th>Section</th>
 
-        </tr>
-    </thead>
-    <tbody id="notificationsBody">
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table id="notificationsTable" class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Quiz ID</th>
+                <th>Quiz Name</th>
+                <th>Quiz SessionId</th>
+                <th>UserName</th>
+                <th>Score</th>
+                <th>Submission Date</th>
+                <th>Subject</th>
+                <th>Section</th>
+                <th style="display:none;">UserId</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="notificationsBody">
+        </tbody>
+    </table>
 </div>
 
 @section Scripts {
@@ -47,41 +49,22 @@
             .withUrl("/quizHub")
             .build();
 
-        connection.on("ReceiveNotification", (quizId, quizName,quizSession, userName, score, submissionDate, subject,section) => {
+        connection.on("ReceiveNotification", (quizId, quizName, quizSession, userId, userName, score, submissionDate, subject, section) => {
             const tableBody = document.getElementById("notificationsBody");
             const row = document.createElement("tr");
 
-            const quizIdCell = document.createElement("td");
-            quizIdCell.innerText = quizId;
-            row.appendChild(quizIdCell);
-
-            const quizNameCell = document.createElement("td");
-            quizNameCell.innerText = quizName;
-            row.appendChild(quizNameCell);
-
-            const quizSessionCell = document.createElement("td");
-            quizSessionCell.innerText = quizSession;
-            row.appendChild(quizSessionCell);
-
-            const userNameCell = document.createElement("td");
-            userNameCell.innerText = userName;
-            row.appendChild(userNameCell);
-
-            const scoreCell = document.createElement("td");
-            scoreCell.innerText = score;
-            row.appendChild(scoreCell);
-
-            const submissionDateCell = document.createElement("td");
-            submissionDateCell.innerText = submissionDate;
-            row.appendChild(submissionDateCell);
-
-            const subjectCell = document.createElement("td");
-            subjectCell.innerText = subject;
-            row.appendChild(subjectCell);
-
-            const sectionCell = document.createElement("td");
-            sectionCell.innerText = section;
-            row.appendChild(sectionCell);
+            row.innerHTML = `
+                        <td>${quizId}</td>
+                        <td>${quizName}</td>
+                        <td>${quizSession}</td>
+                        <td>${userName}</td>
+                        <td>${score}</td>
+                        <td>${submissionDate}</td>
+                        <td>${subject}</td>
+                        <td>${section}</td>
+                        <td style="display:none;">${userId}</td>
+                        <td><a href="/Answers/ViewAnswers?userId=${userId}&quizId=${quizId}" class="btn btn-info">Answers</a></td>
+                    `;
 
             tableBody.appendChild(row);
         });
@@ -102,24 +85,25 @@
                     quizId: quiz
                 },
                 success: function (data) {
-                    console.log(data);
                     const tableBody = $('#notificationsBody');
                     tableBody.empty();
 
                     data.forEach(item => {
-                        const row = $('<tr></tr>');
+                        const row = $(`
+                                    <tr>
+                                        <td>${item.quizID}</td>
+                                        <td>${item.quizName}</td>
+                                        <td>${item.quizSession}</td>
+                                        <td>${item.userName}</td>
+                                        <td>${item.score}</td>
+                                        <td>${item.submissionDate}</td>
+                                        <td>${item.subject}</td>
+                                        <td>${item.section}</td>
+                                        <td style="display:none;">${item.userId}</td>
+                                        <td><a href="/Answers/ViewAnswers?userId=${item.userId}&quizId=${item.quizID}" class="btn btn-info">Answers</a></td>
+                                    </tr>
+                                `);
 
-                        const quizIdCell = $('<td></td>').text(item.quizID);
-                        const quizNameCell = $('<td></td>').text(item.quizName);
-                        const quizSessionCell = $('<td></td>').text(item.quizSession);
-                        const userNameCell = $('<td></td>').text(item.userName);
-                        const scoreCell = $('<td></td>').text(item.score);
-                        const submissionDateCell = $('<td></td>').text(item.submissionDate);
-                        const subjectCell = $('<td></td>').text(item.subject);
-                        const sectionCell = $('<td></td>').text(item.section);
-
-
-                        row.append(quizIdCell, quizNameCell, quizSessionCell, userNameCell, scoreCell, submissionDateCell, subjectCell, sectionCell);
                         tableBody.append(row);
                     });
                 },

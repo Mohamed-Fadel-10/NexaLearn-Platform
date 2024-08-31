@@ -42,7 +42,7 @@ builder.Services.AddScoped<IMaterialsService, MaterialsService>();
 builder.Services.AddScoped<ITextSimilarityService, TextSimilarityService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-
+builder.Services.AddScoped<IQuestionsService, QuestionsService>();
 
 builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailConfiguration"));
 
