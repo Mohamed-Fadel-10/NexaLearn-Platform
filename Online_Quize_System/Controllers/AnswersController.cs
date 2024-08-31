@@ -11,9 +11,9 @@ namespace Online_Quize_System.Controllers
         {
             _questionsService = questionsService;
         }
-        public IActionResult ViewAnswers(string userId,int quizId)
+        public async Task< IActionResult> ViewAnswers(string userId,int quizId)
         {
-            var response= _questionsService.StudentsQuestionsAnswers(userId, quizId);
+            var response=await _questionsService.StudentsQuestionsAnswers(userId, quizId);
             if (response != null)
             {
                 return View(response);

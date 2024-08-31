@@ -11,7 +11,6 @@ namespace Services.Interfaces
     public interface IQuestionsService
     {
         public  Task<Response> AddQuestions(List<QuestionViewModel> model, int quizId);
-        public IEnumerable<StudentsAnswersViewModel> StudentsQuestionsAnswers(string userId, int quizID);
-
+        public Task<IEnumerable<StudentsAnswersViewModel>> StudentsQuestionsAnswers(string userId, int quizID);
     }
 }

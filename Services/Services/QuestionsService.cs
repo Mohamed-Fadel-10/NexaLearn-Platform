@@ -118,7 +118,7 @@ namespace Services.Services
             await _context.ShortText.AddAsync(shortText);
         }
 
-        public IEnumerable<StudentsAnswersViewModel> StudentsQuestionsAnswers(string userId, int quizID)
+        public async Task< IEnumerable<StudentsAnswersViewModel>> StudentsQuestionsAnswers(string userId, int quizID)
         {
             var studentsAnswers = new List<StudentsAnswersViewModel>();
 
@@ -137,50 +137,56 @@ namespace Services.Services
                 var question = questionGroup.First();
                 if (question.Question.QuestionType == QuestionType.MultipleChoice)
                 {
-                    studentsAnswers.AddRange(GetMultipleChoiceAnswers(userId, quizID, question.Question.Id));
+                    studentsAnswers.AddRange(await GetMultipleChoiceAnswers(userId, quizID, question.Question.Id));
                 }
                 else if (question.Question.QuestionType == QuestionType.TrueFalse)
                 {
-                    studentsAnswers.AddRange(GetTrueFalseAnswers(userId, quizID, question.Question.Id));
+                    studentsAnswers.AddRange(await GetTrueFalseAnswers(userId, quizID, question.Question.Id));
                 }
                 else
                 {
-                    studentsAnswers.AddRange(GetShortTextAnswers(userId, quizID, question.Question.Id));
+                    studentsAnswers.AddRange(await GetShortTextAnswers(userId, quizID, question.Question.Id));
                 }
             }
 
             return studentsAnswers;
         }
 
-        private IEnumerable<StudentsAnswersViewModel> GetMultipleChoiceAnswers(string userId, int quizID, int questionId)
+        private async Task< IEnumerable<StudentsAnswersViewModel>> GetMultipleChoiceAnswers(string userId, int quizID, int questionId)
         {
-            return _context.UsersQuestionsQuizzes
+            var quizStudent = await QuizStudentData(userId, quizID);
+
+            return await _context.UsersQuestionsQuizzes
                 .Join(_context.MultipleChoices,
                     qu => qu.QuestionID,
                     mc => mc.QuestionId,
                     (qu, mc) => new { Question = qu, MultipleChoices = mc })
                 .AsNoTracking()
                 .Where(q => q.Question.UserId == userId && q.Question.QuizID == quizID && q.Question.QuestionID == questionId)
-                .GroupBy(q => q.Question.QuestionID) 
+                .GroupBy(q => q.Question.QuestionID)
                 .Select(g => new StudentsAnswersViewModel
                 {
                     QuestionText = g.First().Question.Question.Title,
                     Points = (double)g.First().Question.Question.Points,
                     Score = (double)g.First().Question.Score,
                     StudentAnswer = g.First().Question.Answer,
+                    UserName = quizStudent.UserName.ToString(),
+                    QuizName = quizStudent.QuizName.ToString(),
                     Options = g.Select(q => q.MultipleChoices).Distinct().Select(mc => new OptionsViewModel
                     {
                         IsCorrect = mc.IsCorrect,
                         Text = mc.Option
                     }).ToList()
                 })
-                .ToList();
+                .ToListAsync();
         }
 
 
-        private IEnumerable<StudentsAnswersViewModel> GetTrueFalseAnswers(string userId, int quizID, int questionId)
+        private async Task< IEnumerable<StudentsAnswersViewModel>> GetTrueFalseAnswers(string userId, int quizID, int questionId)
         {
-            return _context.UsersQuestionsQuizzes
+           var quizStudent = await QuizStudentData(userId, quizID);
+
+            return await  _context.UsersQuestionsQuizzes
                 .Join(_context.TrueFalse,
                     qu => qu.QuestionID,
                     tf => tf.QuestionId,
@@ -188,20 +194,24 @@ namespace Services.Services
                 .AsNoTracking()
                 .Where(q => q.Question.UserId == userId && q.Question.QuizID == quizID && q.Question.QuestionID == questionId)
                 .GroupBy(q => q.Question.QuestionID) 
-                .Select(g => new StudentsAnswersViewModel
+                .Select( g => new StudentsAnswersViewModel
                 {
                     QuestionText = g.First().Question.Question.Title,
                     Points = (double)g.First().Question.Question.Points,
                     Score = (double)g.First().Question.Score,
+                    UserName= quizStudent.UserName.ToString(),
+                    QuizName = quizStudent.QuizName.ToString(),
                     StudentAnswer = g.First().Question.Answer,
                     CorrectAnswer = g.First().TrueFalse.CorrectAnswer,
                 })
-                .ToList();
+                .ToListAsync();
         }
 
-        private IEnumerable<StudentsAnswersViewModel> GetShortTextAnswers(string userId, int quizID, int questionId)
+        private async Task< IEnumerable<StudentsAnswersViewModel>> GetShortTextAnswers(string userId, int quizID, int questionId)
         {
-            return _context.UsersQuestionsQuizzes
+            var quizStudent = await QuizStudentData(userId, quizID);
+
+            return await _context.UsersQuestionsQuizzes
                 .Join(_context.ShortText,
                     qu => qu.QuestionID,
                     st => st.QuestionId,
@@ -214,10 +224,26 @@ namespace Services.Services
                     Points = (double)s.Question.Question.Points,
                     Score = (double)s.Question.Score,
                     StudentAnswer = s.Question.Answer,
+                    UserName = quizStudent.UserName.ToString(),
+                    QuizName = quizStudent.QuizName.ToString(),
                     CorrectAnswer = s.ShortText.CorrectAnswer,
-                }).ToList();
+                }).ToListAsync();
         }
 
+        public async Task<StudentsAnswersViewModel> QuizStudentData(string userID, int quizID)
+        {
+            var user = await _unitOfWork.Students.GetByIDAsync(userID);
+            var quiz = await _unitOfWork.Quiz.GetByIDAsync(quizID);
+            if (quiz != null && user != null)
+            {
+                return new StudentsAnswersViewModel
+                {
+                    QuizName=quiz.Name,
+                    UserName=user.UserName,
+                };
+            }
+            return new StudentsAnswersViewModel();
+        }
 
     }
 }

@@ -54,24 +54,24 @@
             const row = document.createElement("tr");
 
             row.innerHTML = `
-                        <td>${quizId}</td>
-                        <td>${quizName}</td>
-                        <td>${quizSession}</td>
-                        <td>${userName}</td>
-                        <td>${score}</td>
-                        <td>${submissionDate}</td>
-                        <td>${subject}</td>
-                        <td>${section}</td>
-                        <td style="display:none;">${userId}</td>
-                        <td><a href="/Answers/ViewAnswers?userId=${userId}&quizId=${quizId}" class="btn btn-info">Answers</a></td>
-                    `;
+                                <td>${quizId}</td>
+                                <td>${quizName}</td>
+                                <td>${quizSession}</td>
+                                <td>${userName}</td>
+                                <td>${score}</td>
+                                <td>${submissionDate}</td>
+                                <td>${subject}</td>
+                                <td>${section}</td>
+                                <td style="display:none;">${userId}</td>
+                                <td><a href="/Answers/ViewAnswers?userId=${userId}&quizId=${quizId}" class="btn btn-info">Answers</a></td>
+                            `;
 
             tableBody.appendChild(row);
         });
 
         connection.start().catch(err => console.error(err.toString()));
 
-        $('#searchButton').on('click', function () {
+        function fetchData() {
             const subject = $('#subjectSelect').val();
             const section = $('#sectionSelect').val();
             const quiz = $('#quizSelect').val();
@@ -90,19 +90,19 @@
 
                     data.forEach(item => {
                         const row = $(`
-                                    <tr>
-                                        <td>${item.quizID}</td>
-                                        <td>${item.quizName}</td>
-                                        <td>${item.quizSession}</td>
-                                        <td>${item.userName}</td>
-                                        <td>${item.score}</td>
-                                        <td>${item.submissionDate}</td>
-                                        <td>${item.subject}</td>
-                                        <td>${item.section}</td>
-                                        <td style="display:none;">${item.userId}</td>
-                                        <td><a href="/Answers/ViewAnswers?userId=${item.userId}&quizId=${item.quizID}" class="btn btn-info">Answers</a></td>
-                                    </tr>
-                                `);
+                                            <tr>
+                                                <td>${item.quizID}</td>
+                                                <td>${item.quizName}</td>
+                                                <td>${item.quizSession}</td>
+                                                <td>${item.userName}</td>
+                                                <td>${item.score}</td>
+                                                <td>${item.submissionDate}</td>
+                                                <td>${item.subject}</td>
+                                                <td>${item.section}</td>
+                                                <td style="display:none;">${item.userId}</td>
+                                                <td><a href="/Answers/ViewAnswers?userId=${item.userId}&quizId=${item.quizID}" class="btn btn-info">Answers</a></td>
+                                            </tr>
+                                        `);
 
                         tableBody.append(row);
                     });
@@ -111,6 +111,14 @@
                     console.error('Error fetching filtered data:', error);
                 }
             });
+        }
+
+        $(document).ready(function () {
+            fetchData();
+        });
+
+        $('#searchButton').on('click', function () {
+            fetchData();
         });
     </script>
 }

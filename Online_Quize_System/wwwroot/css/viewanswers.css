@@ -1,56 +1,74 @@
-.question-block {
-    background-color: #f8f9fa;
+.quiz-summary-container {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+    .quiz-summary-container h4 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .quiz-summary-container p {
+        font-size: 18px;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+        .quiz-summary-container p strong {
+            color: #000;
+            font-weight: bold;
+        }
+
+.answer-question-container {
+    background-color: #f1f1f1;
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 5px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
 }
 
-    .question-block h4 {
+    .answer-question-container h4 {
         margin-top: 0;
         margin-bottom: 10px;
     }
 
-    .question-block p {
+    .answer-question-container p {
         margin-bottom: 10px;
     }
 
-    .question-block .options-list {
-        list-style-type: none;
-        padding-left: 0;
-    }
-
-        .question-block .options-list li {
-            padding: 10px;
-            margin-bottom: 5px;
-            border-radius: 3px;
-        }
-
-            .question-block .options-list li.correct-answer {
-                background-color: #d4edda; 
-                color: #155724;
-            }
-
-            .question-block .options-list li.wrong-answer {
-                background-color: #f8d7da; 
-                color: #721c24;
-            }
-
-            .question-block .options-list li.neutral-answer {
-                background-color: #e9ecef; 
-                color: #212529;
-            }
-
-.correct-answer {
-    background-color: #d4edda; 
-    color: #155724;
-    padding: 5px;
-    border-radius: 3px;
+.option-list {
+    list-style-type: none;
+    padding-left: 0;
 }
 
-.wrong-answer {
-    background-color: #f8d7da; 
+    .option-list li {
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 3px;
+    }
+
+.option-correct {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.option-incorrect {
+    background-color: #f8d7da;
     color: #721c24;
-    padding: 5px;
-    border-radius: 3px;
+}
+
+.option-neutral {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+.correct-answer-text {
+    font-weight: bold;
+    color: #155724;
 }

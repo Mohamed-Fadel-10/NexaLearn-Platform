@@ -4,31 +4,132 @@
 @{
     ViewBag.Title = "View Answers";
     Layout = "_Dashboard";
+
+    double totalPoints = (double)Model.Sum(m => m.Points);
+    double totalScore = (double)Model.Sum(m => m.Score);
+    var firstAnswer = Model.FirstOrDefault();
+
+
+    int questionNumber = 1;
 }
+<head>
+    <link href="~/css/viewanswers.css" rel="stylesheet" />
+
+    <style>
+        .quiz-summary-container {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: auto auto; 
+            grid-gap: 15px; 
+            align-items: center;
+            justify-items: start;
+            text-align: left;
+        }
+
+            .quiz-summary-container h4 {
+                grid-column: span 2;
+                font-size: 28px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+
+            .quiz-summary-container p {
+                font-size: 20px;
+                color: #555;
+                margin-bottom: 10px;
+            }
+
+                .quiz-summary-container p strong {
+                    color: #000;
+                    font-weight: bold;
+                }
+
+        .answer-question-container {
+            background-color: #f9fafb; /
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+            .answer-question-container h4 {
+                margin-top: 0;
+                margin-bottom: 10px;
+                color: #333;
+            }
+
+            .answer-question-container p {
+                margin-bottom: 10px;
+                color: #444;
+            }
+
+        .option-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+            .option-list li {
+                padding: 10px;
+                margin-bottom: 5px;
+                border-radius: 3px;
+            }
+
+        .option-correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .option-incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .option-neutral {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        .correct-answer-text {
+            font-weight: bold;
+            color: #155724;
+        }
+
+    </style>
+</head>
 
 <h2>Review Answers</h2>
 
-<head>
-    <link href="~/css/viewanswers.css" rel="stylesheet" />
-</head>
+<div class="quiz-summary-container">
+    <h4>Quiz Summary</h4>
+    <p><strong>Student Name:</strong> @firstAnswer?.UserName</p>
+    <p><strong>Quiz Name:</strong> @firstAnswer?.QuizName</p>
+    <p><strong>Total Points:</strong> @totalPoints</p>
+    <p><strong>Total Score:</strong> @totalScore / @totalPoints</p>
+</div>
 
 @foreach (var answer in Model)
 {
-    <div class="question-block">
-        <h4>@answer.QuestionText</h4>
+    <div class="answer-question-container">
+        <h4>Question @questionNumber: @answer.QuestionText</h4> 
         <p><strong>Points:</strong> @answer.Points</p>
         <p><strong>Score:</strong> @answer.Score</p>
-
         @if (answer.Options != null && answer.Options.Any())
         {
             <h5>Options:</h5>
-            <ul class="options-list">
+            <ul class="option-list">
                 @foreach (var option in answer.Options)
                 {
                     var isStudentAnswer = option.Text == answer.StudentAnswer;
                     var isCorrectAnswer = option.IsCorrect == true;
 
-                    <li class="@(isStudentAnswer ? (isCorrectAnswer ? "correct-answer" : "wrong-answer") : "neutral-answer")">
+                    <li class="@(isStudentAnswer ? (isCorrectAnswer ? "option-correct" : "option-incorrect") : "option-neutral")">
                         @option.Text
                     </li>
                 }
@@ -36,16 +137,16 @@
 
             <p>
                 <strong>Student Answer:</strong>
-                <span class="@(answer.Options.Any(o => o.Text == answer.StudentAnswer && o.IsCorrect==true) ? "correct-answer" : "wrong-answer")">
+                <span class="@(answer.Options.Any(o => o.Text == answer.StudentAnswer && o.IsCorrect == true) ? "option-correct" : "option-incorrect")">
                     @answer.StudentAnswer
                 </span>
             </p>
 
             <p><strong>Correct Answer(s):</strong></p>
-            <ul class="options-list">
+            <ul class="option-list">
                 @foreach (var option in answer.Options.Where(o => o.IsCorrect == true))
                 {
-                    <li class="correct-answer">
+                    <li class="option-correct">
                         @option.Text
                     </li>
                 }
@@ -53,18 +154,19 @@
         }
         else if (answer.CorrectAnswer != null)
         {
-            <!-- True/False or Short Text Question -->
             <p>
                 <strong>Your Answer:</strong>
-                <span class="@(answer.StudentAnswer == answer.CorrectAnswer ? "correct-answer" : "wrong-answer")">
+                <span class="@(answer.StudentAnswer == answer.CorrectAnswer ? "option-correct" : "option-incorrect")">
                     @answer.StudentAnswer
                 </span>
             </p>
             <p>
                 <strong>Correct Answer:</strong>
-                <span style="font-weight:bold;">@answer.CorrectAnswer</span>
+                <span class="correct-answer-text">@answer.CorrectAnswer</span>
             </p>
         }
     </div>
     <hr />
+
+    questionNumber++;
 }
