@@ -116,6 +116,13 @@ namespace Online_Quiz_System.Controllers
             return Json(data);
         }
 
+        [HttpGet("GetSectionsWithStudentNumbers")]
+        public async Task<IActionResult> GetSectionsWithStudentNumbers()
+        {
+            var sections = await _sectionService.SectionsWithStudentsNumbers();
+            return Json(sections);
+        }
+
 
     }
 }

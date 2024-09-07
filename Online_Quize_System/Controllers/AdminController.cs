@@ -33,6 +33,8 @@ namespace Online_Quize_System.Controllers
             ViewBag.UsersNumbers = users.Count();
             var subjects = await _subjectService.GetAllSubjects();
             ViewBag.subjects = subjects.Count();
+            var sections=await  _sectionService.GetAllSections();
+            ViewBag.Sections= sections.Count();
             return View();
         }
         [Authorize(Roles = "Admin")]

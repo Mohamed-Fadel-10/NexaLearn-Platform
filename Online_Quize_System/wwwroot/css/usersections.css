@@ -83,7 +83,7 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s;
 }
-
+ 
     .update-card:hover {
         transform: translateY(-5px);
     }
