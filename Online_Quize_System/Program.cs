@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Infrastructure.Hubs;
 using Services.Unit_Of_Work;
+using Online_Quize_System.Seed_Data;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,13 +22,15 @@ builder.Services.AddDbContext<QuizContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("defualtConnection"));
 });
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=> {
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+    options.Password.RequireDigit = true; 
+    options.Password.RequireNonAlphanumeric = true; 
+    options.Password.RequiredLength = 8;
+    options.SignIn.RequireConfirmedEmail = true; 
+})
+.AddEntityFrameworkStores<QuizContext>() 
+.AddDefaultTokenProviders();
 
-    options.Password.RequireDigit = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 6;
-    options.SignIn.RequireConfirmedEmail = true;
-}).AddEntityFrameworkStores<QuizContext>().AddDefaultTokenProviders();
 
 // Injection for Services
 builder.Services.AddSignalR();
@@ -59,6 +62,21 @@ builder.Services.AddAuthentication(options =>
         });
 
 var app = builder.Build();
+// Call Seeding Method 
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        SeedData.SeedRolesAndAdminAsync(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding roles and users.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

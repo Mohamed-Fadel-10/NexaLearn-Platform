@@ -1,8 +1,42 @@
 ﻿@{
     ViewData["Title"] = "Email Confirmation";
 }
-<h1>@ViewData["Title"]</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .full-width-container {
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .confirmation-message {
+            text-align: center;
+            max-width: 600px;
+        }
 
-<h1>
-    Please check your email to confirm your account.
-</h1>
+        .confirmation-message h1{
+            font-size:50px;
+        }
+
+            .confirmation-message p{
+                font-size: 25px;
+            }
+    </style>
+</head>
+<body>
+    <div class="container-fluid full-width-container">
+        <div class="confirmation-message">
+            <h1>@ViewData["Title"]</h1>
+            <p>Please check your email to confirm your account.</p>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

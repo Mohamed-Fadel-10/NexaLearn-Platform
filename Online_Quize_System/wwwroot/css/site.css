@@ -153,12 +153,43 @@
 
     .menu-toggle {
         display: flex;
+        position: absolute;
+        top: 15px;
+        right: 15px; 
     }
 
-    .profile-btn {
-        color: black;
+    .nav-items-mobile {
+        text-align: left; 
+        align-items: flex-start; 
+        left: 0; 
+        padding-left: 15px; 
     }
+
+        .nav-items-mobile.active {
+            right: auto; 
+            left: 0; 
+        }
+
+
+        .nav-items-mobile .btn,
+        .nav-items-mobile .logIn-btn {
+            border: 1px solid #cc7a00; 
+            border-radius: 5px; 
+        }
+
+        .nav-items-mobile .logIn-btn {
+            background-color: #ffffff; 
+            color: black; 
+        }
+
+            .nav-items-mobile .btn:hover,
+            .nav-items-mobile .logIn-btn:hover {
+                background-color: white;
+                border-color: #cc7a00;
+                color: black;
+            }
 }
+
 
 /*--------------  Hero Section --------------*/
 .hero-section {

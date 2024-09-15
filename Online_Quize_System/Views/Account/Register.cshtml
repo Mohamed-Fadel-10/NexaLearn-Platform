@@ -143,3 +143,46 @@
         background: #eee;
     }
 </style>
+
+    <script>
+        $(document).ready(function () {
+            // Check username
+            $('#UserName').on('blur', function () {
+                var userName = $(this).val();
+                if (userName) {
+                    $.ajax({
+                        url: '@Url.Action("VerifyCurrentUserName", "Account")',
+                        type: 'GET',
+                        data: { userName: userName },
+                        success: function (response) {
+                            if (response !== true) {
+                                $('#UserName').siblings('span').text(response);
+                            } else {
+                                $('#UserName').siblings('span').text('');
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Check email
+            $('#Email').on('blur', function () {
+                var email = $(this).val();
+                if (email) {
+                    $.ajax({
+                        url: '@Url.Action("VerifyCurrentEmail", "Account")',
+                        type: 'GET',
+                        data: { email: email },
+                        success: function (response) {
+                            if (response !== true) {
+                                $('#Email').siblings('span').text(response);
+                            } else {
+                                $('#Email').siblings('span').text('');
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
