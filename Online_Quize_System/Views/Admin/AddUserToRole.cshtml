@@ -3,17 +3,34 @@
 @{
     Layout = "_Dashboard";
 }
-<form asp-action="AddUserToRole" asp-controller="Admin">
-    <div>
-        <select asp-for="UserID" asp-items="ViewBag.students" class="form-control">
-            <option value="" class="form-control">Select a Student</option>
-        </select>
-    </div>
-    <div>
-        <select asp-for="RoleID" asp-items="ViewBag.roles" class="form-control">
-            <option value="" class="form-control">Select a Role</option>
-        </select>
-    </div>
-    <button type="submit" value="Add" class="btn btn-primary" id="role"> Add To Role</button>
 
-</form>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg w-100">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="text-center">Add User to Role</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddUserToRole" asp-controller="Admin">
+                        <div class="form-group mb-3">
+                            <label asp-for="UserID" class="control-label">Select a Student</label>
+                            <select asp-for="UserID" asp-items="ViewBag.students" class="form-control">
+                                <option value="" class="form-control">Select a Student</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="RoleID" class="control-label">Select a Role</label>
+                            <select asp-for="RoleID" asp-items="ViewBag.roles" class="form-control">
+                                <option value="" class="form-control">Select a Role</option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" value="Add" class="btn btn-primary px-4 w-100">Add to Role</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

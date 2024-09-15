@@ -4,26 +4,43 @@
 @{
     Layout = "_Dashboard";
 }
-<h1>Add New Section</h1>
-<form asp-action="AddSection" asp-controller="Section">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div>
-        <label asp-for="Name" class="control-label col-md-2"> Name</label>
-        <input type="text" name="name" asp-for="Name" class="form-control" />
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg w-100">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="text-center">Add New Section</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddSection" asp-controller="Section">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="control-label">Section Name</label>
+                            <input type="text" name="name" asp-for="Name" class="form-control" placeholder="Enter section name" />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Capacity" class="control-label">Capacity</label>
+                            <input type="text" name="Capacity" asp-for="Capacity" class="form-control" placeholder="Enter section capacity" />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Address" class="control-label">Address</label>
+                            <input type="text" name="Address" asp-for="Address" class="form-control" placeholder="Enter section address" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="SubjectId" class="control-label">Select Subject</label>
+                            <select asp-for="SubjectId" asp-items="ViewBag.Subjects" class="form-control">
+                                <option value="">Select a Subject</option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" value="Add" class="btn btn-primary px-4 w-100">Add Section</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        <label asp-for="Capacity" class="control-label col-md-2"> Capacity</label>
-        <input type="text" name="Capacity" asp-for="Capacity" class="form-control" />
-    </div>
-    <div>
-        <label asp-for="Address" class="control-label col-md-2"> Address</label>
-        <input type="text" name="Address" asp-for="Address" class="form-control" />
-        <span asp-validation-for="Address" class="text-danger"></span>
-    </div>
-    <br />
-    <select asp-for="SubjectId" asp-items="ViewBag.Subjects" class="form-control">
-        <option value="" class="form-control">Select a Subject</option>
-    </select>
-    <button type="submit" value="Add" class="btn btn-primary"> Add</button>
-</form>
+</div>

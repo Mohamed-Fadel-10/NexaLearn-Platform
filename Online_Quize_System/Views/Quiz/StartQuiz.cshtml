@@ -86,9 +86,9 @@
                                             <label class="form-check-label" for="option${i}">${option.Text}</label>
                                         </div>`;
                 });
-            } else if (question.Type === 1 /* ShortText */) {
+            } else if (question.Type === 1 /* ShortText or long text */) {
                 questionHtml += `<div class="form-group">
-                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Your answer" value="${storedAnswer || ''}">
+                                                        <textarea  class="form-control" name="answer" id="answer" placeholder="Your answer" value="${storedAnswer || ''}"></textarea>
                                     </div>`;
             }
 

@@ -13,35 +13,47 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Add Materials</h1>
-        <form asp-action="AddMaterials" asp-controller="Admin" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label asp-for="Title">Title</label>
-                <input type="text" asp-for="Title" class="form-control" id="Title" name="Title" required>
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-lg w-100">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="text-center">Add Materials</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="AddMaterials" asp-controller="Admin" method="post" enctype="multipart/form-data">
+                            <div class="form-group mb-3">
+                                <label asp-for="Title" class="control-label">Title</label>
+                                <input type="text" asp-for="Title" class="form-control" id="Title" name="Title" placeholder="Enter material title" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="Description" for="Description" class="control-label">Description</label>
+                                <textarea class="form-control" asp-for="Description" id="Description" name="Description" placeholder="Enter material description" required></textarea>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="Files" class="control-label">Files</label>
+                                <input type="file" asp-for="Files" class="form-control" id="Files" name="Files" multiple>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="SubjectID" class="control-label">Subject</label>
+                                <select asp-for="SubjectID" asp-items="ViewBag.subjects" class="form-control" id="SubjectId">
+                                    <option value="">Select a Subject</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="SectionId" class="control-label">Section</label>
+                                <select class="form-control" asp-for="SectionId" name="SectionId" id="SectionId">
+                                    <option value="">Select a Section</option>
+                                </select>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary px-4 w-100">Add Materials</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" for="Description">Description</label>
-                <textarea class="form-control" asp-for="Description" id="Description" name="Description" required></textarea>
-            </div>
-            <div class="form-group">
-                <label asp-for="Files">Files</label>
-                <input type="file" asp-for="Files" class="form-control" id="Files" name="Files" multiple>
-            </div>
-            <div class="form-group">
-                <label asp-for="SubjectID">Subject</label>
-                <select asp-for="SubjectID" asp-items="ViewBag.subjects" class="form-control" id="SubjectId">
-                    <option value="">Select a Subject</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="SectionId">Section</label>
-                <select class="form-control" asp-for="SectionId" name="SectionId">
-                    <option value="">Select a Section</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Materials</button>
-        </form>
+        </div>
     </div>
 
     <script>

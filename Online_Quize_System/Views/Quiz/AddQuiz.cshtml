@@ -7,112 +7,61 @@
 }
 <h2>Create Quiz</h2>
 
-<div class="quiz-settings-container">
-    <form id="quizSettingsForm" asp-action="AddQuiz" asp-controller="Quiz">
-        <div class="form-group">
-            <label asp-for="Name">Quiz Name</label>
-            <input asp-for="Name" type="text" class="form-control" id="Name" name="Name" required>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg w-100">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="text-center">Create Quiz</h4>
+                </div>
+                <div class="card-body">
+                    <form id="quizSettingsForm" asp-action="AddQuiz" asp-controller="Quiz">
+                        <div class="form-group">
+                            <label asp-for="Name">Quiz Name</label>
+                            <input asp-for="Name" type="text" class="form-control" id="Name" name="Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Description">Description</label>
+                            <textarea asp-for="Description" class="form-control" id="Description" name="Description" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TotalDegree">Total Degree</label>
+                            <input type="number" asp-for="TotalDegree" class="form-control" id="TotalDegree" name="TotalDegree" required>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PassingDegree">Passing Degree</label>
+                            <input asp-for="PassingDegree" type="number" class="form-control" id="PassingDegree" name="PassingDegree" required>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Duration">Duration</label>
+                            <input asp-for="Duration" type="text" class="form-control" id="Duration" name="Duration" required>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="QuestionNumber">Question Numbers</label>
+                            <input asp-for="QuestionNumber" type="number" class="form-control" id="QuestionNumber" name="QuestionNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SubjectId">Subject</label>
+                            <select asp-for="SubjectId" asp-items="ViewBag.subjects" class="form-control">
+                                <option value="" class="form-control">Select a Subject</option>
+                            </select>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input asp-for="IsPrivate" class="form-check-input" type="checkbox" id="IsPrivate" name="IsPrivate">
+                            <label asp-for="IsPrivate" class="form-check-label" for="IsPrivate">Private Quiz</label>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-4 w-100">Save and Continue</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label asp-for="Description">Description</label>
-            <textarea asp-for="Description" class="form-control" id="Description" name="Description" rows="3" required></textarea>
-        </div>
-        <div class="form-group">
-            <label asp-for="TotalDegree">Total Degree</label>
-            <input type="number" asp-for="TotalDegree" class="form-control" id="TotalDegree" name="TotalDegree" required>
-        </div>
-        <div class="form-group">
-            <label asp-for="PassingDegree">Passing Degree</label>
-            <input asp-for="PassingDegree" type="number" class="form-control" id="PassingDegree" name="PassingDegree" required>
-        </div>
-        <div class="form-group">
-            <label asp-for="Duration">Duration</label>
-            <input asp-for="Duration" type="text" class="form-control" id="Duration" name="Duration" required>
-        </div>
-        <div class="form-group">
-            <label asp-for="QuestionNumber">Question Numbers</label>
-            <input asp-for="QuestionNumber" type="number" class="form-control" id="QuestionNumber" name="QuestionNumber" required>
-        </div>
-        <div class="form-group">
-            <select asp-for="SubjectId" asp-items="ViewBag.subjects" class="form-control">
-                <option value="" class="form-control">Select a Subject</option>
-            </select>
-        </div>
-        <div class="form-check">
-            <input asp-for="IsPrivate" class="form-check-input" type="checkbox" id="IsPrivate" name="IsPrivate">
-            <label asp-for="IsPrivate" class="form-check-label" for="IsPrivate">Private Quiz</label>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-secondary" id="saveQuizSettingsBtn">Save and Continue</button>
-        </div>
-    </form>
+    </div>
 </div>
 
 @section Styles {
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet" />
-    <style>
-        h2 {
-            text-align: center;
-            font-family: 'Arial', sans-serif;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .quiz-settings-container {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            margin: auto;
-            max-width: none;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-            .form-group label {
-                color: #000;
-                font-weight: 600;
-                font-size: 1.1em;
-            }
-
-        .form-control {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 1.05em;
-            width: 100%;
-        }
-
-        .form-check {
-            margin-bottom: 20px;
-        }
-
-        .form-check-label {
-            color: #000;
-            font-weight: bold;
-        }
-
-        .btn-secondary {
-            background-color: #4a90e2;
-            color: white;
-            font-weight: bold;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            width: 100%;
-        }
-
-            .btn-secondary:hover {
-                background-color: #357abd;
-            }
-
-        .form-check-input {
-            margin-right: 10px;
-        }
-    </style>
 }
 
 @section Scripts {
@@ -126,4 +75,3 @@
         });
     </script>
 }
-

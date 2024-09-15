@@ -1,22 +1,36 @@
 ﻿@using Entities.Models
 @model Subject
 @{
-    
     Layout = "_Dashboard";
 }
-<h1>Add New Subject</h1>
-<form asp-action="AddSubject" asp-controller="Admin">
-    <div>
-        <label asp-for="Name" class="control-label col-md-2"> Name</label>
-        <input type="text" name="name"  asp-for="Name" class="form-control" />
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg w-100">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="text-center">Add New Subject</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddSubject" asp-controller="Admin">
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="control-label">Subject Name</label>
+                            <input type="text" name="name" asp-for="Name" class="form-control" placeholder="Enter subject name" required/>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="MaxDegree" class="control-label">Max Degree</label>
+                            <input type="text" name="MaxDegree" asp-for="MaxDegree" class="form-control" placeholder="Enter max degree" required />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="MinDegree" class="control-label">Min Degree</label>
+                            <input type="text" name="MinDegree" asp-for="MinDegree" class="form-control" placeholder="Enter min degree" required />
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" value="Add" class="btn btn-primary px-4 w-100">Add Subject</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        <label asp-for="MaxDegree" class="control-label col-md-2"> MaxDegree</label>
-        <input type="text" name="MaxDegree"  asp-for="MaxDegree" class="form-control" />
-    </div>
-    <div>
-        <label asp-for="MinDegree" class="control-label col-md-2"> MinDegree</label>
-        <input type="text" name="MinDegree" asp-for="MinDegree" class="form-control" />
-    </div>
-    <button type="submit" value="Add" class="btn btn-primary"> Add</button>
-</form>
+</div>
