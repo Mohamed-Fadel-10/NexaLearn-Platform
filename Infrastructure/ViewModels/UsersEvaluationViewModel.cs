@@ -18,6 +18,7 @@ namespace Infrastructure.ViewModels
         public string? Answer { get; set; }
         public double? Score { get; set; }
         public string? QuizSession { get; set; }
+        public double? PassingDegree { get; set; }
       
         public double? TotalDegree { get; set; }
         public DateTime? SubmissionDate { get; set; }

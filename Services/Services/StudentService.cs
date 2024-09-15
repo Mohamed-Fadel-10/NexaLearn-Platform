@@ -148,6 +148,7 @@ namespace Services.Services
                 Score = userdata.Score,
                 QuizName = currentQuiz.Name,
                 TotalDegree = currentQuiz.TotalDegree,
+                PassingDegree= currentQuiz.PassingScore,
                 QuestionsNumber = userdata.QuestionsNumber,
                 CorrectAnswerCount = userdata.CorrectAnswerCount,
                 Subject = currentSubject.Name,

@@ -29,7 +29,6 @@ namespace Entities.Models
         public virtual ICollection<Question>? Questions { get; set; }= new List<Question>();
         public virtual ICollection<UsersQuestionsQuiz> UsersEvaluations { get; set; } = new List<UsersQuestionsQuiz>();
 
-        public virtual ICollection<UsersQuizFeedbacks>? UsersQuizFeedbacks { get; set; }= new List<UsersQuizFeedbacks>();
 
     }
 }

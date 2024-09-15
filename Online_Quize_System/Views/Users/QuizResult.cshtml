@@ -5,7 +5,7 @@
     var percentage = (double)Model.Score * 100 / Model.TotalDegree;
     var greenAngle = (Model.Score * 360 / Model.TotalDegree);
     var redAngle = 360 - greenAngle;
-    var isPassed = percentage > 50;
+    var isPassed = Model.Score >= Model.PassingDegree;  
 }
 
 <head>

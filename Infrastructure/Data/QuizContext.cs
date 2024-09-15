@@ -16,6 +16,7 @@ namespace Infrastructure.Data
         public QuizContext()  { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<UsersQuestionsQuiz>()
                 .HasKey(uqq => uqq.Id);
 
@@ -53,9 +54,7 @@ namespace Infrastructure.Data
         public virtual DbSet<Subject> Subjects { get; set; }
         public virtual DbSet<Section> Sections { get; set; }
         public virtual DbSet<Question> Question  { get; set; }
-        public virtual DbSet<FeedBack> FeedBack { get; set; }
         public virtual DbSet<ApplicationUser> Users { get; set; }
-        public virtual DbSet<UsersQuizFeedbacks> UsersQuizFeedbacks { get; set; }
         public virtual DbSet<MultipleChoice> MultipleChoices { get; set; }
         public virtual DbSet<TrueFalse> TrueFalse { get; set; }
         public virtual DbSet<ShortText> ShortText { get; set; }
