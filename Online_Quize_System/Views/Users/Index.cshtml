@@ -1,7 +1,7 @@
 ﻿@using Infrastructure.ViewModels
 @model List<UserProfileDataViewModel>
 @{
-    ViewData["Title"] = "Users";
+    ViewData["Title"] = "NexaLearn-Users";
     Layout = "_Dashboard";
 }
 
@@ -16,7 +16,7 @@
                 <th>Major</th>
                 <th>Email</th>
                 <th>UserName</th>
-                <th>Actions</th> <!-- العمود الجديد للأفعال -->
+                <th>Actions</th> 
             </tr>
         </thead>
         <tbody id="sectionsBody">
@@ -29,7 +29,6 @@
                     <td>@item.Email</td>
                     <td>@item.UserName</td>
                     <td>
-                        <!-- Updated correctly matching the controller -->
                         <a href="@Url.Action("Details", "Users", new { id = item.Id })" class="btn btn-info btn-sm">View</a>
                         <a href="@Url.Action("DeleteUser", "Admin", new { id = item.Id })" class="btn btn-danger btn-sm">Delete</a>
                     </td>
