@@ -67,7 +67,7 @@ NexaLearn is an educational platform similar to Classroom but with enhanced feat
   ![Create Subject](ProjectImages/AddNewSubject.png)
 
 - **Upload Materials**  
-  ![Upload Materials](ProjectImages/Add Materilas.png)
+  ![Upload Materials](ProjectImages/AddMaterilas.png)
 
 - **Created Quizzes**  
   ![Created Quizzes](ProjectImages/AllQuizzesCreated.png)
