@@ -34,10 +34,10 @@ NexaLearn is an educational platform similar to Classroom but with enhanced feat
 ## Screenshots
 
 - **LogIn Page**  
-  ![Section Enrollment](ProjectImages/LogIn.png)
+  ![Log In Page ](ProjectImages/LogIn.png)
   
-  - **Profile**  
-  ![Section Enrollment](ProjectImages/Profile.png)
+- **Profile**  
+  ![Profile Page](ProjectImages/Profile.png)
 
 - **Section Enrollment**  
   ![Section Enrollment](ProjectImages/SectionEnrollemnt.png) 
@@ -54,23 +54,23 @@ NexaLearn is an educational platform similar to Classroom but with enhanced feat
 - **Real-Time Chat**  
   ![Real-Time Chat](ProjectImages/ChatProcess.png)
   
-  - **Admin Dashboard**  
-  ![Create Sections](ProjectImages/AdminDashboard.png)
+- **Admin Dashboard**  
+  ![Admin Dashboard](ProjectImages/AdminDashboard.png)
 
 - **Create Quiz**  
-  ![Create Sections](ProjectImages/CreateQuiz.png)
+  ![Create Quiz](ProjectImages/CreateQuiz.png)
 
 - **Create Sections**  
   ![Create Sections](ProjectImages/AddNewSection.png)
 
-  - **Create Sections**  
-  ![Create Sections](ProjectImages/AddNewSubject.png)
+- **Create Subject**  
+  ![Create Subject](ProjectImages/AddNewSubject.png)
 
 - **Upload Materials**  
   ![Upload Materials](ProjectImages/Add Materilas.png)
 
-- **Create Quizzes**  
-  ![Create Quizzes](ProjectImages/AllQuizzesCreated.png)
+- **Created Quizzes**  
+  ![Created Quizzes](ProjectImages/AllQuizzesCreated.png)
 
 - **Monitor Student Progress**  
   ![Monitor Student Progress](ProjectImages/StudentsEvaluations.png)
