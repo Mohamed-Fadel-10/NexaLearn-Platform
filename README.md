@@ -32,29 +32,45 @@ NexaLearn is an educational platform similar to Classroom but with enhanced feat
 - **Real-Time Chat**: Instructors can communicate with students using the integrated chat system, facilitating real-time interactions.
 
 ## Screenshots
+
+- **LogIn Page**  
+  ![Section Enrollment](ProjectImages/LogIn.png)
+  
+  - **Profile**  
+  ![Section Enrollment](ProjectImages/Profile.png)
+
 - **Section Enrollment**  
   ![Section Enrollment](ProjectImages/SectionEnrollemnt.png) 
 
 - **Access Materials**  
-  ![Access Materials](#)
+  ![Access Materials](ProjectImages/AccessMaterilasByStudent.png)
 
 - **Take Quizzes**  
-  ![Take Quizzes](#)
+  ![Take Quizzes](ProjectImages/JoinQuiz.png)
 
 - **View Results**  
-  ![View Results](#)
+  ![View Results](ProjectImages/Quiz-Result.png)
 
 - **Real-Time Chat**  
-  ![Real-Time Chat](#)
+  ![Real-Time Chat](ProjectImages/ChatProcess.png)
+  
+  - **Admin Dashboard**  
+  ![Create Sections](ProjectImages/AdminDashboard.png)
+
+- **Create Quiz**  
+  ![Create Sections](ProjectImages/CreateQuiz.png)
 
 - **Create Sections**  
-  ![Create Sections](#)
+  ![Create Sections](ProjectImages/AddNewSection.png)
+
+  - **Create Sections**  
+  ![Create Sections](ProjectImages/AddNewSubject.png)
 
 - **Upload Materials**  
-  ![Upload Materials](#)
+  ![Upload Materials](ProjectImages/Add Materilas.png)
 
 - **Create Quizzes**  
-  ![Create Quizzes](#)
+  ![Create Quizzes](ProjectImages/AllQuizzesCreated.png)
 
 - **Monitor Student Progress**  
-  ![Monitor Student Progress](#)
+  ![Monitor Student Progress](ProjectImages/StudentsEvaluations.png)
