@@ -144,7 +144,6 @@ namespace Services.Services
         {
             var options = new List<OptionsViewModel>();
 
-            // Fetch MultipleChoice options
             var multipleChoiceOptions = _context.MultipleChoices
                 .Where(mc => mc.QuestionId == questionId)
                 .Select(mc => new OptionsViewModel
@@ -157,7 +156,6 @@ namespace Services.Services
 
             options.AddRange(multipleChoiceOptions);
 
-            // Fetch TrueFalse options
             var trueFalseOptions = _context.TrueFalse
                 .Where(tf => tf.QuestionId == questionId)
                 .Select(tf => new OptionsViewModel
@@ -170,7 +168,6 @@ namespace Services.Services
 
             options.AddRange(trueFalseOptions);
 
-            // Fetch ShortText options (typically, short text questions will only have one correct answer)
             var shortTextOptions = _context.ShortText
                 .Where(st => st.QuestionId == questionId)
                 .Select(st => new OptionsViewModel

@@ -23,9 +23,9 @@
             const correctOptionText = document.querySelector(`[name='Questions[${questionIndex}].Options[${optionIndex}].Text']`).value;
 
             if (correctOptionCheckbox.checked) {
-                correctAnswerInput.value = correctOptionText; // Store the correct answer text
+                correctAnswerInput.value = correctOptionText; 
             } else {
-                correctAnswerInput.value = ''; // Clear the correct answer if unchecked
+                correctAnswerInput.value = ''; 
             }
         }
     </script>
@@ -39,7 +39,7 @@
     <div class="quiz-details">
         <h3>Quiz Details</h3>
         <div class="form-group">
-            <input type="hidden" name="QuizID" value="@Model.QuizID" /> <!-- Hidden QuizID -->
+            <input type="hidden" name="QuizID" value="@Model.QuizID" /> 
             <label asp-for="Name" class="control-label"></label>
             <input asp-for="Name" class="form-control" />
             <span asp-validation-for="Name" class="text-danger"></span>
@@ -80,7 +80,7 @@
     {
         <div class="question-item">
             <h4>Question @(i + 1)</h4>
-            <input type="hidden" name="Questions[@i].Id" value="@Model.Questions[i].Id" /> <!-- Hidden Question ID -->
+            <input type="hidden" name="Questions[@i].Id" value="@Model.Questions[i].Id" />
             <div class="form-group">
                 <label asp-for="@Model.Questions[i].QuestionText">Question Text</label>
                 <input asp-for="@Model.Questions[i].QuestionText" class="form-control" />
@@ -131,7 +131,6 @@
                     </div>
                 }
 
-                <!-- Hidden input to store the correct answer -->
                 <input type="hidden" id="CorrectAnswer_@i" name="Questions[@i].CorrectAnswer" value="@Model.Questions[i].CorrectAnswer" />
 
 

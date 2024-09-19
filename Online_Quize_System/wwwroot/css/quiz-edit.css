@@ -1,4 +1,3 @@
-/* General form styling */
 .quiz-edit-form {
     width: 100%;
     margin: auto;
@@ -53,7 +52,6 @@ label {
         border-color: #004085;
     }
 
-/* Styling the questions section */
 .question-item {
     margin-top: 30px;
     padding: 15px;
@@ -93,7 +91,6 @@ label {
     color: #666;
 }
 
-/* Enhancing the look of the True/False options */
 .form-check {
     margin-bottom: 5px;
 }
@@ -104,20 +101,17 @@ label {
     cursor: pointer;
 }
 
-/* Customizing the button */
 .btn-primary {
     display: block;
     width: 100%;
     text-align: center;
 }
 
-    /* Adding hover effects to buttons */
     .btn-primary:hover {
         background-color: #0069d9;
         border-color: #005cbf;
     }
 
-/* Highlighting required fields */
 .text-danger {
     color: #dc3545;
 }

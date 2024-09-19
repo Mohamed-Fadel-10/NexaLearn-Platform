@@ -15,7 +15,7 @@
     <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <div class="quiz-wrapper">
-    <div id="demo"></div> 
+    <div id="demo"></div>
 
     <div class="quiz-header text-center">
         <h2 class="quiz-title">@Model.Name</h2>
@@ -61,35 +61,35 @@
             container.innerHTML = '';
 
             let questionHtml = `<div class="card">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Question ${index + 1}</h4>
-                                        <h5 class="card-text">${question.QuestionText}</h5>
-                                        <p class="card-text">Hint: ${question.Hint}</p>
-                                        <p class="card-text">Points: ${question.Points}</p>
-                                `;
+                                            <div class="card-body">
+                                                <h4 class="card-title">Question ${index + 1}</h4>
+                                                <h5 class="card-text">${question.QuestionText}</h5>
+                                                <p class="card-text">Hint: ${question.Hint}</p>
+                                                <p class="card-text">Points: ${question.Points}</p>
+                                        `;
 
             const storedAnswer = answers.find(a => a.QuestionID === question.Id)?.Answer;
 
             if (question.Type === 2 /* TrueFalse */) {
                 questionHtml += `<div class="form-check">
-                                        <input class="form-check-input" type="radio" name="option" id="true" value="true" ${storedAnswer === "true" ? "checked" : ""}>
-                                        <label class="form-check-label" for="true">True</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="option" id="false" value="false" ${storedAnswer === "false" ? "checked" : ""}>
-                                        <label class="form-check-label" for="false">False</label>
-                                    </div>`;
+                                                <input class="form-check-input" type="radio" name="option" id="true" value="true" ${storedAnswer === "true" ? "checked" : ""}>
+                                                <label class="form-check-label" for="true">True</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="option" id="false" value="false" ${storedAnswer === "false" ? "checked" : ""}>
+                                                <label class="form-check-label" for="false">False</label>
+                                            </div>`;
             } else if (question.Type === 3 /* MultipleChoice */) {
                 question.Options.forEach((option, i) => {
                     questionHtml += `<div class="form-check">
-                                            <input class="form-check-input" type="radio" name="option" id="option${i}" value="${option.Text}" ${storedAnswer === option.Text ? "checked" : ""}>
-                                            <label class="form-check-label" for="option${i}">${option.Text}</label>
-                                        </div>`;
+                                                    <input class="form-check-input" type="radio" name="option" id="option${i}" value="${option.Text}" ${storedAnswer === option.Text ? "checked" : ""}>
+                                                    <label class="form-check-label" for="option${i}">${option.Text}</label>
+                                                </div>`;
                 });
             } else if (question.Type === 1 /* ShortText or long text */) {
                 questionHtml += `<div class="form-group">
-                                                        <textarea  class="form-control" name="answer" id="answer" placeholder="Your answer" value="${storedAnswer || ''}"></textarea>
-                                    </div>`;
+                                                                <textarea  class="form-control" name="answer" id="answer" placeholder="Your answer" value="${storedAnswer || ''}"></textarea>
+                                            </div>`;
             }
 
             questionHtml += `</div></div>`;
@@ -180,14 +180,14 @@
         if (storedEndTime) {
             endTime = parseInt(storedEndTime);
         } else {
-            var now = new Date().getTime();
-            endTime = now + (parseInt(countDownDuration[0]) * 3600000) + (parseInt(countDownDuration[1]) * 60000) + (parseInt(countDownDuration[2]) * 1000);
+            var nowUtc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000); 
+            endTime = nowUtc + (parseInt(countDownDuration[0]) * 3600000) + (parseInt(countDownDuration[1]) * 60000) + (parseInt(countDownDuration[2]) * 1000);
             sessionStorage.setItem(`quiz-${quizId}-end-time`, endTime);
         }
 
         var x = setInterval(function () {
-            var now = new Date().getTime();
-            var remainingTime = endTime - now;
+            var nowUtc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000); 
+            var remainingTime = endTime - nowUtc;
 
             sessionStorage.setItem(`quiz-${quizId}-end-time`, endTime);
 
@@ -200,7 +200,7 @@
             if (remainingTime < 0) {
                 clearInterval(x);
                 sessionStorage.removeItem(`quiz-${quizId}-end-time`);
-                finishQuiz(); 
+                finishQuiz();
             }
         }, 1000);
 
@@ -224,9 +224,4 @@
                 .catch(err => console.error(err.toString()));
         }
     </script>
-
-
-
-
-
 }
